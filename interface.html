@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial;}
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+</style>
+</head>
+<body>
+
+<h2>Natural Langauge Processing System Performance</h2>
+
+First System: <input id="file1" name="file1" class="input-file" type="file">
+
+Second System: <input id="file2" name="file2" class="input-file" type="file">
+<br> <br>
+
+
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'Pre-test Power')">Pre-test Power Analysis</button>
+  <button class="tablinks" onclick="openTab(event, 'Data Analysis')">Data Analysis</button>
+  <button class="tablinks" onclick="openTab(event, 'Significance Test')">Significance Test</button>
+  <button class="tablinks" onclick="openTab(event, 'Effect Size')">Effect Size</button>
+  <button class="tablinks" onclick="openTab(event, 'Post-test Power Analysis')">Post-test Power Analysis</button>
+</div>
+
+
+<div id='Pre-test Power' class="tabcontent">
+  <form class="form-horizontal">
+
+
+
+  <!-- Text input-->
+  <div class="form-group">
+    <label class="col-md-4 control-label" for="effect_size">Expected effect size</label>
+    <div class="col-md-4">
+    <input id="effect_size" name="effect_size" type="text" placeholder="0.00" class="form-control input-md" required="">
+
+    </div>
+  </div>
+
+  <!-- Text input-->
+  <div class="form-group">
+    <label class="col-md-4 control-label" for="desired_power_level">Desired power level:</label>
+    <div class="col-md-4">
+    <input id="desired_power_level" name="desired_power_level" type="text" placeholder="e.g. 0.8" class="form-control input-md" required="">
+
+    </div>
+  </div>
+
+  <!-- Text input-->
+  <div class="form-group">
+    <label class="col-md-4 control-label" for="significance_level">Significance level:</label>
+    <div class="col-md-4">
+    <input id="significance_level" name="significance_level" type="text" placeholder="e.g. 0.05" class="form-control input-md" required="">
+
+    </div>
+  </div>
+  <br>
+  <!-- Button -->
+  <div class="form-group">
+    <label class="col-md-4 control-label" for="run"></label>
+    <div class="col-md-4">
+      <button id="run" name="run" class="btn btn-success">Run</button>
+    </div>
+  </div>
+
+
+  </form>
+
+</div>
+
+<div id='Data Analysis' class="tabcontent">
+  <h3>Data Analysis</h3>
+  <p>.</p>
+</div>
+
+<div id='Significance Test' class="tabcontent">
+  <h3>Significance Test</h3>
+  <p>.</p>
+</div>
+
+<div id='Effect Size' class="tabcontent">
+  <h3>Effect Size</h3>
+  <p>.</p>
+</div>
+
+<div id='Post-test Power Analysis' class="tabcontent">
+  <h3>Post-test Power Analysis</h3>
+  <p>.</p>
+</div>
+
+
+<script>
+function openTab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+</script>
+
+</body>
+
+<br>
+<button id="download" name="download" class="btn btn-primary">Download</button>
+
+
+</html>
