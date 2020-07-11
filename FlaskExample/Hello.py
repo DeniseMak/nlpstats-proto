@@ -15,13 +15,29 @@ def test():
 def upload_page():
    return render_template('upload.html')
 
+def countlines(filename):
+   '''
+   counts the lines in a file with the given name
+   :param filename: name of the file
+   :return: number of lines in the file
+   '''
+   # Opening a file
+   file = open(filename, "r")
+
+   # Reading from file
+   Content = file.read()
+   return len(Content.split("\n"))
+
+
 
 @app.route('/uploader', methods=['GET', 'POST'])
 def upload_file():
    if request.method == 'POST':
       f = request.files['file']
-      f.save(secure_filename(f.filename))
-      return 'file uploaded successfully'
+      f.save(secure_filename(f.filename))  # todo: change this to 'uploads' directory
+      #count lines
+      num_lines = countlines(filename=f.filename)
+      return 'file (with {} lines) uploaded successfully'.format(num_lines)
 
 
 @app.route('/success/<name>')
