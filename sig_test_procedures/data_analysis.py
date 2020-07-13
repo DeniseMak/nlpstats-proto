@@ -204,6 +204,15 @@ def recommend_test(test_param,is_norm):
 
 
 if __name__ == '__main__':
+	"""
+	the main
+
+	@argv1: score
+	@argv2: eval_unit_size (int)
+	@argv3: shuffled (bool, True or False)
+	@argv4: calc_method (str, 'mean' or 'median')
+	@argv5: alpha (float)
+	"""
 	# read score file
 	[score1,score2] = read_score_file(sys.argv[1])
 
