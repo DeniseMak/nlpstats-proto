@@ -26,7 +26,6 @@ def read_score_file(score_file):
 	@return: a list of two dictionaries, first is score1, second is score2
 	"""
 
-	#with open(sys.argv[1]) as score:
 	with open(score_file) as score:
 		score_lines = score.readlines()
 
@@ -35,6 +34,10 @@ def read_score_file(score_file):
 	ind = 0
 	for i in score_lines:
 		line_tokens = i.split()
+		if len(line_tokens) != 2:
+			sys.stderr.write("Input file not in the correct format (separated by a whitespace)!")
+			return
+
 		score1[ind] = float(line_tokens[0])
 		score2[ind] = float(line_tokens[1])
 		ind += 1
@@ -53,17 +56,26 @@ def plot_hist(score1, score2):
 	y = list(score2.values())
 
 	plt.figure()
-	plt.hist([x,y], bins=np.linspace(0,1,30), label=['score1', 'score2'])
+	plt.hist(x, bins=np.linspace(0,1,50))
+	plt.axvline(np.array(x).mean(), color='b', linestyle='--', linewidth=1, label='mean')
+	plt.axvline(np.median(np.array(x)), color='r', linestyle='-.', linewidth=1, label='median')
 	plt.legend(loc='upper right')
-	plt.axvline(np.array(x).mean(), color='b', linestyle='--', linewidth=2)
-	plt.axvline(np.array(y).mean(), color='r', linestyle='-.', linewidth=2)
-	plt.axvline(np.median(np.array(x)), color='b', linestyle='--', linewidth=2)
-	plt.axvline(np.median(np.array(y)), color='r', linestyle='-.', linewidth=2)
 	plt.xlabel("Score",fontsize=18)
 	plt.ylabel("Frequency",fontsize=18)
-	plt.title("Histogram of score1 and score2",fontsize=18)
+	plt.title("Histogram of score1",fontsize=18)
+	plt.savefig('hist_score1.svg',dpi=500)
 
-	plt.savefig('hist_score1_score2.png',dpi=500)
+
+	plt.figure()
+	plt.hist(y, bins=np.linspace(0,1,50))
+	plt.axvline(np.array(y).mean(), color='b', linestyle='--', linewidth=1,label='mean')
+	plt.axvline(np.median(np.array(y)), color='r', linestyle='-.', linewidth=1,label='median')
+	plt.legend(loc='upper right')
+	plt.xlabel("Score",fontsize=18)
+	plt.ylabel("Frequency",fontsize=18)
+	plt.title("Histogram of score2",fontsize=18)
+
+	plt.savefig('hist_score2.svg',dpi=500)
 
 def calc_score_diff(score1,score2):
 	"""
@@ -88,13 +100,14 @@ def plot_hist_diff(score_diff):
 
 	x = list(score_diff.values())
 	plt.figure()
-	plt.hist(x, bins=np.linspace(-1,1,30), label=['score difference'])
-	plt.axvline(np.array(x).mean(), color='b', linestyle='--', linewidth=2)
-	plt.axvline(np.median(np.array(x)), color='r', linestyle='-.', linewidth=2)
+	plt.hist(x, bins=np.linspace(-1,1,50))
+	plt.axvline(np.array(x).mean(), color='b', linestyle='--', linewidth=1, label='mean')
+	plt.axvline(np.median(np.array(x)), color='r', linestyle='-.', linewidth=1, label='median')
+	plt.legend(loc='upper right')
 	plt.xlabel("Score",fontsize=18)
 	plt.ylabel("Frequency",fontsize=18)
 	plt.title("Histogram of Score Difference",fontsize=18)
-	plt.savefig('hist_score_diff.png',dpi=500)
+	plt.savefig('hist_score_diff.svg',dpi=500)
 
 
 def partition_score(score_diff, eval_unit_size, shuffled, method):
@@ -124,14 +137,14 @@ def partition_score(score_diff, eval_unit_size, shuffled, method):
 
 	x = list(score_diff_new.values())
 	plt.figure()
-	plt.hist(x, bins=np.linspace(-1,1, 30), label=['score difference (partitioned)'])
-	plt.axvline(np.array(x).mean(), color='b', linestyle='--', linewidth=2)
-	plt.axvline(np.median(np.array(x)), color='r', linestyle='-.', linewidth=2)
-
+	plt.hist(x, bins=np.linspace(-1,1, 50))
+	plt.axvline(np.array(x).mean(), color='b', linestyle='--', linewidth=1, label='mean')
+	plt.axvline(np.median(np.array(x)), color='r', linestyle='-.', linewidth=1, label='median')
+	plt.legend(loc='upper right')
 	plt.xlabel("Score",fontsize=18)
 	plt.ylabel("Frequency",fontsize=18)
 	plt.title("Histogram of Score Difference (partitioned)",fontsize=18)
-	plt.savefig('hist_score_diff_partitioned.png',dpi=500)
+	plt.savefig('hist_score_diff_partitioned.svg',dpi=500)
 
 	return(score_diff_new)
 
@@ -145,6 +158,13 @@ def normality_test(score, alpha):
 	@return: whether to reject to not reject, a boolean value 
 			(True: canoot reject; False: reject)
 	"""
+	if isinstance(alpha,float) == False:
+		sys.stderr.write("Invalid input alpha value! Procedure terminated at normality test step.\n")
+		return
+	else:
+		if alpha>1 or alpha<0:
+			sys.stderr.write("Invalid input alpha value! Procedure terminated at normality test step.\n")
+			return
 	x = list(score.values())
 	norm_test = stats.shapiro(x)
 	if norm_test[1]>alpha:
@@ -205,15 +225,6 @@ def recommend_test(test_param,is_norm):
 
 
 if __name__ == '__main__':
-	"""
-	the main
-
-	@argv1: score
-	@argv2: eval_unit_size (int)
-	@argv3: shuffled (bool, True or False)
-	@argv4: calc_method (str, 'mean' or 'median')
-	@argv5: alpha (float)
-	"""
 	# read score file
 	[score1,score2] = read_score_file(sys.argv[1])
 
@@ -237,7 +248,17 @@ if __name__ == '__main__':
 	# recommend tests
 	recommended_tests = recommend_test(skew_test_diff,norm_test_diff)
 
-	#print(str(norm_test_diff)+'   '+str(recommended_tests))
+	print("Is the difference of the two scores normal: "+str(norm_test_diff)+'.\n')
+
+	print("Recommended measure for central tendency: "+str(skew_test_diff)+'.\n')
+
+	list_rec_tests = ""
+	for i in recommended_tests:
+		list_rec_tests+=' '+i
+	#list_rec_tests.join(recommended_tests)  
+
+	print("List of recommended tests: " +list_rec_tests+'.\n')
+	#print(recommended_tests)
 
 
 
