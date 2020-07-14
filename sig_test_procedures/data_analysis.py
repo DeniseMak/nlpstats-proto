@@ -26,7 +26,8 @@ def read_score_file(score_file):
 	@return: a list of two dictionaries, first is score1, second is score2
 	"""
 
-	with open(sys.argv[1]) as score:
+	#with open(sys.argv[1]) as score:
+	with open(score_file) as score:
 		score_lines = score.readlines()
 
 	score1 = {}
