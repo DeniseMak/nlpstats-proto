@@ -113,22 +113,32 @@ body {font-family: Arial;}
         <input type = "submit"/>
     </form>
   <br> <br>
+  <table>
+      <tr>
+      <td>
       <table border = 1>
+         <tr><th>System 1</th></tr>
          {% for key, value in result1.items() %}
             <tr>
-               <th> {{ key }} </th>
+               <!-- <th> {{ key }} </th> -->
                <td> {{ value }} </td>
             </tr>
          {% endfor %}
       </table>
+      </td>
+      <td>
       <table border = 1>
+      <tr><th>System 2</th></tr>
          {% for key, value in result2.items() %}
             <tr>
-               <th> {{ key }} </th>
+               <!-- <th> {{ key }} </th> -->
                <td> {{ value }} </td>
             </tr>
          {% endfor %}
       </table>
+      </td>
+      </tr>
+  </table>
 </div>
 
 <div id='Significance Test' class="tabcontent">
