@@ -9,3 +9,4 @@ Todo:
 Resources:
 * https://bootsnipp.com/forms
 * https://www.w3schools.com/howto/howto_js_tabs.asp
+* https://stackoverflow.com/questions/34387893/output-matplotlib-figure-to-svg-with-text-as-text-not-curves
