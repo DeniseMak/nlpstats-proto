@@ -1,14 +1,14 @@
 
 
 class testCase:    
-    def __init__(self, score1, score2, score_diff, testParam, sigTest, effSize, powAnalysis):
+    def __init__(self, score1, score2, score_diff, testParam, sigTest, effSize, powAnaly):
         self.score1 = score1
         self.score2 = score2
         self.score_diff = score_diff
         self.testParam = testParam
         self.sigTest = sigTest
         self.effSize = effSize
-        self.powAnaly = powAnalysis
+        self.powAnaly = powAnaly
 
 
     def calc_score_diff(self):
