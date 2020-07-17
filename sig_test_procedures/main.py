@@ -59,11 +59,13 @@ if __name__ == '__main__':
 
 	eff_size_est, eff_size_name = effectSize.calc_eff_size(testCase_new.sigTest, testCase_new.testParam, testCase_new.score1, testCase_new.score2)
 
+	testCase_new.effSize = (eff_size_est, eff_size_name)
 
 	### post power analysis
 
 	power_sampsize = powerAnalysis.post_power_analysis(testCase_new.sigTest, testCase_new.score1, testCase_new.score2, step_size,B=1000)
 
+	testCase_new.powAnaly = power_sampsize
 
 	print(testCase_new.sigTest)
 	print(recommended_tests)
