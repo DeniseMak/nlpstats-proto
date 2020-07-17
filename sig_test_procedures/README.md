@@ -94,6 +94,8 @@ The scripts `effectSize.py` and `powerAnalysis.py` partially provide functionali
 ## `main.py` test case:
 In this script, I choose the significance test to be the second in the list. If `eval_unit_size` is different (say 5), then the list of test might have different length, which may give rise to some bugs. 
 
+Note that the power analysis part may take relatively longer time to complete.
+
 For example, run the following:
 
 `python main.py score 1 False mean 0.05 20`
