@@ -14,7 +14,7 @@ def post_power_analysis(sig_test_name, score1, score2, step_size, mu=0, B=2000, 
 	y = np.array(list(score2.values()))
 	z = x-y
 
-	sample_sizes = np.arange(2, len(z), step_size)
+	sample_sizes = np.arange(50, len(z), step_size)
 	power_sampsizes = {}
 
 	

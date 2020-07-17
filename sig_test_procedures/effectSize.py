@@ -51,7 +51,8 @@ def wilcoxon_z(score1,score2):
 		if z[i]<0:
 			z_rank[i] = -z_rank[i]
 
-	w_p, w_m = 0
+	w_p = 0
+	w_m = 0
 	for i in z_rank:
 		if i>0:
 			w_p+=i
