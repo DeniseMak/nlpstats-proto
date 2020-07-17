@@ -28,6 +28,21 @@ def countlines(filename):
    Content = file.read()
    return len(Content.split("\n"))
 
+@app.route('/uploader2', methods=['GET', 'POST'])
+def upload_file2():
+   if request.method == 'POST':
+      f = request.files['file1']
+      f2 = request.files['file2']
+      f2.save(secure_filename(f2.filename))
+      f.save(secure_filename(f.filename))  # todo: change this to 'uploads' directory
+      #count lines
+      num_lines = countlines(filename=f.filename)
+      num_lines2 = countlines(filename=f2.filename)
+
+      import sig_test_procedures.data_analysis as data
+      dicts = data.read_score_file(f.filename)
+      rendered = render_template('da_temp.html', result1=dicts[0], result2=dicts[1])
+      return rendered #'files (with {} and {} lines) uploaded successfully'.format(num_lines, num_lines2)
 
 
 @app.route('/uploader', methods=['GET', 'POST'])

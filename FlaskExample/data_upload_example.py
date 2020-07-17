@@ -17,5 +17,12 @@ def upload_file2():
       rendered = render_template('da_temp.html', result1=dicts[0], result2=dicts[1])
       return rendered
 
+
+@app.route('/testupload')
+def test_upload():
+   #return redirect(url_for('hello_world', name='Dude'))
+   # return redirect(url_for('hello', name='Dude'))
+   return render_template('interface_upload_example.html')
+
 if __name__ == '__main__':
    app.run(debug = True)
