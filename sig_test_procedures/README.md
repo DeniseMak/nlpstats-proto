@@ -92,16 +92,26 @@ The script `sigTesting.py` contains functions to run the significance testing ch
 The scripts `effectSize.py` and `powerAnalysis.py` partially provide functionalities for Stage 4.
 
 ## `main.py` test case:
+In this script, I choose the significance test to be the second in the list. If `eval_unit_size` is different (say 5), then the list of test might have different length, which may give rise to some bugs. 
+
 For example, run the following:
 
-`python main.py score 1 False mean 0.05`
+`python main.py score 1 False mean 0.05 20`
 
 The output should be:
 
-> Is the difference of the two scores normal: False.
+> ['bootstrap', 'sign', 'permutation', 'wilcoxon', 't'] (this is the list of recommended tests)
 
-> Recommended measure for central tendency: mean.
+> 55.0 (this is the value of test statistic. In this case the test is the sign test.)
 
-> List of recommended tests:  bootstrap sign permutation wilcoxon t.
+> 0.012608304160644415 (this is the obtained p value)
 
-The saved plots are in `sig_test_procedures/test_case`.
+> True (this is whether the test rejects the null that the location of difference is 0)
+
+-----------
+
+> [0.03676324583189519, 0.036749450992933884] (these are the estimates of effect size. There are two indices.)
+
+> ["Cohen's d", "Hedges's g"] (These are the names of the effect sise indices)
+
+The saved plots are in `./figures/`.
