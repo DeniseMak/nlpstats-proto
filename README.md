@@ -2,10 +2,10 @@
 Prototyping ideas for an NLP stats GUI
 
 ## Haotian's Todo:
-* add `matplotlib.use('Agg')` under your import. The following got rid of the problem for me, but some other variation may work.
+* add `matplotlib.use('Agg')` for .png or `matplotlib.use('Svg')` for .png under your import. The following got rid of the problem for me, but some other variation may work.
 ```
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use('Svg')
 from matplotlib import pyplot as plt
 ```
 * Add a path prefix to the svg filenames, ideadlly as a function parameter for each function (`def plot_hist(score1, score2, output_dir):`).
