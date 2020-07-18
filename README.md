@@ -14,11 +14,4 @@ from matplotlib import pyplot as plt
 ## Timeline
 
 1. Finish plumbing DA tab and implement the todo list (before next meeting).
-?? Fill in here ??
-
-## Resources:
-* https://bootsnipp.com/forms
-* https://www.w3schools.com/howto/howto_js_tabs.asp
-* https://stackoverflow.com/questions/34387893/output-matplotlib-figure-to-svg-with-text-as-text-not-curves
-
-
+2. ?? Fill in here ??
