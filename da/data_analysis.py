@@ -15,7 +15,7 @@ import csv
 from scipy import stats
 import random
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use('Svg')
 from matplotlib import pyplot as plt
 
 
