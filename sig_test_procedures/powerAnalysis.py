@@ -12,8 +12,8 @@ from matplotlib import pyplot as plt
 plt.rcParams['svg.fonttype'] = 'none'
 
 
-def post_power_analysis(sig_test_name, score1, score2, step_size, output_dir='', mu=0, B=200, alpha=0.05):
-	z = np.array(list(score1.values()))-np.array(list(score2.values()))
+def post_power_analysis(sig_test_name, score, step_size, output_dir='', mu=0, B=200, alpha=0.05):
+	z = np.array(list(score.values()))
 
 	sample_sizes = np.arange(50, len(z), step_size)
 	power_sampsizes = {}

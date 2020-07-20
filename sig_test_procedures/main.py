@@ -15,7 +15,7 @@ if __name__ == '__main__':
 	score_file = sys.argv[1]
 
 	### initialize a new testCase object
-	testCase_new = testCase.testCase(None,None,None,None)
+	testCase_new = testCase.testCase(None,None,None,None,None)
 
 	# eda
 	testCase_new.eda.m = int(sys.argv[2])
@@ -54,13 +54,18 @@ if __name__ == '__main__':
 	dataAnalysis.plot_hist_diff(testCase_new.score_diff ,'figures')
 
 	# partition score difference
-	testCase_new.score_diff = dataAnalysis.partition_score(testCase_new.score_diff, testCase_new.eda.m, testCase_new.eda.isShuffled, testCase_new.eda.randomSeed, testCase_new.eda.calc_method, 'figures')
+	testCase_new.score_diff_par = dataAnalysis.partition_score(testCase_new.score_diff, testCase_new.eda.m, testCase_new.eda.isShuffled, testCase_new.eda.randomSeed, testCase_new.eda.calc_method, 'figures')
+
+
+	# summary statistics for score1, score1, score_diff and partitioned score_diff
+
+	testCase_new.get_summary_stats()
 
 	# normality test
-	testCase_new.eda.normal = dataAnalysis.normality_test(testCase_new.score_diff, testCase_new.sigTest.alpha)
+	testCase_new.eda.normal = dataAnalysis.normality_test(testCase_new.score_diff_par, testCase_new.sigTest.alpha)
 
 	# skewness test
-	testCase_new.eda.testParam = dataAnalysis.skew_test(testCase_new.score_diff)
+	testCase_new.eda.testParam = dataAnalysis.skew_test(testCase_new.score_diff_par)
 
 	# recommend tests
 	recommended_tests = dataAnalysis.recommend_test(testCase_new.eda.testParam,testCase_new.eda.normal)
@@ -75,7 +80,7 @@ if __name__ == '__main__':
 
 	# run sig test
 	print("------ Testing ------")
-	test_stat, pval, rejection = sigTesting.run_sig_test(testCase_new.sigTest.testName, testCase_new.score_diff, alpha = testCase_new.sigTest.alpha, B = B_boot)
+	test_stat, pval, rejection = sigTesting.run_sig_test(testCase_new.sigTest.testName, testCase_new.score_diff_par, alpha = testCase_new.sigTest.alpha, B = B_boot)
 	testCase_new.sigTest.test_stat = test_stat
 	testCase_new.sigTest.pval = pval
 	testCase_new.sigTest.rejection = rejection
@@ -83,7 +88,7 @@ if __name__ == '__main__':
 	### effect size calculation
 
 	print("------ Effect Size ------")
-	eff_size_est, eff_size_name = effectSize.calc_eff_size(testCase_new.sigTest.testName, testCase_new.eda.testParam, testCase_new.score1, testCase_new.score2)
+	eff_size_est, eff_size_name = effectSize.calc_eff_size(testCase_new.sigTest.testName, testCase_new.eda.testParam, testCase_new.score_diff_par)
 
 	testCase_new.es.estimate = eff_size_est
 	testCase_new.es.estimator = eff_size_name
@@ -94,8 +99,8 @@ if __name__ == '__main__':
 	start_time = time.time()
 
 	power_sampsize = powerAnalysis.post_power_analysis(testCase_new.sigTest.testName, 
-		testCase_new.score1, testCase_new.score2, 
-		step_size = testCase_new.power.step_size, output_dir = 'figures', B=B_pow, alpha=testCase_new.power.alpha)
+		testCase_new.score_diff_par, step_size = testCase_new.power.step_size, 
+		output_dir = 'figures', B=B_pow, alpha=testCase_new.power.alpha)
 
 	sys.stderr.write("Finished power analysis. Runtime: --- %s seconds ---" % (time.time() - start_time) + '\n')
     

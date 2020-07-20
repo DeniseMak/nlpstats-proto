@@ -93,5 +93,5 @@ def permutation_test(x, alpha, B, method='mean'):
 			if abs(mu_b)>abs(mu_ob):
 				count+=1
 	pval = float(count+1)/(B+1)
-	return((None,round(pval,4),pval<alpha))
+	return((mu_ob,round(pval,4),pval<alpha))
 

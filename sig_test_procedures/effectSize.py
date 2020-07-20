@@ -8,55 +8,36 @@ import itertools
 
 
 
-def calc_eff_size(recommended_test, test_param, score1, score2):
+def calc_eff_size(recommended_test, test_param, score):
 	if test_param == 'mean': # use cohen d or hedges g
-		d = cohend(score1, score2)
-		eff_size_estimate = [round(d,4),round(hedgesg(d,score1,score2),4),round(glassdelta(score1,score2),4)]
-		eff_size_estimator = ['Cohen\'s d','Hedges\'s g', 'Glass\' delta']
+		d = cohend(score)
+		eff_size_estimate = [round(d,4),round(hedgesg(d,score),4)]
+		eff_size_estimator = ['Cohen\'s d','Hedges\'s g']
 
 	if recommended_test == 'wilcoxon':
-		eff_size_estimate = [wilcoxon_r(score1,score2)]
+		eff_size_estimate = [wilcoxon_r(score)]
 		eff_size_estimator = ['r']
 
 	if recommended_test != 'wilcoxon' and test_param == 'median':
-		eff_size_estimate = [hodgeslehmann(score1,score2)]
+		eff_size_estimate = [hodgeslehmann(score)]
 		eff_size_estimator = ['HL (unstandardized)']
 
 	return((eff_size_estimate,eff_size_estimator))
 
 
 
-def cohend(score1, score2):
-	x = np.array(list(score1.values()))
-	y = np.array(list(score2.values()))
-	z = x-y
+def cohend(score):
+	z = np.array(list(score.values()))
 
 	return(z.mean()/np.sqrt(np.var(z,ddof=1)))
 
-def hedgesg(d,score1,score2):
-	n1 = len(np.array(list(score1.values())))
-	n2 = len(np.array(list(score2.values())))
-
-	if n1 != n2:
-		return None
-	else:
-		J = 1-(3/(4*n1-9))
-		return(d*J)
+def hedgesg(d,score):
+	J = 1-(3/(4*len(list(score.values()))-9))
+	return(d*J)
 
 
-def glassdelta(score1,score2):
-	"""
-	This function calculates the Glass' delta for the two scores, where we assume score1 is the baseline
-	"""
-	x = np.array(list(score1.values()))
-	y = np.array(list(score2.values()))
-	z = x-y
-
-	return(z.mean()/np.sqrt(np.var(x,ddof=1)))
-
-
-def wilcoxon_r(score1,score2):
-	z = np.array(list(score1.values()))-np.array(list(score2.values()))
+def wilcoxon_r(score):
+	z = np.array(list(score.values()))
 	ties = []
 	z_rank = stats.rankdata(z,method='average')
 	for i in range(0,len(z_rank)):
@@ -81,8 +62,8 @@ def wilcoxon_r(score1,score2):
 
 
 
-def hodgeslehmann(score1,score2):
-	z = np.array(list(score1.values()))-np.array(list(score2.values()))
+def hodgeslehmann(score):
+	z = np.array(list(score.values()))
 	z_pair = list(itertools.combinations(z, 2))
 
 	z_pair_average = []

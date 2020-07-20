@@ -122,6 +122,12 @@ def partition_score(score_diff, eval_unit_size, shuffled, randomSeed, method, ou
 
 	return(score_diff_new)
 
+
+def summary_stats(score):
+	x = np.array(list(score.values()))
+
+
+
 def normality_test(score, alpha=0.05):
 	"""
 	This function invokves the Shapiro-Wilks normality test to test whether
