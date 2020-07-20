@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
 	print('-----------')
 
-	print('obtained power:' + str(list(testCase_new.power.powerCurve.values())[-1]))
+	print('obtained power: ' + str(list(testCase_new.power.powerCurve.values())[-1]))
 
 
 
