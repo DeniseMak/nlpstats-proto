@@ -14,4 +14,4 @@ from matplotlib import pyplot as plt
 ## Timeline
 
 1. Finish plumbing DA tab and implement the todo list (before next meeting).
-2. ?? Fill in here ??
+2. Connect effect size functions to UI (before 7/21 meeting)
