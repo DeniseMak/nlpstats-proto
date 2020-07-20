@@ -1,7 +1,7 @@
 # nlpstats-proto
 Prototyping ideas for an NLP stats GUI
 
-## Haotian's Todo:
+## Haotian's Todo (Done @07.19.2020):
 * add `matplotlib.use('Agg')` for .png or `matplotlib.use('Svg')` for .png under your import. The following got rid of the problem for me, but some other variation may work (https://matplotlib.org/3.2.0/tutorials/introductory/usage.html).
 ```
 import matplotlib
