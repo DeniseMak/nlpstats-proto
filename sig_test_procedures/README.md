@@ -10,11 +10,15 @@ There are `8` Python files in total:
 
 There is also a `main.py` script to test functions of the above 8 scripts, where the arguments are:
 * `<sys.argv[1]>` = `score_file`
-* `<sys.argv[2]>` = `eval_unit_size` (for `partition_score`)
-* `<sys.argv[3]>` = `shuffled` (for `partition_score`)
-* `<sys.argv[4]>` = `method` (for `partition_score`)
-* `<sys.argv[5]>` = `alpha` (for `normality_test`)
-* `<sys.argv[6]>` = `step_size` (for `post_power_analysis`)
+* `<sys.argv[2]>` = `m` (evaluation unit size for `partition_score`)
+* `<sys.argv[3]>` = `calc_method` (for `partition_score`)
+* `<sys.argv[4]>` = `isShuffled` (for `partition_score`)
+* `<sys.argv[5]>` = `randomSeed` (for `partition_score`)
+* `<sys.argv[6]>` = `sigTest.alpha` (for sig test functions)
+* `<sys.argv[7]>` = `power.alpha` (for `post_power_analysis`)
+* `<sys.argv[8]>` = `power.step_size` (for `post_power_analysis`)
+* `<sys.argv[9]>` = `sigTest.B` (for sig test functions)
+* `<sys.argv[10]>` = `power.B` (for `post_power_analysis`)
 
 
 ## Input file:
@@ -58,10 +62,10 @@ The function `plot_hist_diff(score_diff)` plots the histogram of *score_diff*.
 These two plot functions save the plots in the format of `.svg` in the directory `figures`, which is created by the script.
 
 ### Partitioning score difference:
-The function `partition_score(score_diff, eval_unit_size, shuffled, method)` splits *score_diff* into evaluation units, of which the size is specified by the user. The user can also specify whether they want to reshuffle *score_diff* first and what method they want to use for calculation (mean or median). This function will also plot the histogram of the partitioned *score_diff*.
+The function `partition_score(score_diff, eval_unit_size, shuffled, randomSeed, method, output_dir)` splits *score_diff* into evaluation units, of which the size is specified by the user. The user can also specify whether they want to reshuffle *score_diff* first and what method they want to use for calculation (mean or median). This function will also plot the histogram of the partitioned *score_diff*.
 
 ### Normality test:
-The function `normality_test(score,alpha)` will conduct Shapiro-Wilks normality test for *score_diff* at a specified significance level `alpha`. The return value is a boolean, where `True` indicates normality and `False' indicates non-normality.
+The function `normality_test(score,alpha)` will conduct Shapiro-Wilks normality test for *score_diff* at a specified significance level `alpha`. The return value is a boolean, where `True` indicates normality and `False` indicates non-normality.
 
 ### Skewness check:
 The function `skew_test(score)` checks whether the distribution of *score_diff* is skewed in order to determine a good measure for central tendency. Note that here mean or median has nothing to do with the method of calculation in evaluation unit partitioning. The rules of thumb are:
@@ -91,29 +95,62 @@ The script `sigTesting.py` contains functions to run the significance testing ch
 ## Stage 4: reporting (effect size estimation and power analysis)
 The scripts `effectSize.py` and `powerAnalysis.py` partially provide functionalities for Stage 4.
 
-## `main.py` test case:
+## `main.py` test case example:
 In this script, I choose the significance test to be the second in the list. If `eval_unit_size` is different (say 5), then the list of test might have different length, which may give rise to some bugs. 
 
 Note that the power analysis part may take relatively longer time to complete.
 
 For example, run the following:
 
-`python main.py score 1 False mean 0.05 20`
+`python main.py score 5 mean False 13 0.05 0.05 20 500 200`
 
 The output should be:
 
-> ['bootstrap', 'sign', 'permutation', 'wilcoxon', 't'] (this is the list of recommended tests)
+> ------ EDA ------
 
-> 55.0 (this is the value of test statistic. In this case the test is the sign test.)
+> Sample size after partitioning is: 400.0
 
-> 0.012608304160644415 (this is the obtained p value)
+> recommended tests: ['bootstrap', 'sign', 'permutation', 'wilcoxon', 't']
 
-> True (this is whether the test rejects the null that the location of difference is 0)
+> the test used: bootstrap
 
------------
+> normality: False
 
-> [0.03676324583189519, 0.036749450992933884] (these are the estimates of effect size. There are two indices.)
+> testing parameter: mean
 
-> ["Cohen's d", "Hedges's g"] (These are the names of the effect sise indices)
+> ------ Testing ------
+
+> ------ Effect Size ------
+
+> ------ Power Analysis ------
+
+> Finished power analysis. Runtime: --- 230.18052983283997 seconds ---
+
+> ------ Report ------
+
+> test name: bootstrap
+
+> test statistic/CI: [-0.0044, 0.0043]
+
+> p-value: None
+
+> rejection of H0: False
+
+> -----------
+
+> effect size estimates: [0.0368, 0.0367, 0.0259]
+
+> effect size estimator: ["Cohen's d", "Hedges's g", "Glass' delta"]
+
+> -----------
+
+> obtained power:0.0
+
+The power analysis for the bootstrap test takes a bit longer (est. 230 secs) for this case.
+
+The final obtained power is the power level corresponding to the largest sample size. 
+
+Note that if the test is a bootstrap test, the return is a confidence interval and rejection boolean value, rather than a p-value. 
+
 
 The saved plots are in `./figures/`.
