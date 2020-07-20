@@ -12,10 +12,13 @@ import sys
 import numpy as np
 from scipy import stats
 import random
-import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Svg')
+from matplotlib import pyplot as plt
+plt.rcParams['svg.fonttype'] = 'none'
 
 
-def plot_hist(score1, score2):
+def plot_hist(score1, score2, output_dir):
 	"""
 	This is a function to plot histograms of input scores and save the plot to current directory.
 
@@ -31,14 +34,14 @@ def plot_hist(score1, score2):
 	plt.axvline(np.array(x).mean(), color='b', linestyle='--', linewidth=1, label='mean')
 	plt.axvline(np.median(np.array(x)), color='r', linestyle='-.', linewidth=1, label='median')
 	plt.legend(loc='upper right')
-	plt.xlabel("Score",fontsize=18)
-	plt.ylabel("Frequency",fontsize=18)
-	plt.title("Histogram of score1",fontsize=18)
+	plt.xlabel("Score")
+	plt.ylabel("Frequency")
+	plt.title("Histogram of score1")
 
-	if not os.path.exists('figures'):
-		os.makedirs('figures')
+	if not os.path.exists(output_dir):
+		os.makedirs(output_dir)
 
-	plt.savefig('figures/hist_score1.svg',dpi=500)
+	plt.savefig(output_dir+'/hist_score1.svg')
 
 
 	plt.figure()
@@ -46,17 +49,14 @@ def plot_hist(score1, score2):
 	plt.axvline(np.array(y).mean(), color='b', linestyle='--', linewidth=1,label='mean')
 	plt.axvline(np.median(np.array(y)), color='r', linestyle='-.', linewidth=1,label='median')
 	plt.legend(loc='upper right')
-	plt.xlabel("Score",fontsize=18)
-	plt.ylabel("Frequency",fontsize=18)
-	plt.title("Histogram of score2",fontsize=18)
+	plt.xlabel("Score")
+	plt.ylabel("Frequency")
+	plt.title("Histogram of score2")
 
-	if not os.path.exists('figures'):
-		os.makedirs('figures')
-
-	plt.savefig('figures/hist_score2.svg',dpi=500)
+	plt.savefig(output_dir+'/hist_score2.svg')
 	
 
-def plot_hist_diff(score_diff):
+def plot_hist_diff(score_diff, output_dir):
 	"""
 	This is a function to plot the histogram of the score difference
 
@@ -70,17 +70,17 @@ def plot_hist_diff(score_diff):
 	plt.axvline(np.array(x).mean(), color='b', linestyle='--', linewidth=1, label='mean')
 	plt.axvline(np.median(np.array(x)), color='r', linestyle='-.', linewidth=1, label='median')
 	plt.legend(loc='upper right')
-	plt.xlabel("Score",fontsize=18)
-	plt.ylabel("Frequency",fontsize=18)
-	plt.title("Histogram of Score Difference",fontsize=18)
+	plt.xlabel("Score")
+	plt.ylabel("Frequency")
+	plt.title("Histogram of Score Difference")
 
-	if not os.path.exists('figures'):
-		os.makedirs('figures')
+	if not os.path.exists(output_dir):
+		os.makedirs(output_dir)
 
-	plt.savefig('figures/hist_score_diff.svg',dpi=500)
+	plt.savefig(output_dir+'/hist_score_diff.svg')
 
 
-def partition_score(score_diff, eval_unit_size, shuffled, method):
+def partition_score(score_diff, eval_unit_size, shuffled, randomSeed, method, output_dir):
 	"""
 	This function partitions the score difference with respect to the given
 	evaluation unit size. Also, the user can choose to shuffle the score difference
@@ -94,7 +94,7 @@ def partition_score(score_diff, eval_unit_size, shuffled, method):
 	"""
 	ind = list(score_diff.keys())
 	if shuffled:
-		ind_shuffled = random.shuffle(ind)
+		ind_shuffled = random.Random(randomSeed).shuffle(ind)
 	ind_shuffled = np.array_split(ind,np.floor(len(ind)/eval_unit_size))
 	ind_new = 0
 	score_diff_new = {}
@@ -111,18 +111,18 @@ def partition_score(score_diff, eval_unit_size, shuffled, method):
 	plt.axvline(np.array(x).mean(), color='b', linestyle='--', linewidth=1, label='mean')
 	plt.axvline(np.median(np.array(x)), color='r', linestyle='-.', linewidth=1, label='median')
 	plt.legend(loc='upper right')
-	plt.xlabel("Score",fontsize=18)
-	plt.ylabel("Frequency",fontsize=18)
-	plt.title("Histogram of Score Difference (partitioned)",fontsize=18)
+	plt.xlabel("Score")
+	plt.ylabel("Frequency")
+	plt.title("Histogram of Score Difference (partitioned)")
 
-	if not os.path.exists('figures'):
-		os.makedirs('figures')
+	if not os.path.exists(output_dir):
+		os.makedirs(output_dir)
 
-	plt.savefig('figures/hist_score_diff_partitioned.svg',dpi=500)
+	plt.savefig(output_dir+'/hist_score_diff_partitioned.svg')
 
 	return(score_diff_new)
 
-def normality_test(score, alpha):
+def normality_test(score, alpha=0.05):
 	"""
 	This function invokves the Shapiro-Wilks normality test to test whether
 	the input score is normally distributed.

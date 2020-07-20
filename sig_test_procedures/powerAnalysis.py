@@ -6,13 +6,14 @@ import random
 from scipy import stats
 import sigTesting
 from statsmodels.stats.descriptivestats import sign_test
-import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Svg')
+from matplotlib import pyplot as plt
+plt.rcParams['svg.fonttype'] = 'none'
 
 
-def post_power_analysis(sig_test_name, score1, score2, step_size, mu=0, B=2000, alpha=0.05):
-	x = np.array(list(score1.values()))
-	y = np.array(list(score2.values()))
-	z = x-y
+def post_power_analysis(sig_test_name, score1, score2, step_size, output_dir='', mu=0, B=200, alpha=0.05):
+	z = np.array(list(score1.values()))-np.array(list(score2.values()))
 
 	sample_sizes = np.arange(50, len(z), step_size)
 	power_sampsizes = {}
@@ -21,8 +22,8 @@ def post_power_analysis(sig_test_name, score1, score2, step_size, mu=0, B=2000, 
 	for i in sample_sizes:
 		count = 0
 		for b in range(0,B):
-			z_b = np.random.choice(z, i, replace=True)
-			(test_stats, pval, rejection) = sigTesting.run_sig_test(sig_test_name, z_b, alpha, mu,B)
+			z_b = np.random.choice(a = z, size = int(i), replace=True)
+			(test_stats, pval, rejection) = sigTesting.run_sig_test(sig_test_name, z_b, alpha, mu, B)
 			if rejection:
 				count+=1
 		power_sampsizes[i] = float(count)/B
@@ -30,16 +31,17 @@ def post_power_analysis(sig_test_name, score1, score2, step_size, mu=0, B=2000, 
 
 	x = list(power_sampsizes.keys())
 	y = list(power_sampsizes.values())
+
 	plt.figure()
 	plt.plot(x,y)
-	plt.xlabel("Sample Size",fontsize=18)
-	plt.ylabel("Power",fontsize=18)
-	plt.title("Power against Different Sample Sizes",fontsize=18)
+	plt.xlabel("Sample Size")
+	plt.ylabel("Power")
+	plt.title("Power against Different Sample Sizes")
 
-	if not os.path.exists('figures'):
-		os.makedirs('figures')
+	if not os.path.exists(output_dir):
+		os.makedirs(output_dir)
 
-	plt.savefig('figures/power_samplesizes.svg',dpi=500)
+	plt.savefig(output_dir+'/power_samplesizes.svg')
 
 	return(power_sampsizes)
 

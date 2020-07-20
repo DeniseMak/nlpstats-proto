@@ -3,22 +3,24 @@
 import numpy as np
 import random
 from scipy import stats
+import itertools
+
 
 
 
 def calc_eff_size(recommended_test, test_param, score1, score2):
 	if test_param == 'mean': # use cohen d or hedges g
 		d = cohend(score1, score2)
-		eff_size_estimate = [d,hedgesg(d,score1,score2)]
-		eff_size_estimator = ['Cohen\'s d','Hedges\'s g']
+		eff_size_estimate = [round(d,4),round(hedgesg(d,score1,score2),4),round(glassdelta(score1,score2),4)]
+		eff_size_estimator = ['Cohen\'s d','Hedges\'s g', 'Glass\' delta']
 
 	if recommended_test == 'wilcoxon':
-		eff_size_estimate = [wilcoxon_z(score1,score2)]
+		eff_size_estimate = [wilcoxon_r(score1,score2)]
 		eff_size_estimator = ['r']
 
 	if recommended_test != 'wilcoxon' and test_param == 'median':
-		eff_size_estimate = [0]
-		eff_size_estimator = ['--']
+		eff_size_estimate = [hodgeslehmann(score1,score2)]
+		eff_size_estimator = ['HL (unstandardized)']
 
 	return((eff_size_estimate,eff_size_estimator))
 
@@ -41,7 +43,19 @@ def hedgesg(d,score1,score2):
 		J = 1-(3/(4*n1-9))
 		return(d*J)
 
-def wilcoxon_z(score1,score2):
+
+def glassdelta(score1,score2):
+	"""
+	This function calculates the Glass' delta for the two scores, where we assume score1 is the baseline
+	"""
+	x = np.array(list(score1.values()))
+	y = np.array(list(score2.values()))
+	z = x-y
+
+	return(z.mean()/np.sqrt(np.var(x,ddof=1)))
+
+
+def wilcoxon_r(score1,score2):
 	z = np.array(list(score1.values()))-np.array(list(score2.values()))
 	ties = []
 	z_rank = stats.rankdata(z,method='average')
@@ -65,5 +79,16 @@ def wilcoxon_z(score1,score2):
 
 	return(z_score/np.sqrt(len(z)))
 
+
+
+def hodgeslehmann(score1,score2):
+	z = np.array(list(score1.values()))-np.array(list(score2.values()))
+	z_pair = list(itertools.combinations(z, 2))
+
+	z_pair_average = []
+	for i in z_pair:
+		z_pair_average.append(np.mean(i))
+
+	return(np.median(z_pair_average))
 
 
