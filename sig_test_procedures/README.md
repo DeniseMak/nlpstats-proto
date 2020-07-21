@@ -130,7 +130,7 @@ The output should be:
 
 > test name: bootstrap
 
-> test statistic/CI: [-0.0044, 0.0043]
+> test statistic/CI: [-0.0051, 0.0048]
 
 > p-value: None
 
@@ -138,9 +138,9 @@ The output should be:
 
 > -----------
 
-> effect size estimates: [0.0368, 0.0367, 0.0259]
+> effect size estimates: [0.0839, 0.0838]
 
-> effect size estimator: ["Cohen's d", "Hedges's g", "Glass' delta"]
+> effect size estimator: ["Cohen's d", "Hedges's g"]
 
 > -----------
 
