@@ -17,7 +17,7 @@
 
 ## Resources
 
-* Note: unlike the example in the ['da']([da2](https://github.com/DeniseMak/nlpstats-proto/tree/master/da)) directory the submit button for this example does not use AJAX.
+* Note: unlike the example in the [da](https://github.com/DeniseMak/nlpstats-proto/tree/master/da) directory the submit button for this example does not use AJAX.
 
 This subdirectory has my work on the project so far. A lot of it is plumbed together from the following links.
 
