@@ -28,28 +28,31 @@ def homepage():
             result_str = 'Your results are displayed below. '\
                    + '; Seed is: ' + seed \
                    + "; Evaluation unit is: " + eval_unit_size
-            # new
+
             full_filename1 = os.path.join(app.config['FOLDER'], 'hist_score1.svg')
             full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2.svg')
             input_filename_str =  "input_filename was: " + f.filename
             print(input_filename_str)
 
-            rendered = render_template('tab_interface.html',
+            USE_JSON = False
+            if USE_JSON:
+                return jsonify(result=result_str,
+                               hist_score1=full_filename1,
+                               hist_score2=full_filename2)
+            else:
+                rendered = render_template('tab_interface.html',
                                        result_str=result_str,
                                        hist_score1=full_filename1,
-                                       hist_score2=full_filename2) #result1=dicts[0], result2=dicts[1])
-            return rendered #return jsonify(result=result_str, filename=input_filename)
+                                       hist_score2=full_filename2)
+                return rendered
         else:
             return jsonify(result='Input needed for more details.')
     elif request.method == 'GET':
-        #full_filename1 = os.path.join(app.config['FOLDER'], 'hist_score1.svg')
-        #full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2.svg')
+        # You got to the main page by navigating to the URL, not by clicking submit
+            #full_filename1 = os.path.join(app.config['FOLDER'], 'hist_score1.svg')
+            #full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2.svg')
         return render_template('tab_interface.html')
-        '''
-        return render_template('tab_interface.html',
-                               hist_score1 = full_filename1,
-                               hist_score2 = full_filename2) 
-                               '''
+
 
 if __name__ == "__main__":
     app.debug=True

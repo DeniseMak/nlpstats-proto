@@ -41,6 +41,26 @@ body
   border-top: none;
 }
 </style>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+        $(function() {
+          $('a#process_input').bind('click', function() {
+            $.post('/', {
+
+              eval_unit_size: $('input[name="eval_unit_size"]').val(),
+              seed: $('input[name="seed"]').val(),
+                system_file: $('input[name="system_file"]').val()
+
+            }, function(data) {
+                // Note: I don't think this is working.
+              $('#result').text(data.result);
+              $('#hist_score1').src(data.hist_score1);
+              $('#hist_score2').src(data.hist_score2);
+            });
+            return false;
+          });
+        });
+    </script>
 </head>
 <body>
 
@@ -58,8 +78,9 @@ body
 </div>
 
 
-
-<div id='Data Analysis' class="tabcontent">
+<!-- Data Analysis
+    TODO: Make style dynamic -->
+<div id='Data Analysis' class="tabcontent" style="display:block">
   <form class="form-horizontal" enctype="multipart/form-data" method="post">
   <fieldset>
 
@@ -70,7 +91,9 @@ body
     <div class="col-md-4">
       <input id="system_file" name="system_file" class="input-file" type="file"/>
         <!-- Submit Button -->
+        <!--
         <input type = "submit"/>
+        -->
     </div>
   </div>
   <br>
@@ -112,14 +135,14 @@ body
   <br>
 
   <!-- Button -->
-      <!--
+
   <div class="form-group">
     <label class="col-md-4 control-label" for="submit"></label>
     <div class="col-md-4">
       <button id="submit" name="submit" class="btn btn-success">Run</button>
     </div>
   </div>
-     -->
+
 
 
   </fieldset>
@@ -128,8 +151,8 @@ body
     <!-- Images -->
     <div class="hiddendiv" id = "hidden">
           <h1 id=result align='center'>{{ result_str }}</h1>
-          <img src="{{ hist_score1 }}">
-          <img src="{{ hist_score2 }}">
+          <img id=hist_score1 src="{{ hist_score1 }}">
+          <img id=hist_score2 src="{{ hist_score2 }}">
     </div>
 </div>
 

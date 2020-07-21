@@ -1,5 +1,9 @@
 # Prototype Data Analysis - V2
 
+Note: This is just an alternative to the V1 UI in [da](https://github.com/DeniseMak/nlpstats-proto/tree/master/da) 
+to try out a submit button. We can decide tomorrow (7/22) which kind of submit button works better after
+this version has been fleshed out.
+ 
 ## State of Affairs
 * We have working text input and output.
 * File upload now saves the chosen file into the [da2](https://github.com/DeniseMak/nlpstats-proto/tree/master/da2) directory
@@ -17,7 +21,8 @@
 
 ## Resources
 
-* Note: unlike the example in the [da](https://github.com/DeniseMak/nlpstats-proto/tree/master/da) directory the submit button for this example does not use AJAX.
+* Note: unlike the example in the [da](https://github.com/DeniseMak/nlpstats-proto/tree/master/da) directory, the route function calls
+ `render_template()` instead of `jsonify`.
 
 This subdirectory has my work on the project so far. A lot of it is plumbed together from the following links.
 
