@@ -13,5 +13,10 @@ from matplotlib import pyplot as plt
 
 ## Timeline
 
-1. Finish plumbing DA tab and implement the todo list (before next meeting).
-2. Connect effect size functions to UI (before 7/21 meeting)
+1. Plumb as many functions as possuble (before Friday meeting).
+2. video (Jesse and Denise): the GUI has to run on your local machine 
+3. local GUI
+4. Web-based GUI
+
+Edit paper before the deadline.
+Deadline: 5am PDT on 8/1
