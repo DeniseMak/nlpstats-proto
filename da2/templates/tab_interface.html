@@ -43,9 +43,10 @@ body
 </style>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script type=text/javascript>
+        // Note: This doesn't work for the file fields
         $(function() {
           $('a#process_input').bind('click', function() {
-            $.post('/', {
+            $.getJSON('/', {
 
               eval_unit_size: $('input[name="eval_unit_size"]').val(),
               seed: $('input[name="seed"]').val(),
@@ -60,6 +61,13 @@ body
             return false;
           });
         });
+    </script>
+    <script type="text/javascript">
+        function da_submit_func() {
+            console.log(document.getElementById('da_hidden').value)
+            console.log("clicked DA submit!")
+        }
+        // document.getElementById('da_submit')
     </script>
 </head>
 <body>
@@ -78,13 +86,16 @@ body
 </div>
 
 
+<form
+        action="/"
+        class="form-horizontal"
+        enctype="multipart/form-data"
+        method="post">
 <!-- Data Analysis
     TODO: Make style dynamic -->
 <div id='Data Analysis' class="tabcontent" style="display:block">
-  <form class="form-horizontal" enctype="multipart/form-data" method="post">
+
   <fieldset>
-
-
   <!-- File Button -->
   <div class="form-group">
     <label class="col-md-4 control-label" for="system_file">System File:</label>
@@ -97,7 +108,6 @@ body
     </div>
   </div>
   <br>
-
   <!-- Text input-->
   <div class="form-group">
     <label class="col-md-4 control-label" for="eval_unit_size">Evaluation Unit Size:</label>
@@ -107,8 +117,7 @@ body
     </div>
   </div>
   <br>
-
-  <!-- Multiple Radios (inline) -->
+  <!-- Data Analysis: Multiple Radios (inline)  -->
   <div class="form-group">
     <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
     <div class="col-md-4">
@@ -123,7 +132,6 @@ body
     </div>
   </div>
   <br>
-
   <!-- Text input-->
   <div class="form-group">
     <label class="col-md-4 control-label" for="seed">Random Seed:</label>
@@ -133,44 +141,87 @@ body
     </div>
   </div>
   <br>
-
-  <!-- Button -->
-
+  <!-- Data Analysis Submit Button -->
   <div class="form-group">
     <label class="col-md-4 control-label" for="submit"></label>
     <div class="col-md-4">
-      <button id="submit" name="submit" class="btn btn-success">Run</button>
+        <input type="hidden" id="da_hidden" value="hidden101">
+        <!-- Is type=submit implied by class="btn btn-success" -->
+      <button id="submit"
+              name="submit"
+              type=submit
+              class="btn btn-success"
+              onsubmit="da_submit_func()">Run</button>
+        <!-- Button for JS script-->
+        <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
     </div>
   </div>
-
-
-
   </fieldset>
-  </form>
-
     <!-- Images -->
     <div class="hiddendiv" id = "hidden">
           <h1 id=result align='center'>{{ result_str }}</h1>
           <img id=hist_score1 src="{{ hist_score1 }}">
           <img id=hist_score2 src="{{ hist_score2 }}">
+          <img id=hist_diff src="{{ hist_diff }}">
+          <img id=hist_diff_par src="{{ hist_diff_par }}">
     </div>
 </div>
-
+</form>  <!-- (comment out to try one form for all tabs -->
 <div id='Significance Test' class="tabcontent">
-  <form class="form-horizontal">
+  <!-- <form class="form-horizontal"> -->
   <div class="form-group">
     <label class="col-md-4 control-label" for="effect_size">Significance level &alpha;:</label>
     <div class="col-md-4">
     <input id="significance_level" name="significance_level" type="number" placeholder="0.00" class="form-control input-md" required="" step="0.01" min="0" max="1">
     </div>
   </div>
-  </form>
+
 </div>
 
+<!-- Effect Size -->
+<form
+        action="/effectsize"
+        class="form-horizontal"
+        enctype="multipart/form-data"
+        method="post">
 <div id='Effect Size' class="tabcontent">
-  <h3>Effect Size</h3>
-  <p>.</p>
-</div>
+
+  <!-- Effect Size Multiple Radios (inline)  -->
+  <div class="form-group">
+        <h3>Effect Size</h3>
+        <p>Choose the target statistic (mean or median).</p>
+    <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
+    <div class="col-md-4">
+      <label class="radio-inline" for="target_statistic-0">
+        <input type="radio" name="effect_size_target_statistic" id="target_statistic-0" value="mean" checked="checked">
+        Mean
+      </label>
+      <label class="radio-inline" for="target_statistic-1">
+        <input type="radio" name="effect_size_target_statistic" id="target_statistic-1" value="median">
+        Median
+      </label>
+    </div>
+  </div>
+  <!-- effect size Submit Button -->
+  <div class="form-group">
+    <label class="col-md-4 control-label" for="submit"></label>
+    <div class="col-md-4">
+        <input type="hidden" id="da_hidden" value="hidden101">
+        <!-- Is type=submit implied by class="btn btn-success" -->
+      <button id="ef_submit"
+              name="ef_submit"
+              type=submit
+              class="btn btn-success"
+              onsubmit="ef_submit_func()">Run</button>
+        <!-- Button for JS script-->
+        <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
+    </div>
+  </div>
+</div> <!-- end Effect Size tab -->
+
+</form>
+<!-- end form Effect Size tab -->
+
 
 <div id='Post-test Power Analysis' class="tabcontent">
   <h3>Post-test Power Analysis</h3>
