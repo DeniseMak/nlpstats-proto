@@ -2,7 +2,7 @@
 Prototyping ideas for an NLP stats GUI
 
 ## Haotian's Todo (Done @07.19.2020):
-* add `matplotlib.use('Agg')` for .png or `matplotlib.use('Svg')` for .png under your import. The following got rid of the problem for me, but some other variation may work (https://matplotlib.org/3.2.0/tutorials/introductory/usage.html).
+* add `matplotlib.use('Agg')` for .png or `matplotlib.use('Svg')` for .svg under your import. The following got rid of the problem for me, but some other variation may work (https://matplotlib.org/3.2.0/tutorials/introductory/usage.html).
 ```
 import matplotlib
 matplotlib.use('Svg')
@@ -13,5 +13,10 @@ from matplotlib import pyplot as plt
 
 ## Timeline
 
-1. Finish plumbing DA tab and implement the todo list (before next meeting).
-2. Connect effect size functions to UI (before 7/21 meeting)
+1. Plumb as many functions as possuble (before Friday meeting).
+2. video (Jesse and Denise): the GUI has to run on your local machine 
+3. local GUI
+4. Web-based GUI
+
+Edit paper before the deadline.
+Deadline: 5am PDT on 8/1
