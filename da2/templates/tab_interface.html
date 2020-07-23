@@ -227,10 +227,10 @@ body
     <!-- Images -->
     <div class="hiddendiv" id = "hidden">
           <h1 id=result align='center'>{{ result_str }}</h1>
-          <img id=hist_score1 src="{{ hist_score1 }}">
-          <img id=hist_score2 src="{{ hist_score2 }}">
-          <img id=hist_diff src="{{ hist_diff }}">
-          <img id=hist_diff_par src="{{ hist_diff_par }}">
+          <img id=hist_score1 src="{{ hist_score1 }}?{{ rand }}">
+          <img id=hist_score2 src="{{ hist_score2 }}?{{ rand }}">
+          <img id=hist_diff src="{{ hist_diff }}?{{ rand }}">
+          <img id=hist_diff_par src="{{ hist_diff_par }}?{{ rand }}">
     </div>
 </div>
 </form>  <!-- (comment out to try one form for all tabs -->
