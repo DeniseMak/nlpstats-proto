@@ -1,7 +1,7 @@
 # v2 - using tabs
 from flask import *
 from flask import render_template
-from data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score
+from data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score, skew_test
 from effectSize import calc_eff_size
 from werkzeug.utils import secure_filename
 import os
@@ -11,6 +11,10 @@ FOLDER = os.path.join('static')
 
 app = Flask(__name__)
 app.config['FOLDER'] = FOLDER
+
+# defaults
+DEFAULT_SEED = 1
+DEFAULT_EVAL_SIZE = 1
 
 @app.route('/', methods= ["GET", "POST"])
 def homepage():
@@ -22,12 +26,15 @@ def homepage():
         plot_hist(scores1, scores2)
         score_dif = calc_score_diff(scores1, scores2)
         eval_unit_size = request.form.get('eval_unit_size')
+
+        # Handle case of no eval unit size
+        if not eval_unit_size:
+            eval_unit_size = DEFAULT_EVAL_SIZE
+
         sample_size = np.floor(len(list(score_dif))/float(eval_unit_size))
 
         # plot difference hist
         plot_hist_diff(score_dif, FOLDER)
-
-
 
 
         # target_stat is 'mean' or 'median'
@@ -37,20 +44,24 @@ def homepage():
 
 
         seed = request.form.get('seed')
+        if not seed:
+            seed = DEFAULT_SEED
+
         # partition score difference and save svg
         score_diff_par = partition_score(score_dif, float(eval_unit_size),
                                          True, #shuffle
                                          seed,
                                          target_stat, # mean or median
                                          FOLDER)
-        # test hidden field 'hidden101' or '202
-        # print(request.form.get('da_hidden'))
+
+        # skewness test
+        mean_or_median = skew_test(score_diff_par)
 
         if seed and eval_unit_size:
-            result_str = 'Your results are displayed below. '\
-                   + '; Seed is: ' + seed \
-                   + "; Evaluation unit is: " + eval_unit_size
-
+            result_str = 'Your results are displayed below. Based on skewness, you should use {} as the test statistic.\nSeed = {} Eval unit size = {}'.format(
+                mean_or_median,
+                seed,
+                eval_unit_size)
             full_filename1 = os.path.join(app.config['FOLDER'], 'hist_score1.svg')
             full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2.svg')
             full_filename_dif = os.path.join(app.config['FOLDER'], 'hist_score_diff.svg')
@@ -77,11 +88,12 @@ def homepage():
                                        hist_diff_par= full_filename_dif_par)
                 return rendered
         else:
-            return jsonify(result='Input needed for more details.')
+            # we shouldn't get here since we used default values for the seed and eval unit size
+            rendered = render_template('tab_interface.html',
+                                       result_str='evaluation unit size or seed not defined',)
+            return rendered
     elif request.method == 'GET':
         # You got to the main page by navigating to the URL, not by clicking submit
-            #full_filename1 = os.path.join(app.config['FOLDER'], 'hist_score1.svg')
-            #full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2.svg')
         return render_template('tab_interface.html')
 
 
