@@ -20,11 +20,7 @@ this version has been fleshed out.
 6. Code cleanup and commenting.
 
 ## Changes
-* How to hide the file input label [SA answer](https://stackoverflow.com/questions/16001586/change-the-no-file-chosen). We can use the `{ {xyz} }` syntax to say that a file is already picked if that is the case. He says "Then style the label as a button if you want."
-```
-<input type="file" id="files" class="hidden"/>
-<label for="files">Select file</label>
-```
+* How to hide the file input label [SA answer](https://stackoverflow.com/questions/16001586/change-the-no-file-chosen). We can use the `{ {xyz} }` syntax to say that a file is already picked if that is the case. I also used this: [SA text as button](https://stackoverflow.com/questions/710089/how-do-i-make-an-html-link-look-like-a-button)
 * Help function plumbing. [tooltips](https://www.w3schools.com/howto/howto_css_tooltip.asp)
 * Default data form values.  Change `placeholder` to `value`.
 * Retain values on submission.

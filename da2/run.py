@@ -3,6 +3,7 @@ from flask import *
 from flask import render_template
 from data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score, skew_test
 from effectSize import calc_eff_size
+from helper import helper
 from werkzeug.utils import secure_filename
 import os
 import numpy as np
