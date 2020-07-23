@@ -3,7 +3,7 @@ from flask import *
 from flask import render_template
 from data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score, skew_test
 from effectSize import calc_eff_size
-from helper import helper
+from help import helper
 from werkzeug.utils import secure_filename
 import os
 import numpy as np
@@ -82,7 +82,8 @@ def homepage():
                                hist_score2=full_filename2)
             else:
                 rendered = render_template('tab_interface.html',
-                                       result_str=result_str,
+                                       help1 = helper("function 1"),
+                                       result_str = result_str,
                                        hist_score1=full_filename1,
                                        hist_score2=full_filename2,
                                        hist_diff= full_filename_dif,
