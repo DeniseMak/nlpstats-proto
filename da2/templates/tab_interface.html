@@ -40,6 +40,46 @@ body
   border: 1px solid #ccc;
   border-top: none;
 }
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
 </style>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script type=text/javascript>
@@ -113,7 +153,10 @@ body
     <label class="col-md-4 control-label" for="eval_unit_size">Evaluation Unit Size:</label>
     <div class="col-md-4">
     <input id="eval_unit_size" name="eval_unit_size" type="number" value="1" class="form-control input-md" required="">
-    <span class="help-block">This should be a whole number between 1 and the number of data points.</span>
+        <div class="tooltip">Help
+          <span class="tooltiptext">This should be a whole number between one and the number of data points.</span>
+        </div>
+
     </div>
   </div>
   <br>
@@ -136,8 +179,10 @@ body
   <div class="form-group">
     <label class="col-md-4 control-label" for="seed">Random Seed:</label>
     <div class="col-md-4">
-    <input id="seed" name="seed" type="number" value="1.23" step="0.01" class="form-control input-md">
-    <span class="help-block">If you would like to provide a (real number) seed number, enter it here. Otherwise, we will shuffle.</span>
+    <input id="seed" name="seed" type="number" placeholder="Shuffle" step="0.01" class="form-control input-md">
+    <div class="tooltip">Help
+      <span class="tooltiptext">If you would like to provide a (real number) seed number, enter it here. Otherwise, we will shuffle.</span>
+    </div>
     </div>
   </div>
   <br>
