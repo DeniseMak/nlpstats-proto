@@ -112,7 +112,7 @@ body
   <div class="form-group">
     <label class="col-md-4 control-label" for="eval_unit_size">Evaluation Unit Size:</label>
     <div class="col-md-4">
-    <input id="eval_unit_size" name="eval_unit_size" type="text" placeholder="1" class="form-control input-md" required="">
+    <input id="eval_unit_size" name="eval_unit_size" type="number" value="1" class="form-control input-md" required="">
     <span class="help-block">This should be a whole number between 1 and the number of data points.</span>
     </div>
   </div>
@@ -136,7 +136,7 @@ body
   <div class="form-group">
     <label class="col-md-4 control-label" for="seed">Random Seed:</label>
     <div class="col-md-4">
-    <input id="seed" name="seed" type="text" placeholder="3.33" class="form-control input-md">
+    <input id="seed" name="seed" type="number" value="1.23" step="0.01" class="form-control input-md">
     <span class="help-block">If you would like to provide a (real number) seed number, enter it here. Otherwise, we will shuffle.</span>
     </div>
   </div>

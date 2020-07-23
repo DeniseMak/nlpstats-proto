@@ -11,12 +11,23 @@ this version has been fleshed out.
 * Radio buttons not working
 
 ## Todo (Data Analysis Tab -- We Have More!)
+0. **Should not crash on submission without file**
 1. Refocus form on the correct tab after submission. 
 2. Finish plumbing the other functions written by Haotian.
 3. Client-side validation. 
 4. Passing of server-side validation errors.
 5. Aesthetic improvements.
 6. Code cleanup and commenting.
+
+## Changes
+* How to hide the file input label [SA answer](https://stackoverflow.com/questions/16001586/change-the-no-file-chosen). We can use the `{ {xyz} }` syntax to say that a file is already picked if that is the case. He says "Then style the label as a button if you want."
+```
+<input type="file" id="files" class="hidden"/>
+<label for="files">Select file</label>
+```
+* Help function plumbing.
+* Default data form values.  Change `placeholder` to `value`.
+* Retain values on submission.
 
 
 ## Resources
