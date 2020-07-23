@@ -25,7 +25,7 @@ def homepage():
         sample_size = np.floor(len(list(score_dif))/float(eval_unit_size))
 
         # plot difference hist
-        plot_hist_diff(score_dif)
+        plot_hist_diff(score_dif, FOLDER)
 
 
 
@@ -38,9 +38,11 @@ def homepage():
 
         seed = request.form.get('seed')
         # partition score difference and save svg
-        score_diff_par = partition_score(score_dif, float(eval_unit_size), True,
-                                         target_stat # mean or median
-                                         )
+        score_diff_par = partition_score(score_dif, float(eval_unit_size),
+                                         True, #shuffle
+                                         seed,
+                                         target_stat, # mean or median
+                                         FOLDER)
         # test hidden field 'hidden101' or '202
         # print(request.form.get('da_hidden'))
 

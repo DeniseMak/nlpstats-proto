@@ -92,7 +92,7 @@ def calc_score_diff(score1,score2):
 	return(score_diff)
 
 
-def plot_hist_diff(score_diff):
+def plot_hist_diff(score_diff, output_dir):
 	"""
 	This is a function to plot the histogram of the score difference
 
@@ -106,13 +106,17 @@ def plot_hist_diff(score_diff):
 	plt.axvline(np.array(x).mean(), color='b', linestyle='--', linewidth=1, label='mean')
 	plt.axvline(np.median(np.array(x)), color='r', linestyle='-.', linewidth=1, label='median')
 	plt.legend(loc='upper right')
-	plt.xlabel("Score",fontsize=18)
-	plt.ylabel("Frequency",fontsize=18)
-	plt.title("Histogram of Score Difference",fontsize=18)
-	plt.savefig('hist_score_diff.svg',dpi=500)
+	plt.xlabel("Score")
+	plt.ylabel("Frequency")
+	plt.title("Histogram of Score Difference")
+
+	if not os.path.exists(output_dir):
+		os.makedirs(output_dir)
+
+	plt.savefig(output_dir+'/hist_score_diff.svg')
 
 
-def partition_score(score_diff, eval_unit_size, shuffled, method):
+def partition_score(score_diff, eval_unit_size, shuffled, randomSeed, method, output_dir):
 	"""
 	This function partitions the score difference with respect to the given
 	evaluation unit size. Also, the user can choose to shuffle the score difference
@@ -126,7 +130,7 @@ def partition_score(score_diff, eval_unit_size, shuffled, method):
 	"""
 	ind = list(score_diff.keys())
 	if shuffled:
-		ind_shuffled = random.shuffle(ind)
+		ind_shuffled = random.Random(randomSeed).shuffle(ind)
 	ind_shuffled = np.array_split(ind,np.floor(len(ind)/eval_unit_size))
 	ind_new = 0
 	score_diff_new = {}
@@ -143,10 +147,14 @@ def partition_score(score_diff, eval_unit_size, shuffled, method):
 	plt.axvline(np.array(x).mean(), color='b', linestyle='--', linewidth=1, label='mean')
 	plt.axvline(np.median(np.array(x)), color='r', linestyle='-.', linewidth=1, label='median')
 	plt.legend(loc='upper right')
-	plt.xlabel("Score",fontsize=18)
-	plt.ylabel("Frequency",fontsize=18)
-	plt.title("Histogram of Score Difference (partitioned)",fontsize=18)
-	plt.savefig('hist_score_diff_partitioned.svg',dpi=500)
+	plt.xlabel("Score")
+	plt.ylabel("Frequency")
+	plt.title("Histogram of Score Difference (partitioned)")
+
+	if not os.path.exists(output_dir):
+		os.makedirs(output_dir)
+
+	plt.savefig(output_dir+'/hist_score_diff_partitioned.svg')
 
 	return(score_diff_new)
 
