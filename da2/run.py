@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.config['FOLDER'] = FOLDER
 
 # defaults
-DEFAULT_SEED = 1
+DEFAULT_SEED = None
 DEFAULT_EVAL_SIZE = 1
 
 @app.route('/', methods= ["GET", "POST"])
@@ -58,7 +58,7 @@ def homepage():
         # skewness test
         mean_or_median = skew_test(score_diff_par)
 
-        if seed and eval_unit_size:
+        if eval_unit_size:
             result_str = 'Your results are displayed below. Based on skewness, you should use {} as the test statistic.\nSeed = {} Eval unit size = {}'.format(
                 mean_or_median,
                 seed,
@@ -82,7 +82,7 @@ def homepage():
                                hist_score2=full_filename2)
             else:
                 rendered = render_template('tab_interface.html',
-                                       help1 = helper("function 1"),
+                                       file_uploaded = "File uploaded.",
                                        result_str = result_str,
                                        hist_score1=full_filename1,
                                        hist_score2=full_filename2,
@@ -96,7 +96,9 @@ def homepage():
             return rendered
     elif request.method == 'GET':
         # You got to the main page by navigating to the URL, not by clicking submit
-        return render_template('tab_interface.html')
+        return render_template('tab_interface.html',
+                               help1 = helper("function 1"),
+                               file_uploaded = "Upload a file.")
 
 
 @app.route('/effectsize', methods= ["GET", "POST"])

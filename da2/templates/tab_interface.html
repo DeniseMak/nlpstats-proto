@@ -81,11 +81,17 @@ body
 }
 
 
-
+.button {
+  text-decoration: none;
+  background-color: #EEEEEE;
+  color: #333333;
+  padding: 2px 6px 2px 6px;
+}
 
 
 
 </style>
+
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script type=text/javascript>
         // Note: This doesn't work for the file fields
@@ -148,20 +154,9 @@ body
     
        <div class="tooltip">Help
            <span class="tooltiptext">"{{help1}}"</span></div>
-       
-       
-       
     <div class="col-md-4">
-    <style>
- .button {
-   text-decoration: none;
-   background-color: #EEEEEE;
-   color: #333333;
-   padding: 2px 6px 2px 6px;
- }</style>
- 
-        <input type="file" id="system_file" name="system_file" style="display:none;"/>
-        <a href="#" class="button"><label for="system_file">Select</label></a>
+        <input type="file" id="system_file" name="system_file" style="display:none;" required/>
+        <a href="#" class="button"><label for="system_file">Select</label></a> {{file_uploaded}}
         
 
 
