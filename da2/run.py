@@ -98,6 +98,7 @@ def homepage():
         # You got to the main page by navigating to the URL, not by clicking submit
         return render_template('tab_interface.html',
                                help1 = helper("function 1"),
+                               help2 = helper("function 2"),
                                file_uploaded = "Upload a file.")
 
 
