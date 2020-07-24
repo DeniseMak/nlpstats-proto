@@ -230,11 +230,16 @@ body
     <div class="hiddendiv" id = "hidden">
           <h2>{{ summary_str }}</h2>
                 <table border = 1>
-                    <tr><th>Score</th><th>Stats</th></tr>
+                    <tr><th>Score</th><th>mean</th><th>median</th><th>std.dev.</th><th>min</th><th>max</th></tr>
                      {% for key, value in summary_stats_dict.items() %}
 
                         <tr>
-                           <td> {{ key }} </td> <td>{{ value }}</td>
+                          <!--
+                           <td> {{ key }} </td> <td>{{ value }}</td> -->
+                        <td> {{ key }} </td>
+                            {% for k, v in value.items() %}
+                            <td>{{ v }}</td>
+                                {% endfor %}
                         </tr>
                      {% endfor %}
                 </table>
