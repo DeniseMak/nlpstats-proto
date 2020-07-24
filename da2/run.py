@@ -8,6 +8,7 @@ from help import helper
 from werkzeug.utils import secure_filename
 import os
 import numpy as np
+import testCase
 
 FOLDER = os.path.join('static')
 
@@ -17,6 +18,9 @@ app.config['FOLDER'] = FOLDER
 # defaults
 DEFAULT_SEED = None
 DEFAULT_EVAL_SIZE = 1
+
+# strings to use in UI
+summary_str = "Summary of Statistics"
 
 def create_test_reasons(recommended_tests):
     '''
@@ -37,6 +41,36 @@ def create_test_reasons(recommended_tests):
             test_reasons[test] = \
             "This test can be used regardless of the distribution's normality or skew."
     return test_reasons
+
+# todo: return values of 5 summary stats for score1, score2, dif, dif_par
+def create_summary_stats_dict(tc):
+    print('Score 1: mean={}, med={}, sd={}, min={}, max={}'.format(tc.eda.summaryStat_score1.mu,
+                                                                             tc.eda.summaryStat_score1.med,
+                                                                             tc.eda.summaryStat_score1.sd,
+                                                                             tc.eda.summaryStat_score1.min_val,
+                                                                             tc.eda.summaryStat_score1.max_val))
+    summary_dict = {}
+    summary_dict['score1'] = {'mean': tc.eda.summaryStat_score1.mu,
+                              'median': tc.eda.summaryStat_score1.med,
+                              'std.dev.': tc.eda.summaryStat_score1.sd,
+                              'min': tc.eda.summaryStat_score1.min_val,
+                              'max': tc.eda.summaryStat_score1.max_val}
+    summary_dict['score2'] = {'mean': tc.eda.summaryStat_score2.mu,
+                              'median': tc.eda.summaryStat_score2.med,
+                              'std.dev.': tc.eda.summaryStat_score2.sd,
+                              'min': tc.eda.summaryStat_score2.min_val,
+                              'max': tc.eda.summaryStat_score2.max_val}
+    summary_dict['score_dif'] = {'mean': tc.eda.summaryStat_score_diff.mu,
+                                 'median': tc.eda.summaryStat_score_diff.med,
+                                 'std.dev.': tc.eda.summaryStat_score_diff.sd,
+                                 'min': tc.eda.summaryStat_score_diff.min_val,
+                                 'max': tc.eda.summaryStat_score_diff.max_val}
+    summary_dict['score_dif_par'] = {'mean': tc.eda.summaryStat_score_diff_par.mu,
+                                 'median': tc.eda.summaryStat_score_diff_par.med,
+                                 'std.dev.': tc.eda.summaryStat_score_diff_par.sd,
+                                 'min': tc.eda.summaryStat_score_diff_par.min_val,
+                                 'max': tc.eda.summaryStat_score_diff_par.max_val}
+    return summary_dict
 
 @app.route('/', methods= ["GET", "POST"])
 def homepage(debug=True):
@@ -64,7 +98,6 @@ def homepage(debug=True):
         effect_size_target_stat= request.form.get('effect_size_target_statistic')
         print('target stat={}\ntarget stat for effect size={}'.format(target_stat, effect_size_target_stat))
 
-
         seed = request.form.get('seed')
         if not seed:
             seed = DEFAULT_SEED
@@ -75,12 +108,28 @@ def homepage(debug=True):
                                          seed,
                                          target_stat, # mean or median
                                          FOLDER)
+        # --------------Summary Stats -------------
+        ### initialize a new testCase object
+        tc = testCase.testCase(scores1,
+                               scores2,
+                               score_dif,
+                               score_diff_par,
+                               sample_size,
+                               FOLDER)
+        tc.get_summary_stats()
+        # todo make this a function for score1, score2, score_dif, score_dif_par:
+        summary_stats_dict = create_summary_stats_dict(tc)
+        # if debug: print('Score 1: mean={}, med={}, sd={}, min={}, max={}'.format(tc.eda.summaryStat_score1.mu,
+        #                                                                tc.eda.summaryStat_score1.med,
+        #                                                                tc.eda.summaryStat_score1.sd,
+        #                                                                tc.eda.summaryStat_score1.min_val,
+        #                                                                tc.eda.summaryStat_score1.max_val))
 
-        # skewness test
+        # --------------Recommended Test Statistic (mean or median, by skewness test) ------------------
         mean_or_median = skew_test(score_diff_par)
-        # normality test
+        # ---------------normality test
         is_normal = normality_test(score_diff_par, alpha=0.05)
-        # recommended tests
+        # --------------Recommended Significance Tests -------------------------
         recommended_tests = recommend_test(mean_or_median, is_normal)
         # recommended tests reasons
         recommended_tests_reasons = create_test_reasons(recommended_tests)
@@ -118,8 +167,10 @@ def homepage(debug=True):
                 rendered = render_template('tab_interface.html',
                                        file_uploaded = "File uploaded.",
                                        result_str = result_str,
-                                       mean_or_median = mean_or_median,
-                                       is_normal = is_normal,
+                                       summary_str = summary_str,
+                                       summary_stats_dict = summary_stats_dict,
+                                       mean_or_median = mean_or_median, # 'mean' if not skewed, 'median' if skewed.
+                                       is_normal = is_normal,           # True if normal, False if not.
                                        recommended_tests = recommended_tests,  # this is a list.
                                        recommended_tests_reasons = recommended_tests_reasons, # dict with reasons
                                        test_reason = test_reason,
@@ -140,7 +191,9 @@ def homepage(debug=True):
                                help1 = helper("function 1"),
                                help2 = helper("function 2"),
                                file_uploaded = "Upload a file.",
-                               recommended_tests = [])
+                               recommended_tests = [],
+                               recommended_tests_reasons ={},
+                               summary_stats_dict = {})
 
 
 @app.route('/effectsize', methods= ["GET", "POST"])

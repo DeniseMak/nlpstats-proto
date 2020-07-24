@@ -228,7 +228,18 @@ body
  
     <!-- Images -->
     <div class="hiddendiv" id = "hidden">
-          <h2 id=result align='left'>{{ result_str }}</h2>
+          <h2>{{ summary_str }}</h2>
+                <table border = 1>
+                    <tr><th>Score</th><th>Stats</th></tr>
+                     {% for key, value in summary_stats_dict.items() %}
+
+                        <tr>
+                           <td> {{ key }} </td> <td>{{ value }}</td>
+                        </tr>
+                     {% endfor %}
+                </table>
+          <h2 id=result align='left'>
+              {{ result_str }}</h2>
                 <table border = 1>
                 <tr><th>Test</th><th>Reason</th></tr>
                      {% for key, value in recommended_tests_reasons.items() %}
@@ -245,10 +256,11 @@ body
                   <li> {{ name }} (Reason: {{ test_reason }})</li>
                   {% endfor %}
                 </ul>
+                -->
           <img id=hist_score1 src="{{ hist_score1 }}?{{ rand }}">
           <img id=hist_score2 src="{{ hist_score2 }}?{{ rand }}">
           <img id=hist_diff src="{{ hist_diff }}?{{ rand }}">
-          <img id=hist_diff_par src="{{ hist_diff_par }}?{{ rand }}"> -->
+          <img id=hist_diff_par src="{{ hist_diff_par }}?{{ rand }}">
 
     </div>
 </div>
