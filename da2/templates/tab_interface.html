@@ -229,9 +229,12 @@ body
     <div class="hiddendiv" id = "hidden">
     <!-- SUMMARY STATISTICS -->
           <h2>{{ summary_str }}</h2>
+            {% if summary_stats_dict|length %}
                 <table border = 1>
-                    <tr><th>Score</th><th>mean</th><th>median</th><th>std.dev.</th><th>min</th><th>max</th></tr>
-                     {% for key, value in summary_stats_dict.items() %}
+
+                    <tr><th>Score</th><th>mean</th><th>median</th><th>std_dev</th><th>min</th><th>max</th></tr>
+
+                    {% for key, value in summary_stats_dict.items() %}
 
                         <tr>
                           <!--
@@ -243,6 +246,7 @@ body
                         </tr>
                      {% endfor %}
                 </table>
+            {% endif %}
 
     <!-- RECOMMENDATION for test statistics -->
         <h2 id=teststat_heading align='left'>{{ teststat_heading }}</h2>
@@ -260,15 +264,18 @@ body
     <!-- RECOMMENDATION for significance tests with REASONS -->
           <h2 id=sigtest_heading align='left'>
               {{ result_str }}</h2>
-                <table border = 1>
-                <tr><th>Test</th><th>Reason</th></tr>
-                     {% for key, value in recommended_tests_reasons.items() %}
+                {% if recommended_tests_reasons|length %}
+                    <table border = 1>
 
-                        <tr>
-                           <td> {{ key }} </td> <td>{{ value }}</td>
-                        </tr>
-                     {% endfor %}
-                </table>
+                    <tr><th>Test</th><th>Reason</th></tr>
+
+                         {% for key, value in recommended_tests_reasons.items() %}
+                            <tr>
+                               <td> {{ key }} </td> <td>{{ value }}</td>
+                            </tr>
+                         {% endfor %}
+                    </table>
+                {% endif %}
         <!-- (Bulleted list example) -->
         <!--
                 The following tests are recommended:
@@ -280,10 +287,18 @@ body
                 -->
 
     <!-- Images -->
+        {% if hist_score1 %}
           <img id=hist_score1 src="{{ hist_score1 }}?{{ rand }}">
+        {% endif %}
+        {% if hist_score2 %}
           <img id=hist_score2 src="{{ hist_score2 }}?{{ rand }}">
+        {% endif %}
+        {% if hist_diff %}
           <img id=hist_diff src="{{ hist_diff }}?{{ rand }}">
+        {% endif %}
+        {% if hist_diff_par %}
           <img id=hist_diff_par src="{{ hist_diff_par }}?{{ rand }}">
+        {% endif %}
 
     </div>
 </div>
