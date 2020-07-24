@@ -36,26 +36,6 @@ def calc_score_diff(score1,score2):
 	return(score_diff)
 
 
-# def create_test_reasons_old(recommended_tests):
-#     '''
-#     This function creates a dictionary of test names with reasons, given the list of test names.
-#     @param recommended_tests: List of tests
-#     @return: Dictionary of test names with reasons as the values
-#     '''
-#     test_reasons = {}
-#     for test in recommended_tests:
-#         if test == 't':
-#             test_reasons['t'] = "The t-test is appropriate for a normal distribution."
-#         elif test == 'bootstrap_med' or test == 'permutation_med':
-#             test_reasons[test] = "This test is appropriate if the data is skewed and median is a good measure of central tendency."
-#         elif test == 'bootstrap' or test == 'permutation':
-#             test_reasons[test] = \
-#                 "This test is appropriate if the data isn't skewed and mean is a good measure of central tendency."
-#         else:
-#             test_reasons[test] = \
-#             "This test can be used regardless of the distribution's normality or skew."
-#     return test_reasons
-
 def create_test_reasons(recommended_tests):
     '''
     This function creates a dictionary of test names with reasons, given the list of test names.
@@ -68,6 +48,11 @@ def create_test_reasons(recommended_tests):
     return test_reasons
 
 
+def format_digits(num, sig_digits=5):
+    str = '{:.5f}'.format(num)
+    return str
+
+
 def create_summary_stats_dict(tc):
     print('Score 1: mean={}, med={}, sd={}, min={}, max={}'.format(tc.eda.summaryStat_score1.mu,
                                                                              tc.eda.summaryStat_score1.med,
@@ -75,26 +60,26 @@ def create_summary_stats_dict(tc):
                                                                              tc.eda.summaryStat_score1.min_val,
                                                                              tc.eda.summaryStat_score1.max_val))
     summary_dict = {}
-    summary_dict['score1'] = {'mean': tc.eda.summaryStat_score1.mu,
-                              'median': tc.eda.summaryStat_score1.med,
-                              'std.dev.': tc.eda.summaryStat_score1.sd,
-                              'min': tc.eda.summaryStat_score1.min_val,
-                              'max': tc.eda.summaryStat_score1.max_val}
-    summary_dict['score2'] = {'mean': tc.eda.summaryStat_score2.mu,
-                              'median': tc.eda.summaryStat_score2.med,
-                              'std.dev.': tc.eda.summaryStat_score2.sd,
-                              'min': tc.eda.summaryStat_score2.min_val,
-                              'max': tc.eda.summaryStat_score2.max_val}
-    summary_dict['score_dif'] = {'mean': tc.eda.summaryStat_score_diff.mu,
-                                 'median': tc.eda.summaryStat_score_diff.med,
-                                 'std.dev.': tc.eda.summaryStat_score_diff.sd,
-                                 'min': tc.eda.summaryStat_score_diff.min_val,
-                                 'max': tc.eda.summaryStat_score_diff.max_val}
-    summary_dict['score_dif_par'] = {'mean': tc.eda.summaryStat_score_diff_par.mu,
-                                 'median': tc.eda.summaryStat_score_diff_par.med,
-                                 'std.dev.': tc.eda.summaryStat_score_diff_par.sd,
-                                 'min': tc.eda.summaryStat_score_diff_par.min_val,
-                                 'max': tc.eda.summaryStat_score_diff_par.max_val}
+    summary_dict['score1'] = {'mean': format_digits(tc.eda.summaryStat_score1.mu),
+                              'median': format_digits(tc.eda.summaryStat_score1.med),
+                              'std.dev.': format_digits(tc.eda.summaryStat_score1.sd),
+                              'min': format_digits(tc.eda.summaryStat_score1.min_val),
+                              'max': format_digits(tc.eda.summaryStat_score1.max_val)}
+    summary_dict['score2'] = {'mean': format_digits(tc.eda.summaryStat_score2.mu),
+                              'median': format_digits(tc.eda.summaryStat_score2.med),
+                              'std.dev.': format_digits(tc.eda.summaryStat_score2.sd),
+                              'min': format_digits(tc.eda.summaryStat_score2.min_val),
+                              'max': format_digits(tc.eda.summaryStat_score2.max_val)}
+    summary_dict['difference'] = {'mean': format_digits(tc.eda.summaryStat_score_diff.mu),
+                                 'median': format_digits(tc.eda.summaryStat_score_diff.med),
+                                 'std.dev.': format_digits(tc.eda.summaryStat_score_diff.sd),
+                                 'min': format_digits(tc.eda.summaryStat_score_diff.min_val),
+                                 'max': format_digits(tc.eda.summaryStat_score_diff.max_val)}
+    summary_dict['difference (partitioned)'] = {'mean': format_digits(tc.eda.summaryStat_score_diff_par.mu),
+                                 'median': format_digits(tc.eda.summaryStat_score_diff_par.med),
+                                 'std.dev.': format_digits(tc.eda.summaryStat_score_diff_par.sd),
+                                 'min': format_digits(tc.eda.summaryStat_score_diff_par.min_val),
+                                 'max': format_digits(tc.eda.summaryStat_score_diff_par.max_val)}
     return summary_dict
 
 
