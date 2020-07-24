@@ -18,6 +18,26 @@ app.config['FOLDER'] = FOLDER
 DEFAULT_SEED = None
 DEFAULT_EVAL_SIZE = 1
 
+def create_test_reasons(recommended_tests):
+    '''
+    This function creates a dictionary of test names with reasons, given the list of test names.
+    @param recommended_tests: List of tests
+    @return: Dictionary of test names with reasons as the values
+    '''
+    test_reasons = {}
+    for test in recommended_tests:
+        if test == 't':
+            test_reasons['t'] = "The t-test is appropriate for a normal distribution."
+        elif test == 'bootstrap_med' or test == 'permutation_med':
+            test_reasons[test] = "This test is appropriate if the data is skewed and median is a good measure of central tendency."
+        elif test == 'bootstrap' or test == 'permutation':
+            test_reasons[test] = \
+                "This test is appropriate if the data isn't skewed and mean is a good measure of central tendency."
+        else:
+            test_reasons[test] = \
+            "This test can be used regardless of the distribution's normality or skew."
+    return test_reasons
+
 @app.route('/', methods= ["GET", "POST"])
 def homepage(debug=True):
     if request.method == 'POST':
@@ -62,7 +82,10 @@ def homepage(debug=True):
         is_normal = normality_test(score_diff_par, alpha=0.05)
         # recommended tests
         recommended_tests = recommend_test(mean_or_median, is_normal)
-        if debug: print(recommended_tests)
+        # recommended tests reasons
+        recommended_tests_reasons = create_test_reasons(recommended_tests)
+
+        if debug: print(recommended_tests_reasons)
         # test reason
         if mean_or_median == 'mean' and is_normal:
             test_reason = "This test is appropriate for data in a normal distribution that is not skewed"
@@ -95,7 +118,10 @@ def homepage(debug=True):
                 rendered = render_template('tab_interface.html',
                                        file_uploaded = "File uploaded.",
                                        result_str = result_str,
-                                       recommended_tests = recommended_tests,
+                                       mean_or_median = mean_or_median,
+                                       is_normal = is_normal,
+                                       recommended_tests = recommended_tests,  # this is a list.
+                                       recommended_tests_reasons = recommended_tests_reasons, # dict with reasons
                                        test_reason = test_reason,
                                        hist_score1=full_filename1,
                                        hist_score2=full_filename2,

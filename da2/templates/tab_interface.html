@@ -229,10 +229,10 @@ body
           <h2 id=result align='left'>{{ result_str }}</h2>
                 <table border = 1>
                 <tr><th>Test</th><th>Reason</th></tr>
-                     {% for value in recommended_tests %}
+                     {% for key, value in recommended_tests_reasons.items() %}
 
                         <tr>
-                           <td> {{ value }} </td> <td>{{ test_reason }}</td>
+                           <td> {{ key }} </td> <td>{{ value }}</td>
                         </tr>
                      {% endfor %}
                 </table>
