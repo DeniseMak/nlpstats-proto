@@ -1,7 +1,8 @@
 # v2 - using tabs
 from flask import *
 from flask import render_template
-from data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score, skew_test
+from data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score,\
+    skew_test, normality_test, recommend_test
 from effectSize import calc_eff_size
 from help import helper
 from werkzeug.utils import secure_filename
@@ -57,12 +58,20 @@ def homepage(debug=True):
 
         # skewness test
         mean_or_median = skew_test(score_diff_par)
+        # normality test
+        is_normal = normality_test(score_diff_par, alpha=0.05)
+        # recommended tests
+        recommended_tests = recommend_test(mean_or_median, is_normal)
+        if debug: print(recommended_tests)
+        # test reason
+        if mean_or_median == 'mean' and is_normal:
+            test_reason = "This test is appropriate for data in a normal distribution that is not skewed"
+        elif mean_or_median == 'mean':
+            test_reason = "This test is appropriate for data that is not skewed, which uses the mean as the test statistic."
+
 
         if eval_unit_size:
-            result_str = 'Your results are displayed below. Based on skewness, you should use {} as the test statistic.\nSeed = {} Eval unit size = {}'.format(
-                mean_or_median,
-                seed,
-                eval_unit_size)
+            result_str = 'The following table shows the recommended tests.'
             full_filename1 = os.path.join(app.config['FOLDER'], 'hist_score1.svg')
             full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2.svg')
             full_filename_dif = os.path.join(app.config['FOLDER'], 'hist_score_diff.svg')
@@ -86,6 +95,8 @@ def homepage(debug=True):
                 rendered = render_template('tab_interface.html',
                                        file_uploaded = "File uploaded.",
                                        result_str = result_str,
+                                       recommended_tests = recommended_tests,
+                                       test_reason = test_reason,
                                        hist_score1=full_filename1,
                                        hist_score2=full_filename2,
                                        hist_diff= full_filename_dif,
@@ -102,7 +113,8 @@ def homepage(debug=True):
         return render_template('tab_interface.html',
                                help1 = helper("function 1"),
                                help2 = helper("function 2"),
-                               file_uploaded = "Upload a file.")
+                               file_uploaded = "Upload a file.",
+                               recommended_tests = [])
 
 
 @app.route('/effectsize', methods= ["GET", "POST"])

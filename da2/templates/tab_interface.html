@@ -226,11 +226,28 @@ body
  
     <!-- Images -->
     <div class="hiddendiv" id = "hidden">
-          <h1 id=result align='center'>{{ result_str }}</h1>
+          <h2 id=result align='left'>{{ result_str }}</h2>
+                <table border = 1>
+                <tr><th>Test</th><th>Reason</th></tr>
+                     {% for value in recommended_tests %}
+
+                        <tr>
+                           <td> {{ value }} </td> <td>{{ test_reason }}</td>
+                        </tr>
+                     {% endfor %}
+                </table>
+    <!--
+                The following tests are recommended:
+                <ul>
+                  {% for name in recommended_tests %}
+                  <li> {{ name }} (Reason: {{ test_reason }})</li>
+                  {% endfor %}
+                </ul>
           <img id=hist_score1 src="{{ hist_score1 }}?{{ rand }}">
           <img id=hist_score2 src="{{ hist_score2 }}?{{ rand }}">
           <img id=hist_diff src="{{ hist_diff }}?{{ rand }}">
-          <img id=hist_diff_par src="{{ hist_diff_par }}?{{ rand }}">
+          <img id=hist_diff_par src="{{ hist_diff_par }}?{{ rand }}"> -->
+
     </div>
 </div>
 </form>  <!-- (comment out to try one form for all tabs -->
