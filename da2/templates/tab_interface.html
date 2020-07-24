@@ -225,8 +225,9 @@ body
     </div>
   </div>
  
-    <!-- Images -->
+
     <div class="hiddendiv" id = "hidden">
+    <!-- SUMMARY STATISTICS -->
           <h2>{{ summary_str }}</h2>
                 <table border = 1>
                     <tr><th>Score</th><th>mean</th><th>median</th><th>std.dev.</th><th>min</th><th>max</th></tr>
@@ -242,7 +243,22 @@ body
                         </tr>
                      {% endfor %}
                 </table>
-          <h2 id=result align='left'>
+
+    <!-- RECOMMENDATION for test statistics -->
+        <h2 id=teststat_heading align='left'>{{ teststat_heading }}</h2>
+        {%  if mean_or_median %}
+            <b>Normality:</b>The data distribution
+            {% if is_normal %} passes {% else %} does not pass
+            {% endif %} the normality test. <p></p>
+            <b>Skewness:</b> The data distribution
+            {% if mean_or_median == 'median' %} is {% else %} is not
+                {% endif %} skewed. <p></p>
+            <b>Test statistic:</b> Based on the skewness, the recommended test statistic to use is:
+                <b>{{ mean_or_median }}</b>
+        {% endif %}
+
+    <!-- RECOMMENDATION for significance tests with REASONS -->
+          <h2 id=sigtest_heading align='left'>
               {{ result_str }}</h2>
                 <table border = 1>
                 <tr><th>Test</th><th>Reason</th></tr>
@@ -253,7 +269,8 @@ body
                         </tr>
                      {% endfor %}
                 </table>
-    <!--
+        <!-- (Bulleted list example) -->
+        <!--
                 The following tests are recommended:
                 <ul>
                   {% for name in recommended_tests %}
@@ -261,6 +278,8 @@ body
                   {% endfor %}
                 </ul>
                 -->
+
+    <!-- Images -->
           <img id=hist_score1 src="{{ hist_score1 }}?{{ rand }}">
           <img id=hist_score2 src="{{ hist_score2 }}?{{ rand }}">
           <img id=hist_diff src="{{ hist_diff }}?{{ rand }}">

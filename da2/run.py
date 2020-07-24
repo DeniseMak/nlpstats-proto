@@ -20,7 +20,8 @@ DEFAULT_SEED = None
 DEFAULT_EVAL_SIZE = 1
 
 # strings to use in UI
-summary_str = "Summary of Statistics"
+summary_str = "Summary of statistics"
+teststat_heading = "Test statistic recommendation"
 
 def calc_score_diff(score1,score2):
 	"""
@@ -35,25 +36,25 @@ def calc_score_diff(score1,score2):
 	return(score_diff)
 
 
-def create_test_reasons_old(recommended_tests):
-    '''
-    This function creates a dictionary of test names with reasons, given the list of test names.
-    @param recommended_tests: List of tests
-    @return: Dictionary of test names with reasons as the values
-    '''
-    test_reasons = {}
-    for test in recommended_tests:
-        if test == 't':
-            test_reasons['t'] = "The t-test is appropriate for a normal distribution."
-        elif test == 'bootstrap_med' or test == 'permutation_med':
-            test_reasons[test] = "This test is appropriate if the data is skewed and median is a good measure of central tendency."
-        elif test == 'bootstrap' or test == 'permutation':
-            test_reasons[test] = \
-                "This test is appropriate if the data isn't skewed and mean is a good measure of central tendency."
-        else:
-            test_reasons[test] = \
-            "This test can be used regardless of the distribution's normality or skew."
-    return test_reasons
+# def create_test_reasons_old(recommended_tests):
+#     '''
+#     This function creates a dictionary of test names with reasons, given the list of test names.
+#     @param recommended_tests: List of tests
+#     @return: Dictionary of test names with reasons as the values
+#     '''
+#     test_reasons = {}
+#     for test in recommended_tests:
+#         if test == 't':
+#             test_reasons['t'] = "The t-test is appropriate for a normal distribution."
+#         elif test == 'bootstrap_med' or test == 'permutation_med':
+#             test_reasons[test] = "This test is appropriate if the data is skewed and median is a good measure of central tendency."
+#         elif test == 'bootstrap' or test == 'permutation':
+#             test_reasons[test] = \
+#                 "This test is appropriate if the data isn't skewed and mean is a good measure of central tendency."
+#         else:
+#             test_reasons[test] = \
+#             "This test can be used regardless of the distribution's normality or skew."
+#     return test_reasons
 
 def create_test_reasons(recommended_tests):
     '''
@@ -65,7 +66,8 @@ def create_test_reasons(recommended_tests):
     for test in recommended_tests: # test is a tuple (name, reason)
         test_reasons[test[0]] = test[1]
     return test_reasons
-# todo: return values of 5 summary stats for score1, score2, dif, dif_par
+
+
 def create_summary_stats_dict(tc):
     print('Score 1: mean={}, med={}, sd={}, min={}, max={}'.format(tc.eda.summaryStat_score1.mu,
                                                                              tc.eda.summaryStat_score1.med,
@@ -94,6 +96,7 @@ def create_summary_stats_dict(tc):
                                  'min': tc.eda.summaryStat_score_diff_par.min_val,
                                  'max': tc.eda.summaryStat_score_diff_par.max_val}
     return summary_dict
+
 
 @app.route('/', methods= ["GET", "POST"])
 def homepage(debug=True):
@@ -131,8 +134,9 @@ def homepage(debug=True):
                                          seed,
                                          target_stat, # mean or median
                                          FOLDER)
+
         # --------------Summary Stats -------------
-        ### initialize a new testCase object
+        ### initialize a new testCase object to use for summary statistics
         tc = testCase.testCase(scores1,
                                scores2,
                                score_dif,
@@ -155,15 +159,15 @@ def homepage(debug=True):
         # --------------Recommended Significance Tests -------------------------
         recommended_tests = recommend_test(mean_or_median, is_normal)
 
-        # recommended tests reasons (temp function) TODO: REPLACE
+        # recommended tests reasons (temp function)
         recommended_tests_reasons = create_test_reasons(recommended_tests)
 
         if debug: print(recommended_tests_reasons)
         # test reason
-        if mean_or_median == 'mean' and is_normal:
-            test_reason = "This test is appropriate for data in a normal distribution that is not skewed"
-        elif mean_or_median == 'mean':
-            test_reason = "This test is appropriate for data that is not skewed, which uses the mean as the test statistic."
+        # if mean_or_median == 'mean' and is_normal:
+        #     test_reason = "This test is appropriate for data in a normal distribution that is not skewed"
+        # elif mean_or_median == 'mean':
+        #     test_reason = "This test is appropriate for data that is not skewed, which uses the mean as the test statistic."
 
 
         if eval_unit_size:
@@ -194,11 +198,12 @@ def homepage(debug=True):
                                        result_str = result_str,
                                        summary_str = summary_str,
                                        summary_stats_dict = summary_stats_dict,
+                                       teststat_heading = teststat_heading,
                                        mean_or_median = mean_or_median, # 'mean' if not skewed, 'median' if skewed.
                                        is_normal = is_normal,           # True if normal, False if not.
                                        recommended_tests = recommended_tests,  # this is a list.
                                        recommended_tests_reasons = recommended_tests_reasons, # dict with reasons
-                                       test_reason = test_reason,
+                                       #test_reason = test_reason,
                                        hist_score1=full_filename1,
                                        hist_score2=full_filename2,
                                        hist_diff= full_filename_dif,
