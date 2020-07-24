@@ -255,8 +255,8 @@ body
             {% if is_normal %} passes {% else %} does not pass
             {% endif %} the normality test. <p></p>
             <b>Skewness:</b> The data distribution
-            {% if mean_or_median == 'median' %} is {% else %} is not
-                {% endif %} skewed. <p></p>
+            {% if mean_or_median == 'median' %} exceeds {% else %} does not exceed
+                {% endif %} the skew threshold. <p></p>
             <b>Test statistic:</b> Based on the skewness, the recommended test statistic to use is:
                 <b>{{ mean_or_median }}</b>
         {% endif %}
@@ -303,12 +303,39 @@ body
     </div>
 </div>
 </form>  <!-- (comment out to try one form for all tabs -->
+
+
+<!-- SIGNIFICANCE TEST TAB -->
 <div id='Significance Test' class="tabcontent">
   <!-- <form class="form-horizontal"> -->
+
   <div class="form-group">
-    <label class="col-md-4 control-label" for="effect_size">Significance level &alpha;:</label> <div class="tooltip">Help
-      <span class="tooltiptext">Info here.</span>
-    </div>
+        <!-- SIGNIFICANCE TEST RECOMMENDATION for test statistics -->
+          <h2 id=sigtest_heading align='left'>{{ result_str }}</h2>
+            {% if recommended_tests_reasons|length %}
+                    <table border = 1>
+
+                    <tr><th>Test</th><th>Reason</th></tr>
+
+                         {% for key, value in recommended_tests_reasons.items() %}
+                            <tr>
+                               <td> {{ key }} </td> <td>{{ value }}</td>
+                            </tr>
+                         {% endfor %}
+                    </table>
+        <h2>Choose the significance test to run</h2>
+           <!-- radio button to choose test -->
+                {% for key, value in recommended_tests_reasons.items() %}
+                <label class="radio-inline" for="target_sig_test-1">
+                <input type="radio" name="target_sig_test" id="target_sig_test-1" value={{ key }}>
+                    {{ key }}</label>
+                {% endfor %}
+            {% endif %}
+<br/><p></p>
+    <label class="col-md-4 control-label" for="effect_size">Significance level &alpha;:</label>
+      <div class="tooltip">?
+        <span class="tooltiptext">The significance level.</span>
+      </div>
     <div class="col-md-4">
     <input id="significance_level" name="significance_level" type="number" placeholder="0.00" class="form-control input-md" required="" step="0.01" min="0" max="1">
     </div>
