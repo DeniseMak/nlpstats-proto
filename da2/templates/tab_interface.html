@@ -369,8 +369,6 @@ body
 
   <!-- Effect Size Multiple Radios (inline)  -->
   <div class="form-group">
-        <h3>Effect Size</h3>
-        <p>Choose the target statistic (mean or median).</p>
     <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
     <div class="col-md-4">
       <label class="radio-inline" for="target_statistic-0">
@@ -383,6 +381,8 @@ body
       </label>
     </div>
   </div>
+  
+  <br>
   <!-- effect size Submit Button -->
   <div class="form-group">
     <label class="col-md-4 control-label" for="submit"></label>
@@ -405,8 +405,76 @@ body
 
 
 <div id='Post-test Power Analysis' class="tabcontent">
-  <h3>Post-test Power Analysis</h3>
-  <p>.</p>
+  <form class="form-horizontal">
+ 
+
+
+
+  <!-- Multiple Radios -->
+  <div class="form-group">
+      
+          <label class="col-md-4 control-label" for="effect_size">Effect Size:</label> <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div>
+          <div class="col-md-4">
+          <input id="effect_size" name="effect_size" type="effect_size" placeholder="default" class="form-control input-md" required="">
+            
+          </div>
+       <br>
+             
+             
+      <label class="col-md-4 control-label" for="sample_size">Sample Size:</label> <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span> </div>
+          <div class="col-md-4">
+          <input id="start" name="start" type="number" placeholder="Start" class="form-control input-md" required="">
+         <input id="end" name="end" type="number" placeholder="End" class="form-control input-md" required="">
+           <input id="step_size" name="step_size" type="number" placeholder="Step Size" class="form-control input-md" required="">
+          </div>
+
+          <br>
+          <label class="col-md-4 control-label" for="iterations">Iterations Per Sample Size:</label> <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div>
+          <div class="col-md-4">
+          <input id="iterations" name="iterations" type="number" placeholder="default" class="form-control input-md" required="">
+            
+          </div>
+
+      
+      <br>
+      <label class="col-md-4 control-label" for="method">Power Analysis Method:</label> <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div>
+    <div class="col-md-4">
+    <div class="radio">
+      <label for="method-0">
+        <input type="radio" name="method" id="method-0" value="monte_carlo" checked="checked">
+        Monte Carlo
+      </label>
+      </div>
+    <div class="radio">
+      <label for="method-1">
+        <input type="radio" name="method" id="method-1" value="bootstrap">
+        Bootstrap
+      </label>
+      </div>
+    <div class="radio">
+      <label for="method-2">
+        <input type="radio" name="method" id="method-2" value="analysis">
+        Analysis
+      </label>
+      </div>
+    </div>
+  </div>
+    <br>
+    <!-- Power Submit Button -->
+    <div class="form-group">
+      <label class="col-md-4 control-label" for="submit"></label>
+      <div class="col-md-4">
+          <input type="hidden" id="da_hidden" value="hidden101">
+      
+        <button id="ef_submit"
+                name="ef_submit"
+                type=submit
+                class="btn btn-success"
+                onsubmit="pa_submit_func()">Run</button>
+      </div>
+    </div>
+  </div>
+  </form>
 </div>
 
 <div id='Download Test Results' class="tabcontent">
