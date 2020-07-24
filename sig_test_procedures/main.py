@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
 	# recommend tests
 	recommended_tests = dataAnalysis.recommend_test(testCase_new.eda.testParam,testCase_new.eda.normal)
-	testCase_new.sigTest.testName = recommended_tests[0] 
+	testCase_new.sigTest.testName = recommended_tests[0][0] 
 	testCase_new.eda.testName = testCase_new.sigTest.testName
 
 	print('Sample size after partitioning is: '+str(testCase_new.sample_size))
@@ -98,8 +98,8 @@ if __name__ == '__main__':
 	print("------ Power Analysis ------")
 	start_time = time.time()
 
-	power_sampsize = powerAnalysis.post_power_analysis(testCase_new.sigTest.testName, 
-		testCase_new.score_diff_par, step_size = testCase_new.power.step_size, 
+	(power_sampsize, power_method) = powerAnalysis.post_power_analysis(testCase_new.sigTest.testName,testCase_new.eda.normal,
+		testCase_new.score_diff_par, step_size = testCase_new.power.step_size, starting_size=30,
 		output_dir = 'figures', B=B_pow, alpha=testCase_new.power.alpha)
 
 	sys.stderr.write("Finished power analysis. Runtime: --- %s seconds ---" % (time.time() - start_time) + '\n')
@@ -123,7 +123,7 @@ if __name__ == '__main__':
 	print('-----------')
 
 	print('obtained power: ' + str(list(testCase_new.power.powerCurve.values())[-1]))
-
+	print('Power analysis method: '+str(power_method))
 
 
 
