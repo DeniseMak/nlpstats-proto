@@ -19,6 +19,9 @@ app.config['FOLDER'] = FOLDER
 DEFAULT_SEED = None
 DEFAULT_EVAL_SIZE = 1
 
+# template filename
+# Note: "tab_inteface2.html" has histograms before recommendations
+template_filename = "tab_interface.html"
 # strings to use in UI
 summary_str = "Summary of statistics"
 teststat_heading = "Test statistic recommendation"
@@ -177,7 +180,7 @@ def homepage(debug=True):
             else:
                 rand = np.random.randint(10000)
                 if debug: print('random number to append to image url={}'.format(rand))
-                rendered = render_template('tab_interface.html',
+                rendered = render_template(template_filename,
                                        file_uploaded = "File uploaded: {}".format(f.filename),
                                        eval_unit_size = eval_unit_size,
                                        result_str = result_str,
@@ -197,12 +200,12 @@ def homepage(debug=True):
                 return rendered
         else:
             # we shouldn't get here since we used default values for the seed and eval unit size
-            rendered = render_template('tab_interface.html',
+            rendered = render_template(template_filename,
                                        result_str='evaluation unit size or seed not defined',)
             return rendered
     elif request.method == 'GET':
         # You got to the main page by navigating to the URL, not by clicking submit
-        return render_template('tab_interface.html',
+        return render_template(template_filename,
                                help1 = helper("function 1"),
                                help2 = helper("function 2"),
                                file_uploaded = "Upload a file.",
