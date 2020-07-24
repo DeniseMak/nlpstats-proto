@@ -9,6 +9,9 @@ from werkzeug.utils import secure_filename
 import os
 import numpy as np
 import testCase
+import sigTesting
+
+from interface.sigTesting import run_sig_test
 
 FOLDER = os.path.join('static')
 
@@ -22,9 +25,11 @@ DEFAULT_EVAL_SIZE = 1
 # template filename
 # Note: "tab_inteface2.html" has histograms before recommendations
 template_filename = "tab_interface.html"
+template_filename_sigtest = "tab_interface_sigtest_mockup.html"
 # strings to use in UI
 summary_str = "Summary of statistics"
 teststat_heading = "Test statistic recommendation"
+result_str = 'You can choose from the following significance tests'
 
 def calc_score_diff(score1,score2):
 	"""
@@ -159,7 +164,7 @@ def homepage(debug=True):
 
 
         if eval_unit_size:
-            result_str = 'The following table shows the recommended tests.'
+
             full_filename1 = os.path.join(app.config['FOLDER'], 'hist_score1.svg')
             full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2.svg')
             full_filename_dif = os.path.join(app.config['FOLDER'], 'hist_score_diff.svg')
@@ -180,6 +185,8 @@ def homepage(debug=True):
             else:
                 rand = np.random.randint(10000)
                 if debug: print('random number to append to image url={}'.format(rand))
+
+
                 rendered = render_template(template_filename,
                                        file_uploaded = "File uploaded: {}".format(f.filename),
                                        eval_unit_size = eval_unit_size,
@@ -197,7 +204,10 @@ def homepage(debug=True):
                                        hist_diff= full_filename_dif,
                                        hist_diff_par= full_filename_dif_par,
                                            rand=rand)
-                return rendered
+                resp = make_response(rendered)
+                resp.set_cookie('fileName', f.filename)
+                #resp.set_cookie('score_diff_par', json.dumps(score_diff_par))  # won't work, cookie too large
+                return resp   # return rendered
         else:
             # we shouldn't get here since we used default values for the seed and eval unit size
             rendered = render_template(template_filename,
@@ -213,6 +223,29 @@ def homepage(debug=True):
                                recommended_tests_reasons ={},
                                summary_stats_dict = {})
 
+@app.route('/sig_test', methods= ["GET", "POST"])
+def sigtest():
+    print(' ********* Running /sig_test')
+    fileName = request.cookies.get('fileName')
+    # partition_score = request.cookies.get('score_diff_par') # doesn't work
+    scores1, scores2 = read_score_file(fileName)  # read_score_file("score")
+    score_dif = calc_score_diff(scores1, scores2)
+    print("THE SCORE_DIF:{}".format(score_dif))
+    test_stat, pval, rejection = run_sig_test('t',
+                                              score_dif,
+                                              0.05, # todo: alpha
+                                              B=500) # todo: B_boot
+    return render_template(template_filename_sigtest,
+                               help1 = helper("function 1"),
+                               help2 = helper("function 2"),
+                               file_uploaded = "File uploaded: {}".format(fileName),
+                               recommended_tests = [],
+                               recommended_tests_reasons ={},
+                               summary_stats_dict = {},
+                               test_stat = test_stat,
+                               pval = pval,
+                               rejectH0 = rejection,
+                               )
 
 @app.route('/effectsize', methods= ["GET", "POST"])
 def effectsize():

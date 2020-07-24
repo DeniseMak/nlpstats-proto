@@ -351,7 +351,44 @@ body
                 </label> <p></p>
                 {% endfor %}
             {% endif %}
-<br/><p></p>
+            <!-- MOCKUP RADIO -->
+      <h2>Choose the significance test to run</h2>
+                  <label class="radio-inline" for="target_sig_test-1">
+                <input type="radio" name="target_sig_test" id="target_sig_test-1" value=t>
+                    t
+                        <div class="tooltip">?
+                            <span class="tooltiptext">help on t</span>
+                        </div>
+                </label> <p></p>
+                    <label class="radio-inline" for="target_sig_test-1">
+                <input type="radio" name="target_sig_test" id="target_sig_test-1" value=bootstrap>
+                    bootstrap
+                        <div class="tooltip">?
+                            <span class="tooltiptext">help on bootstrap</span>
+                        </div>
+                </label> <p></p>
+                    <label class="radio-inline" for="target_sig_test-1">
+                <input type="radio" name="target_sig_test" id="target_sig_test-1" value=permutation_mean>
+                    permutation_mean
+                        <div class="tooltip">?
+                            <span class="tooltiptext">help on permutation_mean</span>
+                        </div>
+                </label> <p></p>
+                  <input type="radio" name="target_sig_test" id="target_sig_test-1" value=wilcoxson>
+                    wilcoxson
+                        <div class="tooltip">?
+                            <span class="tooltiptext">help on wilcoxson</span>
+                        </div>
+                </label> <p></p>
+                    <input type="radio" name="target_sig_test" id="target_sig_test-1" value=sign>
+                    sign
+                        <div class="tooltip">?
+                            <span class="tooltiptext">help on sign</span>
+                        </div>
+                </label> <p></p>
+
+
+        <br/>
     <label class="col-md-4 control-label" for="effect_size">Significance level &alpha;:</label>
       <div class="tooltip">?
         <span class="tooltiptext">The significance level.</span>
@@ -375,6 +412,27 @@ body
         <!-- Button for JS script-->
         <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
     </div>
+
+    <h2>Results</h2>
+        <!-- <ul>
+            <li><b>test statistic/CI:</b>1.65562</li>
+            <li><b>p-value</b>: 0.098585</li>
+            <li><b>Reject H0</b>: False</li>
+        </ul> -->
+        <table border="1">
+            <tr><th>test statistic/CI</th>
+                <td>{{ test_stat }}<!--1.65562--></td></tr>
+            <tr><th>p-value</th>
+                <td> {{ pval }}<!--0.098585--></td></tr>
+            <tr><th>Reject H0</th>
+                <td>{{ rejectH0 }}</td></tr>
+        </table>
+            <!--
+            test name: t
+            test statistic/CI: 1.6556223864889548
+            p-value: 0.09858455289631643
+            rejection of H0: False
+            -->
   </div>
 
 </div>
@@ -387,7 +445,42 @@ body
         enctype="multipart/form-data"
         method="post">
 <div id='Effect Size' class="tabcontent">
-
+<div>
+    Significance test: <p></p>
+                      <label class="radio-inline" for="target_sig_test-1">
+                <input type="radio" name="target_sig_test" id="target_sig_test-1" value=t>
+                    t
+                        <div class="tooltip">?
+                            <span class="tooltiptext">help on t</span>
+                        </div>
+                </label> <p></p>
+                    <label class="radio-inline" for="target_sig_test-1">
+                <input type="radio" name="target_sig_test" id="target_sig_test-1" value=bootstrap>
+                    bootstrap
+                        <div class="tooltip">?
+                            <span class="tooltiptext">help on bootstrap</span>
+                        </div>
+                </label> <p></p>
+                    <label class="radio-inline" for="target_sig_test-1">
+                <input type="radio" name="target_sig_test" id="target_sig_test-1" value=permutation_mean>
+                    permutation_mean
+                        <div class="tooltip">?
+                            <span class="tooltiptext">help on permutation_mean</span>
+                        </div>
+                </label> <p></p>
+                  <input type="radio" name="target_sig_test" id="target_sig_test-1" value=wilcoxson>
+                    wilcoxson
+                        <div class="tooltip">?
+                            <span class="tooltiptext">help on wilcoxson</span>
+                        </div>
+                </label> <p></p>
+                    <input type="radio" name="target_sig_test" id="target_sig_test-1" value=sign>
+                    sign
+                        <div class="tooltip">?
+                            <span class="tooltiptext">help on sign</span>
+                        </div>
+                </label> <p></p>
+</div>
   <!-- Effect Size Multiple Radios (inline)  -->
   <div class="form-group">
     <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
@@ -419,6 +512,20 @@ body
         <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
     </div>
   </div>
+    <div>
+            <h2>Results</h2>
+        <!-- <ul>
+            <li><b>test statistic/CI:</b>1.65562</li>
+            <li><b>p-value</b>: 0.098585</li>
+            <li><b>Reject H0</b>: False</li>
+        </ul> -->
+        <table border="1">
+             <tr><th>Estimator</th><th>Effect Size</th></tr>
+            <tr><td>Cohen's d</td><td>0.0828</td></tr>
+            <tr><td>Hedges' g</td><td> 0.0826</td></tr>
+
+        </table>
+    </div>
 </div> <!-- end Effect Size tab -->
 
 </form>
