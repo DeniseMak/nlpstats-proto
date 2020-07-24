@@ -22,7 +22,20 @@ DEFAULT_EVAL_SIZE = 1
 # strings to use in UI
 summary_str = "Summary of Statistics"
 
-def create_test_reasons(recommended_tests):
+def calc_score_diff(score1,score2):
+	"""
+	This function calculates the pairwise score difference for score1 and score2
+
+	@param score1, score2: input scores, dictionary
+	@return: score_diff, score difference, a dictionary
+	"""
+	score_diff = {}
+	for i in score1.keys():
+		score_diff[i] = score1[i]-score2[i]
+	return(score_diff)
+
+
+def create_test_reasons_old(recommended_tests):
     '''
     This function creates a dictionary of test names with reasons, given the list of test names.
     @param recommended_tests: List of tests
@@ -42,6 +55,16 @@ def create_test_reasons(recommended_tests):
             "This test can be used regardless of the distribution's normality or skew."
     return test_reasons
 
+def create_test_reasons(recommended_tests):
+    '''
+    This function creates a dictionary of test names with reasons, given the list of test names.
+    @param recommended_tests: List of tuples [('t', "t because..."), ('bootstrap', 'bootstrap because...')]
+    @return: Dictionary of test names with reasons as the values
+    '''
+    test_reasons = {}
+    for test in recommended_tests: # test is a tuple (name, reason)
+        test_reasons[test[0]] = test[1]
+    return test_reasons
 # todo: return values of 5 summary stats for score1, score2, dif, dif_par
 def create_summary_stats_dict(tc):
     print('Score 1: mean={}, med={}, sd={}, min={}, max={}'.format(tc.eda.summaryStat_score1.mu,
@@ -131,7 +154,8 @@ def homepage(debug=True):
         is_normal = normality_test(score_diff_par, alpha=0.05)
         # --------------Recommended Significance Tests -------------------------
         recommended_tests = recommend_test(mean_or_median, is_normal)
-        # recommended tests reasons
+
+        # recommended tests reasons (temp function) TODO: REPLACE
         recommended_tests_reasons = create_test_reasons(recommended_tests)
 
         if debug: print(recommended_tests_reasons)
