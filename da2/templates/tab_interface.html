@@ -157,10 +157,7 @@ body
     <div class="col-md-4">
         <input type="file" id="system_file" name="system_file" style="display:none;" required/>
         <a href="#" class="button"><label for="system_file">Select</label></a> {{file_uploaded}}
-        
 
-
-        
          <!--
       <input id="system_file" name="system_file" class="input-file" type="file"/>
          -->
@@ -175,7 +172,9 @@ body
       <span class="tooltiptext">This should be a whole number between one and the number of data points.</span>
     </div>
     <div class="col-md-4">
-    <input id="eval_unit_size" name="eval_unit_size" type="number" value="1" class="form-control input-md" required="">
+    <input id="eval_unit_size" name="eval_unit_size" type="number"
+           value="{{ eval_unit_size }}"
+           class="form-control input-md" required="">  <!-- previously had value="1" -->
         
 
     </div>
