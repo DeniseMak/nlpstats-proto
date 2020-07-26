@@ -94,6 +94,13 @@ def create_summary_stats_dict(tc):
 @app.route('/', methods= ["GET", "POST"])
 def homepage(debug=True):
     if request.method == 'POST':
+
+        # ------- Test if 'last_tab' was sent
+        last_tab_clicked = request.form.get('last_tab')
+        last_tab_name_clicked = request.form.get('last_tab_name')
+        print("***** LAST TAB: {}".format(last_tab_clicked))
+        print("***** LAST TAB: {}".format(last_tab_name_clicked))
+        # ------- File ----------------
         f = request.files['system_file']  # new
         f.save(secure_filename(f.filename))  # todo: change this to 'uploads' directory
 
@@ -189,6 +196,7 @@ def homepage(debug=True):
 
                 rendered = render_template(template_filename,
                                        file_uploaded = "File uploaded: {}".format(f.filename),
+                                           last_tab_name_clicked=last_tab_name_clicked,
                                        eval_unit_size = eval_unit_size,
                                        result_str = result_str,
                                        summary_str = summary_str,
@@ -223,9 +231,38 @@ def homepage(debug=True):
                                recommended_tests_reasons ={},
                                summary_stats_dict = {})
 
+
+@app.route('/tab_clicked', methods= ["GET", "POST"])
+def tab_clicked():
+    if request.method == 'POST':
+        print(' ********* Running /tab_clicked')
+        last_tab_clicked = request.form.get('last_tab_str')
+        # last_tab_name_clicked = request.form.get('last_tab_input')
+        print("***** LAST TAB (from hardcoded string): {}".format(last_tab_clicked))
+        # print("***** LAST TAB (from INPUT element): {}".format(last_tab_name_clicked))
+        return jsonify(result=last_tab_clicked)    # THIS WORKS!!!
+
+    # GET
+    return render_template(template_filename,
+                           help1=helper("function 1"),
+                           help2=helper("function 2"),
+                           file_uploaded="Upload a file.",
+                           recommended_tests=[],
+                           recommended_tests_reasons={},
+                           summary_stats_dict={})
+
+# ********************************************************************************************
+#   SIGNIFICANCE TEST
+# ********************************************************************************************
 @app.route('/sig_test', methods= ["GET", "POST"])
 def sigtest():
     print(' ********* Running /sig_test')
+    # ------- Test if 'last_tab' was sent
+
+    last_tab_name_clicked = 'Significance Test' #request.form.get('last_tab_input')
+
+    print("***** LAST TAB (from INPUT element): {}".format(last_tab_name_clicked))
+
     fileName = request.cookies.get('fileName')
     # partition_score = request.cookies.get('score_diff_par') # doesn't work
     scores1, scores2 = read_score_file(fileName)  # read_score_file("score")
@@ -238,7 +275,8 @@ def sigtest():
     return render_template(template_filename_sigtest,
                                help1 = helper("function 1"),
                                help2 = helper("function 2"),
-                               file_uploaded = "File uploaded: {}".format(fileName),
+                               file_uploaded = "File uploaded!!: {}".format(fileName),
+                               last_tab_name_clicked= last_tab_name_clicked,
                                recommended_tests = [],
                                recommended_tests_reasons ={},
                                summary_stats_dict = {},

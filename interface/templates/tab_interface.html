@@ -97,17 +97,19 @@ body
         // Note: This doesn't work for the file fields
         $(function() {
           $('a#process_input').bind('click', function() {
-            $.getJSON('/', {
+            $.post('/tab_clicked', {  // alternatively, .getJSON instead of .post
 
               eval_unit_size: $('input[name="eval_unit_size"]').val(),
               seed: $('input[name="seed"]').val(),
-                system_file: $('input[name="system_file"]').val()
+                last_tab_str: 'SIGNIFICANCE_TAB', // todo: use variable for this
+                // last_tab_input: $('input[name="sig_tab_name"]').val()
+              //system_file: $('input[name="system_file"]').val() // Note: I don't think this is working.
 
             }, function(data) {
-                // Note: I don't think this is working.
-              $('#result').text(data.result);
-              $('#hist_score1').src(data.hist_score1);
-              $('#hist_score2').src(data.hist_score2);
+              $('#last_tab').text(data.result);
+
+              //$('#hist_score1').src(data.hist_score1);
+              //$('#hist_score2').src(data.hist_score2);
             });
             return false;
           });
@@ -130,7 +132,8 @@ body
 
 <div class="tab">
   <button class="tablinks" onclick="openTab(event, 'Data Analysis')">Data Analysis</button>
-  <button class="tablinks" onclick="openTab(event, 'Significance Test')">Significance Test</button>
+  <a href=# id="process_input">  <!-- handle click event in JS -->
+      <button class="tablinks" onclick="openTab(event, 'Significance Test')">Significance Test</button></a>
   <button class="tablinks" onclick="openTab(event, 'Effect Size')">Effect Size</button>
   <button class="tablinks" onclick="openTab(event, 'Post-test Power Analysis')">Post-test Power Analysis</button>
   <button class="tablinks" onclick="openTab(event, 'Download Test Results')">Download Test Results</button>
@@ -366,7 +369,8 @@ body
     <label class="col-md-4 control-label" for="submit"></label>
     <div class="col-md-4">
         <input type="hidden" id="sa_hidden" value="hidden101">
-        <!-- Is type=submit implied by class="btn btn-success" -->
+        <!-- Is type=submit implied by class="btn btn-success" ? -->
+        <input type="hidden" id="sig_tab_name" name="sig_tab_name" value="SignificanceTabHidden-2"/>
       <button id="submit"
               name="submit"
               type=submit
@@ -378,7 +382,7 @@ body
   </div>
 
 </div>
-</form> <!-- sig test tab -->
+</form> <!-- End Significance Test form -->
 
 <!-- Effect Size -->
 <form
@@ -494,7 +498,7 @@ body
                 onsubmit="pa_submit_func()">Run</button>
       </div>
     </div>
-  </div>
+
   </form>
 </div>
 
@@ -520,9 +524,20 @@ function openTab(evt, tabName) {
 }
 </script>
 
+
+<script>
+function showdiv() {
+  document.getElementById("hidden").style.display="block"
+}
+</script>
+
+
+<div class="hiddendiv" id = "hidden">
+        <b>Debugging info:</b> <p/>
+    <p id="result"></p>
+  Last tab:<p id=last_tab>{{ last_tab_name_clicked }}</p>
+</div>
+
 </body>
-
-
-
 
 </html>
