@@ -1,11 +1,11 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html>
 
-    
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
-        </script>
-    
-    <script type=text/javascript>
-        // Note: This doesn't work for the file fields
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+</script>
+
+<script type=text/javascript>
+    // Note: This doesn't work for the file fields
         $(function() {
           $('a#process_input').bind('click', function() {
             $.getJSON('/', {
@@ -23,19 +23,17 @@
             return false;
           });
         });
-    </script>
-    
-    <script type="text/javascript">
-        function da_submit_func() {
+</script>
+
+<script type="text/javascript">
+    function da_submit_func() {
             console.log(document.getElementById('da_hidden').value)
             console.log("clicked DA submit!")
         }
         // document.getElementById('da_submit')
-    </script>
+</script>
 
 <style>
-    
-
     .button {
       text-decoration: none;
       background-color: #EEEEEE;
@@ -144,190 +142,172 @@ ul.breadcrumb li a:hover {
 
 .footer { text-align: center; }
 </style>
+
 <body>
 
-<div class="header">
-<h1>System Performance Calculator</h1>
-</div>
+    <div class="header">
+        <h1>System Performance Calculator</h1>
+    </div>
 
     <div class="top_bar">
 
-
-    <a href="#">About</a> &ensp;
-    <a href="#">Settings</a> &ensp;
-    <a href="#">Save Progress</a> &ensp;
-    <a href="#">Restore</a> &ensp;
-    <a href="#">Download Report</a>
-</div>
+        <a href="#">About</a> &ensp;
+        <a href="#">Settings</a> &ensp;
+        <a href="#">Save Progress</a> &ensp;
+        <a href="#">Restore</a> &ensp;
+        <a href="#">Download Report</a>
+    </div>
     <div class="roundpurple">
-    <ul class="breadcrumb">
-        
-        
-      <li><a href="#">Data</a></li>
-      <li><a href="#">Significance</a></li>
-      <li><a href="#">Effect Size</a></li>
-      <li><a href="#">Power Anaysis</a></li>
-    </ul>
-</div>
-    
+        <ul class="breadcrumb">
 
-       <div class="roundpurplebottom" style = "position:relative; top: -18px;">
-    
-    
-    
-    
-    
-    
-    
+            <li><a href="#">Data</a></li>
+            <li><a href="#">Significance</a></li>
+            <li><a href="#">Effect Size</a></li>
+            <li><a href="#">Power Anaysis</a></li>
+        </ul>
+    </div>
 
-      <!-- File Button -->
-      <div class="form-group">
-        
-        <label class="col-md-4 control-label" for="system_file">System File:</label>
-        
-           <div class="tooltip">?
-               <span class="tooltiptext">"{{help1}}"</span></div>
-        <div class="col-md-4">
-            <input type="file" id="system_file" name="system_file" style="display:none;" required/>
-            <a href="#" class="button"><label for="system_file">Select</label></a> {{file_uploaded}}
+    <div class="roundpurplebottom" style="position:relative; top: -18px;">
 
-             <!--
+        <!-- File Button -->
+        <div class="form-group">
+
+            <label class="col-md-4 control-label" for="system_file">System File:</label>
+
+            <div class="tooltip">?
+                <span class="tooltiptext">"{{help1}}"</span></div>
+            <div class="col-md-4">
+                <input type="file" id="system_file" name="system_file" style="display:none;" required/>
+                <a href="#" class="button"><label for="system_file">Select</label></a> {{file_uploaded}}
+
+                <!--
           <input id="system_file" name="system_file" class="input-file" type="file"/>
              -->
-        
-        </div>
-      </div>
-      <br>
-      <!-- Text input-->
-      <div class="form-group">
-        <label class="col-md-4 control-label" for="eval_unit_size">Evaluation Unit Size:</label>
-          <div class="tooltip">?
-          <span class="tooltiptext">This should be a whole number between one and the number of data points.</span>
-        </div>
-        <div class="col-md-4">
-        <input id="eval_unit_size" name="eval_unit_size" type="number"
-               value="{{ eval_unit_size }}"
-               class="form-control input-md" required="">  <!-- previously had value="1" -->
-            
 
+            </div>
         </div>
-      </div>
-      <br>
-      <!-- Data Analysis: Multiple Radios (inline)  -->
-      <div class="form-group">
-        <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
-          <div class="tooltip">?
-              <span class="tooltiptext">"{{help2}}"</span></div>
-        <div class="col-md-4">
-          <label class="radio-inline" for="target_statistic-0">
+        <br>
+        <!-- Text input-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="eval_unit_size">Evaluation Unit Size:</label>
+            <div class="tooltip">?
+                <span class="tooltiptext">This should be a whole number between one and the number of data points.</span>
+            </div>
+            <div class="col-md-4">
+                <input id="eval_unit_size" name="eval_unit_size" type="number" value="{{ eval_unit_size }}" class="form-control input-md" required="">
+                <!-- previously had value="1" -->
+
+            </div>
+        </div>
+        <br>
+        <!-- Data Analysis: Multiple Radios (inline)  -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
+            <div class="tooltip">?
+                <span class="tooltiptext">"{{help2}}"</span></div>
+            <div class="col-md-4">
+                <label class="radio-inline" for="target_statistic-0">
             <input type="radio" name="target_statistic" id="target_statistic-0" value="mean" checked="checked">
             Mean
           </label>
-          <label class="radio-inline" for="target_statistic-1">
+                <label class="radio-inline" for="target_statistic-1">
             <input type="radio" name="target_statistic" id="target_statistic-1" value="median">
             Median
           </label>
+            </div>
         </div>
-      </div>
-      <br>
-      <!-- Text input-->
-      <div class="form-group">
-        <label class="col-md-4 control-label" for="seed">Random Seed:</label>
-         <div class="tooltip">?
-          <span class="tooltiptext">If you would like to provide a (real number) seed number, enter it here. Otherwise, we will shuffle.</span>
-        </div>
-         <div class="col-md-4">
-        <input id="seed" name="seed" type="number" placeholder="Shuffle" step="0.01" class="form-control input-md">
-        
-        </div>
-      </div>
-      <br>
-      <!-- Data Analysis Submit Button -->
-      <div class="form-group">
-        <label class="col-md-4 control-label" for="submit"></label>
-        <div class="col-md-4">
-            <input type="hidden" id="da_hidden" value="hidden101">
-            <!-- Is type=submit implied by class="btn btn-success" -->
-          <button id="submit"
-                  name="submit"
-                  type=submit
-                  class="btn btn-success"
-                  onsubmit="da_submit_func()">Run</button>
-            <!-- Button for JS script-->
-            <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
-        </div>
-      </div>
-     
+        <br>
+        <!-- Text input-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="seed">Random Seed:</label>
+            <div class="tooltip">?
+                <span class="tooltiptext">If you would like to provide a (real number) seed number, enter it here. Otherwise, we will shuffle.</span>
+            </div>
+            <div class="col-md-4">
+                <input id="seed" name="seed" type="number" placeholder="Shuffle" step="0.01" class="form-control input-md">
 
-       
-
+            </div>
         </div>
+        <br>
+        <!-- Data Analysis Submit Button -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="submit"></label>
+            <div class="col-md-4">
+                <input type="hidden" id="da_hidden" value="hidden101">
+                <!-- Is type=submit implied by class="btn btn-success" -->
+                <button id="submit" name="submit" type=submit class="btn btn-success" onsubmit="da_submit_func()">Run</button>
+                <!-- Button for JS script-->
+                <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
+            </div>
+        </div>
+
+    </div>
     </div>
     </form>
-    
-    
-    
-    
-    
-    
-    
-</div>
 
+    </div>
 
-<div class="roundgreen" class="hiddendiv" id = "hidden">
-    
+    <div class="roundgreen" class="hiddendiv" id="hidden">
 
-           <!-- SUMMARY STATISTICS -->
-                 <h2>{{ summary_str }}</h2>
-                   {% if summary_stats_dict|length %}
-                       <table border = 1>
+        <!-- SUMMARY STATISTICS -->
+        <h2>{{ summary_str }}</h2>
+        {% if summary_stats_dict|length %}
+        <table border=1>
 
-                           <tr><th>Score</th><th>mean</th><th>median</th><th>std_dev</th><th>min</th><th>max</th></tr>
+            <tr>
+                <th>Score</th>
+                <th>mean</th>
+                <th>median</th>
+                <th>std_dev</th>
+                <th>min</th>
+                <th>max</th>
+            </tr>
 
-                           {% for key, value in summary_stats_dict.items() %}
+            {% for key, value in summary_stats_dict.items() %}
 
-                               <tr>
-                                 <!--
+            <tr>
+                <!--
                                   <td> {{ key }} </td> <td>{{ value }}</td> -->
-                               <td> {{ key }} </td>
-                                   {% for k, v in value.items() %}
-                                   <td>{{ v }}</td>
-                                       {% endfor %}
-                               </tr>
-                            {% endfor %}
-                       </table>
-                   {% endif %}
+                <td> {{ key }} </td>
+                {% for k, v in value.items() %}
+                <td>{{ v }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
 
-           <!-- RECOMMENDATION for test statistics -->
-               <h2 id=teststat_heading align='left'>{{ teststat_heading }}</h2>
-               {%  if mean_or_median %}
-                   <b>Normality:</b>The data distribution
-                   {% if is_normal %} passes {% else %} does not pass
-                   {% endif %} the normality test. <p></p>
-                   <b>Skewness:</b> The data distribution
-                   {% if mean_or_median == 'median' %} exceeds {% else %} does not exceed
-                       {% endif %} the skew threshold. <p></p>
-                   <b>Test statistic:</b> Based on the skewness, the recommended test statistic to use is:
-                       <b>{{ mean_or_median }}</b>
-               {% endif %}
+        <!-- RECOMMENDATION for test statistics -->
+        <h2 id=teststat_heading align='left'>{{ teststat_heading }}</h2>
+        {% if mean_or_median %}
+        <b>Normality:</b>The data distribution {% if is_normal %} passes {% else %} does not pass {% endif %} the normality test.
+        <p></p>
+        <b>Skewness:</b> The data distribution {% if mean_or_median == 'median' %} exceeds {% else %} does not exceed {% endif %} the skew threshold.
+        <p></p>
+        <b>Test statistic:</b> Based on the skewness, the recommended test statistic to use is:
+        <b>{{ mean_or_median }}</b> {% endif %}
 
-           <!-- RECOMMENDATION for significance tests with REASONS -->
-                 <h2 id=sigtest_heading align='left'>
-                     {{ result_str }}</h2>
-                       {% if recommended_tests_reasons|length %}
-                           <table border = 1>
+        <!-- RECOMMENDATION for significance tests with REASONS -->
+        <h2 id=sigtest_heading align='left'>
+            {{ result_str }}</h2>
+        {% if recommended_tests_reasons|length %}
+        <table border=1>
 
-                           <tr><th>Test</th><th>Reason</th></tr>
+            <tr>
+                <th>Test</th>
+                <th>Reason</th>
+            </tr>
 
-                                {% for key, value in recommended_tests_reasons.items() %}
-                                   <tr>
-                                      <td> {{ key }} </td> <td>{{ value }}</td>
-                                   </tr>
-                                {% endfor %}
-                           </table>
-                       {% endif %}
-               <!-- (Bulleted list example) -->
-               <!--
+            {% for key, value in recommended_tests_reasons.items() %}
+            <tr>
+                <td> {{ key }} </td>
+                <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+        <!-- (Bulleted list example) -->
+        <!--
                        The following tests are recommended:
                        <ul>
                          {% for name in recommended_tests %}
@@ -336,25 +316,19 @@ ul.breadcrumb li a:hover {
                        </ul>
                        -->
 
-           <!-- Images -->
-               {% if hist_score1 %}
-                 <img id=hist_score1 src="{{ hist_score1 }}?{{ rand }}">
-               {% endif %}
-               {% if hist_score2 %}
-                 <img id=hist_score2 src="{{ hist_score2 }}?{{ rand }}">
-               {% endif %}
-               {% if hist_diff %}
-                 <img id=hist_diff src="{{ hist_diff }}?{{ rand }}">
-               {% endif %}
-               {% if hist_diff_par %}
-                 <img id=hist_diff_par src="{{ hist_diff_par }}?{{ rand }}">
-               {% endif %}
-               
-</div>
+        <!-- Images -->
+        {% if hist_score1 %}
+        <img id=hist_score1 src="{{ hist_score1 }}?{{ rand }}"> {% endif %} {% if hist_score2 %}
+        <img id=hist_score2 src="{{ hist_score2 }}?{{ rand }}"> {% endif %} {% if hist_diff %}
+        <img id=hist_diff src="{{ hist_diff }}?{{ rand }}"> {% endif %} {% if hist_diff_par %}
+        <img id=hist_diff_par src="{{ hist_diff_par }}?{{ rand }}"> {% endif %}
 
-<div class="footer">
-<p>Copyright 2020 AUTHORS. This website is released under the terms of the LICENSE. See the paper at LINK.</p>
-</div>
+    </div>
+
+    <div class="footer">
+        <p>Copyright 2020 AUTHORS. This website is released under the terms of the LICENSE. See the paper at LINK.</p>
+    </div>
 
 </body>
+
 </html>
