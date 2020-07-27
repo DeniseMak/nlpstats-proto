@@ -172,9 +172,9 @@ ul.breadcrumb li a:hover {
         <button id="btn_download">Download Report</button>
 
     </div>
+    
     <div class="roundpurple">
         <ul class="breadcrumb">
-
             <li><a href="#">Data</a></li>
             <li><a href="#">Significance</a></li>
             <li><a href="#">Effect Size</a></li>
@@ -349,7 +349,7 @@ ul.breadcrumb li a:hover {
 
             <!-- Modal content -->
             <div class="modal-content">
-                <button id="close_btn_about">Close</button>
+                <button id="close_btn_about">&#x2715;</button>
                 <p>Copyright 2020 by AUTHORS. See our paper at LINK. This website is released under the LICENSE at LINK. LIST OF TECH USED AND THEIR LICENSES and CITATIONS.</p>
 
             </div>
@@ -361,7 +361,7 @@ ul.breadcrumb li a:hover {
             <!-- Modal content -->
             <div class="modal-content">
 
-                <button id="close_btn_settings">Close</button>
+                <button id="close_btn_settings">&#x2715;</button>
                 <p>LIST OF SETTINGS ITEMS</p>
 
                 <button id="restore">Save Settings to File</button>
@@ -376,9 +376,12 @@ ul.breadcrumb li a:hover {
             <!-- Modal content -->
             <div class="modal-content">
 
-                <button id="close_btn_download">Close</button>
+                <button id="close_btn_download">&#x2715;</button>
+                
                 <p>
-                    <a href="{{ url_for('.download_file') }}">Download</a>
+             <form action="{{ url_for('.download_file') }}" method="get" target="_blank">
+                <button type="submit">Download</button>
+             </form>
                 </p>
 
             </div>
@@ -392,7 +395,7 @@ ul.breadcrumb li a:hover {
                 eval("var btn_" + val + " = document.getElementById(\"btn_" + val +"\");");
                 // When the user clicks the button, open the modal
                 eval("btn_" + val + ".onclick = function() { " + val + ".style.display = \"block\"; }");
-               eval("close_btn_" + val + ".onclick = function() { modal_" + val + ".style.display = \"none\"; }");
+                eval("close_btn_" + val + ".onclick = function() { modal_" + val + ".style.display = \"none\"; }");
             }
             
             modals.forEach(make_modal);
