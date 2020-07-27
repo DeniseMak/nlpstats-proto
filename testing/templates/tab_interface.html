@@ -182,9 +182,16 @@ ul.breadcrumb li a:hover {
         </ul>
     </div>
 
+    <!-- Data Analysis form -->
+    <form
+        action="/"
+        class="form-horizontal"
+        enctype="multipart/form-data"
+        method="post">
+    <!-- Begin Data Analysis div -->
     <div class="roundpurplebottom" style="position:relative; top: -18px;">
 
-        <!-- File Button -->
+        <!-- Data Analysis: File Button -->
         <div class="form-group">
 
             <label class="col-md-4 control-label" for="system_file">System File:</label>
@@ -202,7 +209,7 @@ ul.breadcrumb li a:hover {
             </div>
         </div>
         <br>
-        <!-- Text input-->
+        <!-- Data Analysis: Evaluation Unit size-->
         <div class="form-group">
             <label class="col-md-4 control-label" for="eval_unit_size">Evaluation Unit Size:</label>
             <div class="tooltip">?
@@ -215,7 +222,7 @@ ul.breadcrumb li a:hover {
             </div>
         </div>
         <br>
-        <!-- Data Analysis: Multiple Radios (inline)  -->
+        <!-- Data Analysis: Multiple Radios (mean or median)  -->
         <div class="form-group">
             <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
             <div class="tooltip">?
@@ -232,7 +239,7 @@ ul.breadcrumb li a:hover {
             </div>
         </div>
         <br>
-        <!-- Text input-->
+        <!-- Seed input-->
         <div class="form-group">
             <label class="col-md-4 control-label" for="seed">Random Seed:</label>
             <div class="tooltip">?
@@ -257,10 +264,8 @@ ul.breadcrumb li a:hover {
         </div>
 
     </div>
-    </div>
-    </form>
+    </form> <!-- End data analysis form -->
 
-    </div>
 
     <div class="roundgreen" class="hiddendiv" id="hidden">
 
@@ -340,9 +345,8 @@ ul.breadcrumb li a:hover {
 
     </div>
 
-    </head>
 
-    <body>
+
 
         <!-- The Modal -->
         <div id="about" class="modal">
@@ -398,6 +402,6 @@ ul.breadcrumb li a:hover {
             modals.forEach(make_modal);
         </script>
 
-    </body>
+ </body>
 
 </html>
