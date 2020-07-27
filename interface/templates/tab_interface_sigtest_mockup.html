@@ -601,7 +601,7 @@ body
                 onsubmit="pa_submit_func()">Run</button>
       </div>
     </div>
-  </div>
+
   </form>
 </div>
 
@@ -627,6 +627,34 @@ function openTab(evt, tabName) {
 }
 </script>
 
+
+<script>
+function showLastTab(tabToShow) {
+  // document.getElementById("hidden").style.display="block"
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+    console.log('In showLastTab(), tabToShow=' + tabToShow);
+    document.getElementById(tabToShow).style.display="block"
+}
+</script>
+
+
+
+<div class="hiddendiv" id = "hidden">
+    <b>Debugging info:</b> <p/>
+    last tab: <p id=last_tab align="left">{{ last_tab_name_clicked }}</p>
+</div>
+
+<script>
+    window.onload = showLastTab('{{ last_tab_name_clicked }}')
+</script>
 </body>
 
 
