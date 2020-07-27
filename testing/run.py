@@ -297,6 +297,12 @@ def effectsize():
             #full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2.svg')
         return render_template('tab_interface.html')
 
+# https://www.roytuts.com/how-to-download-file-using-python-flask/
+@app.route('/download')
+def download_file():
+        path = "sample.txt"
+        return send_file(path, as_attachment=True)
+        
 if __name__ == "__main__":
     app.debug=True
     app.run()

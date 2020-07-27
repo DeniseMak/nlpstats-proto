@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 
-
 <script type="text/javascript">
     function da_submit_func() {
             console.log(document.getElementById('da_hidden').value)
@@ -166,11 +165,11 @@ ul.breadcrumb li a:hover {
     </div>
 
     <div class="top_bar">
-    
- <!-- Trigger/Open The Modal -->
-<button id="btn_about">About</button>
-<button id="btn_settings">Modify or Save/Restore Settings</button>
-<button id="btn_download">Download Report</button>
+
+        <!-- Trigger/Open The Modal -->
+        <button id="btn_about">About</button>
+        <button id="btn_settings">Modify or Save/Restore Settings</button>
+        <button id="btn_download">Download Report</button>
 
     </div>
     <div class="roundpurple">
@@ -341,83 +340,64 @@ ul.breadcrumb li a:hover {
 
     </div>
 
-    
-    
-
-
     </head>
+
     <body>
 
+        <!-- The Modal -->
+        <div id="about" class="modal">
 
-    <!-- The Modal -->
-    <div id="about" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <button id="close_btn_about">Close</button>
+                <p>Copyright 2020 by AUTHORS. See our paper at LINK. This website is released under the LICENSE at LINK. LIST OF TECH USED AND THEIR LICENSES and CITATIONS.</p>
 
-      <!-- Modal content -->
-      <div class="modal-content">
-        <button id="close_btn_about">Close</button>
-        <p>Copyright 2020 by AUTHORS. See our paper at LINK. This website is released under the LICENSE at LINK. LIST OF TECH USED AND THEIR LICENSES and CITATIONS.</p>
-
-      </div>
-    </div>
-    
-    
-    <!-- The Modal -->
-    <div id="settings" class="modal">
-
-      <!-- Modal content -->
-      <div class="modal-content">
-
-                 <button id="close_btn_settings">Close</button>
-        <p>LIST OF SETTINGS ITEMS</p>
-      
-        <button id="restore">Save Settings to File</button>
-          <button id="save">Restore Settings from File</button>
-
-      </div>
-    </div>
-    
-    
-        
+            </div>
+        </div>
 
         <!-- The Modal -->
-          <div id="download" class="modal">
+        <div id="settings" class="modal">
 
             <!-- Modal content -->
             <div class="modal-content">
 
-                 <button id="close_btn_download">Close</button>
-              <p>DOWNLOAD REPORT</p>
+                <button id="close_btn_settings">Close</button>
+                <p>LIST OF SETTINGS ITEMS</p>
+
+                <button id="restore">Save Settings to File</button>
+                <button id="save">Restore Settings from File</button>
 
             </div>
-          </div>
+        </div>
 
+        <!-- The Modal -->
+        <div id="download" class="modal">
 
+            <!-- Modal content -->
+            <div class="modal-content">
 
-    
-    
-    
+                <button id="close_btn_download">Close</button>
+                <p>
+                    <a href="{{ url_for('.download_file') }}">Download</a>
+                </p>
 
-    
-    
-    <script>
-    // Make modals and buttons
-    var modals = ["about",  "settings", "download"];
-    function make_modal(val){
-        eval("var modal_" + val + " = document.getElementById(\"" + val +"\");");
-        eval("var btn_" + val + " = document.getElementById(\"btn_" + val +"\");");
-        // When the user clicks the button, open the modal
-        eval("btn_" + val + ".onclick = function() { " + val + ".style.display = \"block\"; }");
-       eval("close_btn_" + val + ".onclick = function() { modal_" + val + ".style.display = \"none\"; }");
-    }
-    
-    modals.forEach(make_modal);
+            </div>
+        </div>
 
+        <script>
+            // Make modals and buttons
+            var modals = ["about",  "settings", "download"];
+            function make_modal(val){
+                eval("var modal_" + val + " = document.getElementById(\"" + val +"\");");
+                eval("var btn_" + val + " = document.getElementById(\"btn_" + val +"\");");
+                // When the user clicks the button, open the modal
+                eval("btn_" + val + ".onclick = function() { " + val + ".style.display = \"block\"; }");
+               eval("close_btn_" + val + ".onclick = function() { modal_" + val + ".style.display = \"none\"; }");
+            }
+            
+            modals.forEach(make_modal);
+        </script>
 
-
-    
-    </script>
-
-
-</body>
+    </body>
 
 </html>
