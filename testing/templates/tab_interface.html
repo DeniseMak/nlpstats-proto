@@ -1,29 +1,6 @@
 <!DOCTYPE html>
 <html>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
-</script>
-
-<script type=text/javascript>
-    // Note: This doesn't work for the file fields
-        $(function() {
-          $('a#process_input').bind('click', function() {
-            $.getJSON('/', {
-
-              eval_unit_size: $('input[name="eval_unit_size"]').val(),
-              seed: $('input[name="seed"]').val(),
-                system_file: $('input[name="system_file"]').val()
-
-            }, function(data) {
-                // Note: I don't think this is working.
-              $('#result').text(data.result);
-              $('#hist_score1').src(data.hist_score1);
-              $('#hist_score2').src(data.hist_score2);
-            });
-            return false;
-          });
-        });
-</script>
 
 <script type="text/javascript">
     function da_submit_func() {
@@ -40,6 +17,9 @@
       color: #333333;
       padding: 2px 6px 2px 6px;
     }
+
+
+
 
 
 
@@ -82,7 +62,43 @@ ul.breadcrumb li a:hover {
 
 
 
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
 
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
 
 
 
@@ -150,12 +166,12 @@ ul.breadcrumb li a:hover {
     </div>
 
     <div class="top_bar">
+    
+ <!-- Trigger/Open The Modal -->
+<button id="btn_about">About</button>
+<button id="btn_settings">Modify or Save/Restore Settings</button>
+<button id="btn_download">Download Report</button>
 
-        <a href="#">About</a> &ensp;
-        <a href="#">Settings</a> &ensp;
-        <a href="#">Save Progress</a> &ensp;
-        <a href="#">Restore</a> &ensp;
-        <a href="#">Download Report</a>
     </div>
     <div class="roundpurple">
         <ul class="breadcrumb">
@@ -325,9 +341,82 @@ ul.breadcrumb li a:hover {
 
     </div>
 
-    <div class="footer">
-        <p>Copyright 2020 AUTHORS. This website is released under the terms of the LICENSE. See the paper at LINK.</p>
+    
+    
+
+
+    </head>
+    <body>
+
+
+    <!-- The Modal -->
+    <div id="about" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+        <button id="close_btn_about">Close</button>
+        <p>Copyright 2020 by AUTHORS. See our paper at LINK. This website is released under the LICENSE at LINK. LIST OF TECH USED AND THEIR LICENSES and CITATIONS.</p>
+
+      </div>
     </div>
+    
+    
+    <!-- The Modal -->
+    <div id="settings" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+
+                 <button id="close_btn_settings">Close</button>
+        <p>LIST OF SETTINGS ITEMS</p>
+      
+        <button id="restore">Save Settings to File</button>
+          <button id="save">Restore Settings from File</button>
+
+      </div>
+    </div>
+    
+    
+        
+
+        <!-- The Modal -->
+          <div id="download" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+
+                 <button id="close_btn_download">Close</button>
+              <p>DOWNLOAD REPORT</p>
+
+            </div>
+          </div>
+
+
+
+    
+    
+    
+
+    
+    
+    <script>
+    // Make modals and buttons
+    var modals = ["about",  "settings", "download"];
+    function make_modal(val){
+        eval("var modal_" + val + " = document.getElementById(\"" + val +"\");");
+        eval("var btn_" + val + " = document.getElementById(\"btn_" + val +"\");");
+        // When the user clicks the button, open the modal
+        eval("btn_" + val + ".onclick = function() { " + val + ".style.display = \"block\"; }");
+       eval("close_btn_" + val + ".onclick = function() { modal_" + val + ".style.display = \"none\"; }");
+    }
+    
+    modals.forEach(make_modal);
+
+
+
+    
+    </script>
+
 
 </body>
 
