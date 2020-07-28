@@ -12,29 +12,27 @@ from matplotlib import pyplot as plt
 plt.rcParams['svg.fonttype'] = 'none'
 
 
-def post_power_analysis(sig_test_name, is_normal, score, step_size, starting_size=30, output_dir='', mu=0, B=200, alpha=0.05):
+def post_power_analysis(sig_test_name, sim_method, score, step_size, dist_name = 'normal', starting_size=30, output_dir='', mu=0, B=200, alpha=0.05):
 	z = np.array(list(score.values()))
 	sample_sizes = np.arange(starting_size, len(z), step_size)
 	power_sampsizes = {}
 
-	if is_normal:
-		power_method = 'Monte Carlo'
-		mu_hat = np.mean(z)
-		var_hat = np.var(z,ddof=1)
-		n = len(z)
-		for i in sample_sizes:
-			count = 0
-			for b in range(0,B):
-				z_b = np.random.normal(loc=mu_hat,scale=np.sqrt(var_hat),size=int(i))
-				(test_stats, pval) = stats.ttest_1samp(z_b,mu)
-				if(pval<alpha):
-					count+=1
-			power_sampsizes[i] = float(count)/B
+	if sim_method == "montecarlo": 
+		if dist_name == 'normal': # currently only implement for normal dist.
+			mu_hat = np.mean(z)
+			var_hat = np.var(z,ddof=1)
+			n = len(z)
+			for i in sample_sizes:
+				count = 0
+				for b in range(0,B):
+					z_b = np.random.normal(loc=mu_hat,scale=np.sqrt(var_hat),size=int(i))
+					(test_stats, pval) = stats.ttest_1samp(z_b,mu)
+					if(pval<alpha):
+						count+=1
+				power_sampsizes[i] = float(count)/B
 
-	else:
-		power_method = 'Bootstrap'
 
-	
+	if sim_method == "bootstrap":
 		for i in sample_sizes:
 			count = 0
 			for b in range(0,B):
@@ -59,5 +57,5 @@ def post_power_analysis(sig_test_name, is_normal, score, step_size, starting_siz
 
 	plt.savefig(output_dir+'/power_samplesizes.svg')
 
-	return((power_sampsizes,power_method))
+	return(power_sampsizes)
 
