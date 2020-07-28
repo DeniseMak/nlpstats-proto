@@ -9,7 +9,7 @@ import numpy as np
 # Haotian's Business Logic
 from logic.test_case import testCase
 from logic.help import helper
-from logic.effect_size import calc_eff_size
+from logic.effectSize import calc_eff_size
 from logic.data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score,\
 skew_test, normality_test, recommend_test
 from logic.sig_testing import run_sig_test
