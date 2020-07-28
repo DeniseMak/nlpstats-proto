@@ -115,33 +115,44 @@ def plot_hist_diff(score_diff, output_dir):
 
 	plt.savefig(output_dir+'/hist_score_diff.svg')
 
-
-def partition_score(score_diff, eval_unit_size, shuffled, randomSeed, method, output_dir):
+def partition_score(score1, score2, score_diff, eval_unit_size, shuffled, randomSeed, method, output_dir):
 	"""
 	This function partitions the score difference with respect to the given
 	evaluation unit size. Also, the user can choose to shuffle the score difference
 	before partitioning.
 
+	@param score1, score2: original scores
 	@param score_diff: score difference, a dictionary
 	@param eval_unit_size: evaluation unit size
 	@param shuffled: a boolean value indicating whether reshuffling is done
 	@param method: how to calculate score in an evaluation unit (mean or median)
-	@return: score_diff_new, the partitioned score difference, a dictionary
+	@return: score1_new, score2_new, score_diff_new, the partitioned scores, dictionary
 	"""
-	ind = list(score_diff.keys())
+	ind = list(score_diff.keys()) # the keys should be the same for three scores
+
 	if shuffled:
 		ind_shuffled = random.Random(randomSeed).shuffle(ind)
 	ind_shuffled = np.array_split(ind,np.floor(len(ind)/eval_unit_size))
 	ind_new = 0
+
+	score1_new = {}
+	score2_new = {}
 	score_diff_new = {}
+
 	for i in ind_shuffled:
 		if method == "mean":
+			score1_new[ind_new] = np.array([score1[x] for x in i]).mean()
+			score2_new[ind_new] = np.array([score2[x] for x in i]).mean()
 			score_diff_new[ind_new] = np.array([score_diff[x] for x in i]).mean()
 		if method == "median":
+			score1_new[ind_new] = np.median(np.array([score1[x] for x in i]))
+			score2_new[ind_new] = np.median(np.array([score2[x] for x in i]))
 			score_diff_new[ind_new] = np.median(np.array([score_diff[x] for x in i]))
 		ind_new+=1
 
-	x = list(score_diff_new.values())
+
+	# plot score1_new
+	x = list(score1_new.values())
 	plt.figure()
 	plt.hist(x, bins=np.linspace(-1,1, 50))
 	plt.axvline(np.array(x).mean(), color='b', linestyle='--', linewidth=1, label='mean')
@@ -149,14 +160,41 @@ def partition_score(score_diff, eval_unit_size, shuffled, randomSeed, method, ou
 	plt.legend(loc='upper right')
 	plt.xlabel("Score")
 	plt.ylabel("Frequency")
-	plt.title("Histogram of Score Difference (partitioned)")
+	plt.title("Histogram of score1 (partitioned)")
 
 	if not os.path.exists(output_dir):
 		os.makedirs(output_dir)
 
+	plt.savefig(output_dir+'/hist_score1_partitioned.svg')
+
+	# plot score2_new
+	y = list(score2_new.values())
+	plt.figure()
+	plt.hist(y, bins=np.linspace(-1,1, 50))
+	plt.axvline(np.array(y).mean(), color='b', linestyle='--', linewidth=1, label='mean')
+	plt.axvline(np.median(np.array(y)), color='r', linestyle='-.', linewidth=1, label='median')
+	plt.legend(loc='upper right')
+	plt.xlabel("Score")
+	plt.ylabel("Frequency")
+	plt.title("Histogram of score2 (partitioned)")
+
+	plt.savefig(output_dir+'/hist_score2_partitioned.svg')
+
+	# plot score_diff_new
+	z = list(score_diff_new.values())
+	plt.figure()
+	plt.hist(z, bins=np.linspace(-1,1, 50))
+	plt.axvline(np.array(z).mean(), color='b', linestyle='--', linewidth=1, label='mean')
+	plt.axvline(np.median(np.array(z)), color='r', linestyle='-.', linewidth=1, label='median')
+	plt.legend(loc='upper right')
+	plt.xlabel("Score")
+	plt.ylabel("Frequency")
+	plt.title("Histogram of Score Difference (partitioned)")
+
 	plt.savefig(output_dir+'/hist_score_diff_partitioned.svg')
 
-	return(score_diff_new)
+	return([score1_new, score2_new, score_diff_new])
+
 
 def normality_test(score, alpha):
 	"""

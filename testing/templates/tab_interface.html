@@ -179,7 +179,7 @@
 
             <!-- RECOMMENDATION for significance tests with REASONS -->
             <h2 id=sigtest_heading align='left'>
-                {{ result_str }}</h2>
+                {{ sigtest_heading }}</h2>
             {% if recommended_tests_reasons|length %}
             <table border=1>
 
@@ -208,10 +208,10 @@
 
             <!-- Images -->
             {% if hist_score1 %}
-            <img id=hist_score1 src="{{ hist_score1 }}?{{ rand }}"> {% endif %} {% if hist_score2 %}
-            <img id=hist_score2 src="{{ hist_score2 }}?{{ rand }}"> {% endif %} {% if hist_diff %}
-            <img id=hist_diff src="{{ hist_diff }}?{{ rand }}"> {% endif %} {% if hist_diff_par %}
-            <img id=hist_diff_par src="{{ hist_diff_par }}?{{ rand }}"> {% endif %}
+            <img id=hist_score1 src="../{{ hist_score1 }}?{{ rand }}"> {% endif %} {% if hist_score2 %}
+            <img id=hist_score2 src="../{{ hist_score2 }}?{{ rand }}"> {% endif %} {% if hist_diff %}
+            <!-- <img id=hist_diff src="{{ hist_diff }}?{{ rand }}"> {% endif %} {% if hist_diff_par %} -->
+            <img id=hist_diff_par src="../{{ hist_diff_par }}?{{ rand }}"> {% endif %}
 
         </div>
         <!-- end round green (data analysis) -->
@@ -320,16 +320,16 @@
         <div class="roundpurplebottom" style="position:relative; top: -18px;">
             <form action="/effectsize" class="form-horizontal" enctype="multipart/form-data" method="post">
                 <!-- Effect Size list of tests -->
-                {% if recommended_tests_reasons|length %}
+                {% if effect_size_estimators|length %}
 
                 <table border=1>
 
                     <tr>
-                        <th>Test</th>
-                        <th>Reason</th>
+                        <th>Effect size estimator</th>
+                        <th>Description</th>
                     </tr>
 
-                    {% for key, value in recommended_tests_reasons.items() %}
+                    {% for key, value in effect_size_estimators.items() %}
                     <tr>
                         <td> {{ key }} </td>
                         <td>{{ value }}</td>
@@ -338,7 +338,7 @@
                 </table>
                 <!--<ul>
 
-                                 {% for key, value in recommended_tests_reasons.items() %}
+                                 {% for key, value in effect_size_estimators.items() %}
                             <li>{{ key }}
                                 <div class="tooltip">?
                                     <span class="tooltiptext">{{ value }}</span>
@@ -350,15 +350,18 @@
 
                 <!-- <h2>Choose the significance test to run</h2> -->
                 <!-- radio button to choose test -->
-                <br> {% for key, value in recommended_tests_reasons.items() %}
+                <br> {% for key, value in effect_size_estimators.items() %}
 
-                <input type="radio" name="target_sig_test" id="target_sig_test-1" {% if sig_test_name %} {% if key==sig_test_name %} checked="checked" {% endif %} {% endif %} value={{ key }}> {{ key }}
+                <input type="radio" name="target_eff_test" id="target_eff_test-1"
+                        {% if eff_estimator %} {% if key==eff_estimator %} checked="checked" {% endif %}
+                        {% endif %} value={{ key }}> {{ key }}
                 <div class="tooltip">?
                     <span class="tooltiptext">{{ value }}</span>
                 </div>
 
                 {% endfor %} {% endif %}
                 <!-- Effect Size Multiple Radios (inline)  -->
+                <!--
                 <br><br> Target Statistic:
 
                 <label class="radio-inline" for="target_statistic-0">
@@ -374,8 +377,7 @@
                             checked="checked"
                           {% endif %}
                     >Median
-         
-            
+                    -->
 
               <br>    <br>
               <!-- effect size Submit Button -->
@@ -396,14 +398,13 @@
 
         <div class="roundgreen" class="hiddendiv" id="hidden">
             <p></p>
-            {% if effect_estimator_dict|length %}
+                {% if eff_size_val %}
                 <table border="1">
                  <tr><th>Estimator</th><th>Effect Size</th></tr>
-                    {% for est, eff_size in effect_estimator_dict.items() %}
-                        <tr><td>{{ est }}</td><td>{{ eff_size }}</td></tr>
-                    {% endfor %}
+                        <tr><td>{{ eff_estimator }}</td><td>{{ eff_size_val }}</td></tr>
                 </table>
-            {% endif %}
+                {% endif %}
+
 
         </div>
     </div>
@@ -412,8 +413,8 @@
 
         <div class="roundpurplebottom" style="position:relative; top: -18px;">
 
-            <!-- Multiple Radios -->
-            <div class="form-group">
+            <form action="/power" class="form-horizontal" enctype="multipart/form-data" method="post">
+                <div class="form-group">
 
                 <!-- Don't need this Effect Size textbox here, because it'd be for Pre-test power analysis -->
                 <!--
@@ -423,30 +424,45 @@
                     <input id="effect_size" name="effect_size" type="number" placeholder="default" class="form-control input-md" required="">
 
                 </div>
-                --> Effect Size:
+                -->
                 <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span> </div>
 
                 <input id="start" name="start" type="number" placeholder="Start" class="form-control input-md" required="">
-                <input id="end" name="end" type="number" placeholder="End" class="form-control input-md" required="">
+
                 <input id="step_size" name="step_size" type="number" placeholder="Step Size" class="form-control input-md" required="">
-
+<!--
                 <br><br> Sample Size:
-                <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div>
+                <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div> -->
+                <!-- radio button to choose test -->
+                <br>
 
-                <input id="iterations" name="iterations" type="number" placeholder="default" class="form-control input-md" required="">
+                <input type="radio" name="target_sig_test" id="target_sig_test-1"
+                         checked="checked"
+
+                       value={{ 'montecarlo' }}>
+                    Montecarlo
+                <div class="tooltip">?
+                    <span class="tooltiptext">{{ value }}</span>
+                </div>
+
+
+
+
 
                 <br> <br> Iterations Per Sample Size:
                 <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div>
-                 <input id="iter_size" value="iter_size">
+
          
-           
+           <input id="iterations" name="iterations" type="number" placeholder="default"
+                       class="form-control input-md" required="">
                 <br><br>
                 <!-- Power Submit Button -->
 
              
                 <button id="pa_submit" name="pa_submit" type=submit class="btn btn-success" onsubmit="pa_submit_func()">Run</button>
 
-        </div>
+                </div>
+            </form>
     </div>
 
     <div class="roundgreen" class="hiddendiv" id="hidden">

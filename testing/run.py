@@ -9,14 +9,15 @@ import numpy as np
 # Haotian's Business Logic
 from logic.test_case import testCase
 from logic.help import helper
-from logic.effect_size import calc_eff_size
+from logic.effectSize import calc_eff_size
 from logic.data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score,\
 skew_test, normality_test, recommend_test
 from logic.sig_testing import run_sig_test
 
 import logic.sig_testing
 import logic.power_analysis
-FOLDER = os.path.join('user')
+#FOLDER = os.path.join('user')
+FOLDER = os.path.join('static')
 app = Flask(__name__)
 app.config['FOLDER'] = FOLDER
 
@@ -32,6 +33,10 @@ template_filename_sigtest = "tab_interface_sigtest_mockup.html"
 summary_str = "Summary of statistics"
 teststat_heading = "Test statistic recommendation"
 sig_test_heading = 'You can choose from the following significance tests'
+estimators = {"cohend": "This function calculates the Cohen's d effect size estimator.",
+              "hedgesg": "This function takes the Cohen's d estimate as an input and calculates the Hedges's g.",
+              "wilcoxon_r": "This function calculates the standardized z-score (r) for the Wilcoxon signed-rank test.",
+              "hodgeslehmann": "This function estimates the Hodges-Lehmann estimator for the input score."}
 
 def calc_score_diff(score1,score2):
 	"""
@@ -107,7 +112,7 @@ def homepage(debug=True):
         f.save(FOLDER + "/" + secure_filename(f.filename))
 
         scores1, scores2 = read_score_file(FOLDER + "/" + f.filename) #read_score_file("score")
-        plot_hist(scores1, scores2)
+        # plot_hist(scores1, scores2)
         score_dif = calc_score_diff(scores1, scores2)
         eval_unit_size = request.form.get('eval_unit_size')
 
@@ -118,7 +123,7 @@ def homepage(debug=True):
         sample_size = np.floor(len(list(score_dif))/float(eval_unit_size))
 
         # plot difference hist
-        plot_hist_diff(score_dif, FOLDER)
+        # plot_hist_diff(score_dif, FOLDER)
 
 
         # target_stat is 'mean' or 'median'
@@ -135,7 +140,7 @@ def homepage(debug=True):
 
 
         # partition score difference and save svg
-        score_diff_par = partition_score(score_dif, float(eval_unit_size),
+        score_diff_par = partition_score(scores1, scores2, score_dif, float(eval_unit_size),
                                          shuffle, # shuffle if we have seed
                                          seed,
                                          eval_unit_stat, # mean or median
@@ -146,7 +151,7 @@ def homepage(debug=True):
         tc = testCase(scores1,
                                scores2,
                                score_dif,
-                               score_diff_par,
+                               score_diff_par[2],#score_diff_par,
                                sample_size,
                                FOLDER)
         tc.get_summary_stats()
@@ -159,9 +164,9 @@ def homepage(debug=True):
         #                                                                tc.eda.summaryStat_score1.max_val))
 
         # --------------Recommended Test Statistic (mean or median, by skewness test) ------------------
-        mean_or_median = skew_test(score_diff_par)
+        mean_or_median = skew_test(score_diff_par[2])
         # ---------------normality test
-        is_normal = normality_test(score_diff_par, alpha=0.05)
+        is_normal = normality_test(score_diff_par[2], alpha=0.05)
         # --------------Recommended Significance Tests -------------------------
         recommended_tests = recommend_test(mean_or_median, is_normal)
 
@@ -178,8 +183,14 @@ def homepage(debug=True):
 
         if eval_unit_size:
 
-            full_filename1 = os.path.join(app.config['FOLDER'], 'hist_score1.svg')
-            full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2.svg')
+            # full_filename1 = app.config['FOLDER'] + '/' + 'hist_score1.svg'
+            # # os.path.join(app.config['FOLDER'], 'hist_score1.svg')
+            # full_filename2 = app.config['FOLDER'] + '/' + 'hist_score2.svg'
+            # full_filename_dif = os.path.join(app.config['FOLDER'], 'hist_score_diff.svg')
+            # full_filename_dif_par = app.config['FOLDER'] + '/' + 'hist_score_diff_partitioned.svg'
+
+            full_filename1 = os.path.join('static', 'hist_score1_partitioned.svg')
+            full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2_partitioned.svg')
             full_filename_dif = os.path.join(app.config['FOLDER'], 'hist_score_diff.svg')
             full_filename_dif_par = os.path.join(app.config['FOLDER'], 'hist_score_diff_partitioned.svg')
             filename_str =  "input_filename: {} img1: {}, img2: {}, dif={}, dif_par={}".format(
@@ -210,6 +221,7 @@ def homepage(debug=True):
                                            summary_str = summary_str,
                                            summary_stats_dict = summary_stats_dict,
                                            teststat_heading = teststat_heading,
+                                           sigtest_heading = sig_test_heading,
                                            mean_or_median = mean_or_median,  # 'mean' if not skewed, 'median' if skewed.
                                            is_normal = is_normal,  # True if normal, False if not.
                                            recommended_tests = recommended_tests,  # this is a list.
@@ -218,7 +230,9 @@ def homepage(debug=True):
                                            hist_score2=full_filename2,
                                            hist_diff= full_filename_dif,
                                            hist_diff_par= full_filename_dif_par,
-                                           rand=rand  # rand is for image URL to force reload (avoid caching)
+                                           rand=rand,  # rand is for image URL to force reload (avoid caching)
+                                           # specific to effect size test
+                                           effect_size_estimators = estimators
                                            )
                 resp = make_response(rendered)
 
@@ -283,7 +297,7 @@ def sigtest(debug=True):
     last_tab_name_clicked = 'Significance Test' #request.form.get('last_tab_input')
     print("***** LAST TAB (from POST): {}".format(last_tab_name_clicked))
 
-    scores1, scores2 = read_score_file(fileName)  # read_score_file("score")
+    scores1, scores2 = read_score_file(FOLDER + "/" + fileName)  # todo: different FOLDER for session/user
     score_dif = calc_score_diff(scores1, scores2)
     if debug: print("THE SCORE_DIF:{}".format(score_dif))
     test_stat_val, pval, rejection = run_sig_test(sig_test_name, # 't'
@@ -295,6 +309,10 @@ def sigtest(debug=True):
     recommended_tests = json.loads(request.cookies.get('recommended_tests'))
     summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
     rendered = render_template(template_filename,
+                               # specific to effect size test
+                               effect_size_estimators=estimators,
+                               eff_estimator=request.cookies.get('eff_estimator'),
+                               eff_size_val=request.cookies.get('eff_size_val'),
                                help1 = helper("function 1"),
                                help2 = helper("function 2"),
                                #file_uploaded = "File uploaded!!: {}".format(fileName),
@@ -303,7 +321,7 @@ def sigtest(debug=True):
                            eval_unit_size=request.cookies.get('eval_unit_size'),
                            eval_unit_stat=request.cookies.get('eval_unit_stat'),
                            shuffle_seed=request.cookies.get('shuffle_seed'),
-                           sig_test_heading=request.cookies.get('sig_test_heading'),
+                           sigtest_heading=request.cookies.get('sig_test_heading'), # todo: add teststat_heading
                            summary_str=request.cookies.get('summary_str'),
                            mean_or_median = request.cookies.get('mean_or_median'),
                            is_normal = request.cookies.get('is_normal'),
@@ -336,43 +354,43 @@ def effectsize():
     if request.method == 'POST':
         last_tab_name_clicked = 'Effect Size'
         fileName = request.cookies.get('fileName')
-        scores1, scores2 = read_score_file(fileName)
+        scores1, scores2 = read_score_file(FOLDER + "/" + fileName) # todo: different FOLDER for session/user
         # get dif
         score_dif = calc_score_diff(scores1, scores2)
 
-        # target_stat is 'mean' or 'median'
-        effect_size_target_stat= request.cookies.get('mean_or_median')
+        previous_selected_est = request.cookies.get('eff_estimator')
 
-        previous_selected_test = request.cookies.get('sig_test_name')
         # todo: check if different from previous
-        cur_selected_test = request.form.get('target_sig_test')
+        cur_selected_est = request.form.get('target_eff_test')
 
-        print('target stat for effect size={}, test={}'.format(
-            effect_size_target_stat, cur_selected_test))
+        print('previous estimator={}, current estimator={}'.format(
+            previous_selected_est , cur_selected_est))
 
-        (estimates, estimators) = calc_eff_size(cur_selected_test,
-                                                effect_size_target_stat,
-                                                score_dif)
-        print('Estimates: {}\nEstimators: {}'.format(estimates, estimators))
-        if len(estimators) != len(estimates):
-            print("Warning (effect size): {} estimators but {} estimates".format(
-                len(estimators), len(estimates)
-            ))
+        # old:
+        # (estimates, estimators) = calc_eff_size(cur_selected_test,
+        #                                         effect_size_target_stat,
+        #                                         score_dif)
+        # print('Estimates: {}\nEstimators: {}'.format(estimates, estimators))
+        # if len(estimators) != len(estimates):
+        #     print("Warning (effect size): {} estimators but {} estimates".format(
+        #         len(estimators), len(estimates)
+        #     ))
 
-        # build dict
-        est_dict = {}
-        for i in range(len(estimators)):
-            est_name = estimators[i]
-            est_val = estimates[i]
-            est_dict[est_name] = est_val
 
+        eff_size_val = calc_eff_size(cur_selected_est, score_dif)
+
+        # For completing previous tabs: target_stat is 'mean' or 'median'
+        previous_selected_test = request.cookies.get('sig_test_name')
         recommended_test_reasons = json.loads(request.cookies.get('recommended_test_reasons'))
         recommended_tests = json.loads(request.cookies.get('recommended_tests'))
         summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
         rendered = render_template(template_filename,
-                                   #effect_size_estimators = estimators,
+                                   # specific to effect size test
+                                   effect_size_estimators = estimators,
+                                   eff_estimator = cur_selected_est,
+                                   eff_size_val = eff_size_val,
                                    #effect_size_estimates = estimates,
-                                   effect_estimator_dict = est_dict,
+                                   #effect_estimator_dict = est_dict,
                                    help1=helper("function 1"),
                                    help2=helper("function 2"),
                                    # file_uploaded = "File uploaded!!: {}".format(fileName),
@@ -381,7 +399,7 @@ def effectsize():
                                    eval_unit_size=request.cookies.get('eval_unit_size'),
                                    eval_unit_stat=request.cookies.get('eval_unit_stat'),
                                    shuffle_seed=request.cookies.get('shuffle_seed'),
-                                   sig_test_heading=request.cookies.get('sig_test_heading'),
+                                   sigtest_heading=request.cookies.get('sig_test_heading'), # todo: add teststat_heading
                                    summary_str=request.cookies.get('summary_str'),
                                    mean_or_median=request.cookies.get('mean_or_median'),
                                    is_normal=request.cookies.get('is_normal'),
@@ -393,19 +411,20 @@ def effectsize():
                                    hist_diff=request.cookies.get('hist_diff'),
                                    hist_diff_par=request.cookies.get('hist_diff_par'),
                                    # specific to sig_test
-                                   # TODO: update sig_test results if test_name changes in eff_size.
                                    sig_test_stat_val=request.cookies.get('sig_test_stat_val'), # json.loads?
                                    pval=request.cookies.get('pval'),
                                    rejectH0=request.cookies.get('rejectH0'),
                                    sig_alpha=request.cookies.get('sig_test_alpha'),
-                                   sig_test_name=cur_selected_test  # request.cookies.get('sig_test_name')
+                                   sig_test_name=request.cookies.get('sig_test_name')
                                    )
 
         resp = make_response(rendered)
         # -------- WRITE TO COOKIES ----------
-        resp.set_cookie('effect_estimator_dict',json.dumps(est_dict))
-        if cur_selected_test != previous_selected_test:
-            resp.set_cookie('sig_test_name', cur_selected_test)
+        resp.set_cookie('effect_estimator_dict',json.dumps(estimators))
+        if cur_selected_est:
+            resp.set_cookie('eff_estimator', cur_selected_est)
+        if eff_size_val:
+            resp.set_cookie('eff_size_val', str(eff_size_val))
         return resp
 
     elif request.method == 'GET':
