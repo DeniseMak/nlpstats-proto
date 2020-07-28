@@ -16,7 +16,6 @@ skew_test, normality_test, recommend_test
 from logic.sig_testing import run_sig_test
 
 FOLDER = os.path.join('user')
-
 app = Flask(__name__)
 app.config['FOLDER'] = FOLDER
 
