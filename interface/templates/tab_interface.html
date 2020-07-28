@@ -459,7 +459,7 @@ body
             <!-- Button for JS script-->
             <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
         </div>
-          <h2>Results</h2>
+
         <!-- <ul>
             <li><b>test statistic/CI:</b>1.65562</li>
             <li><b>p-value</b>: 0.098585</li>
@@ -467,6 +467,7 @@ body
         </ul> -->
 
           {% if sig_test_stat_val %}
+            <h2>Results</h2>
             <table border="1">
                 <tr><th>test statistic/CI</th>
                     <td>{{ sig_test_stat_val }}<!--1.65562--></td></tr>

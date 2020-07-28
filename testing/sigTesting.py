@@ -9,10 +9,8 @@ from statsmodels.stats.descriptivestats import sign_test
 def run_sig_test(recommended_test, score, alpha=0.05, mu=0, B=2000):
 	if isinstance(score,dict):
 		x = np.array(list(score.values()))
-		print ('SCORE WAS A DICT!!') # todo remove this line
 	else:
 		x = score
-		print('SCORE NOT A DICT: {}'.format(x))  # todo remove this line
 		
 	test_stats_value = 0
 	pval = 0

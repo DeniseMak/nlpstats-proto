@@ -234,7 +234,7 @@
 
         <div class="roundpurplebottom" style="position:relative; top: -18px;">
 
-            <form action="/" class="form-horizontal" enctype="multipart/form-data" method="post">
+         <form action="/sig_test" class="form-horizontal" enctype="multipart/form-data" method="post">
 
                 <div class="form-group">
                     <!-- SIGNIFICANCE TEST RECOMMENDATION for test statistics -->
@@ -272,19 +272,29 @@
                                 </div>
                         </label>
                     <p></p>
-                    {% endfor %} {% endif %}
+                    {% endfor %}
+                    {% endif %}
                     <br/>
                     <p></p>
+            <!-- SIGNIFICANCE alpha -->
                     <label class="col-md-4 control-label" for="effect_size">Significance level &alpha;:</label>
-                    <div class="tooltip">?
-                        <span class="tooltiptext">The significance level.</span>
-                    </div>
-                    <div class="col-md-4">
-                        <input id="significance_level" name="significance_level" type="number" placeholder="0.00" class="form-control input-md" required="" step="0.01" min="0" max="1">
-                    </div>
+                          <div class="tooltip">?
+                            <span class="tooltiptext">The significance level.</span>
+                          </div>
+                        <div class="col-md-4">
+                        <input id="significance_level" name="significance_level" type="number"
+                               {% if sig_alpha %}
+                                    placeholder="{{ sig_alpha }}"
+                                    value="{{ sig_alpha }}"
+                                {% else %}
+                                    placeholder="0.00"
+                               {% endif %}
+                               class="form-control input-md" required="" step="0.01" min="0" max="1">
+                        </div>
                 </div>
 
                 <br>
+                <!-- Significance: Submit Button -->
                 <div class="form-group">
                     <label class="col-md-4 control-label" for="submit"></label>
                     <div class="col-md-4">
@@ -297,12 +307,21 @@
                     </div>
                 </div>
 
-        </div>
         </form>
         <!-- End Significance Test form -->
 
         <div class="roundgreen" class="hiddendiv" id="hidden">
-
+          {% if sig_test_stat_val %}
+            <h2>Results</h2>
+            <table border="1">
+                <tr><th>test statistic/CI</th>
+                    <td>{{ sig_test_stat_val }}<!--1.65562--></td></tr>
+                <tr><th>p-value</th>
+                    <td> {{ pval }}<!--0.098585--></td></tr>
+                <tr><th>Reject H0</th>
+                    <td>{{ rejectH0 }}</td></tr>
+            </table>
+          {% endif %}
         </div>
     </div>
 
@@ -468,6 +487,32 @@
 
         </script>
 
+        <script>
+        function showdiv() {
+          document.getElementById("hidden").style.display="block"
+        }
+        </script>
+
+        <script>
+        function showLastTab(tabToShow) {
+          // document.getElementById("hidden").style.display="block"
+          var i, tabcontent, tablinks;
+          tabcontent = document.getElementsByClassName("tabcontent");
+          for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+          }
+          tablinks = document.getElementsByClassName("tablinks");
+          for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+          }
+            console.log('In showLastTab(), tabToShow=' + tabToShow);
+            document.getElementById(tabToShow).style.display="block"
+        }
+        </script>
+
+        <script>
+            window.onload = showLastTab('{{ last_tab_name_clicked }}')
+        </script>
 </body>
 
 </html>
