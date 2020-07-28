@@ -56,7 +56,7 @@ There is a built-in function:
 The script `dataAnalysis.py` conducts the pre-testing exploratory data analysis to plot histograms and check for test assumptions.
 
 ### Partitioning score difference:
-The function `partition_score(score1, score2, score_diff, eval_unit_size, shuffled, randomSeed, method, output_dir)` splits *score1, score2, score_diff* into evaluation units, of which the size is specified by the user. The user can also specify whether they want to reshuffle first, the seed used for reshuffling and the method they want to use for calculation (mean or median). This function will also plot the histogram of the partitioned *score1*, *score2* and *score_diff*.
+The function `partition_score(score1, score2, score_diff, eval_unit_size, shuffled, randomSeed, method, output_dir)` splits *score1, score2, score_diff* into evaluation units, of which the size is specified by the user. The user can also specify whether they want to reshuffle first, the seed used for reshuffling and the method they want to use for calculation (mean or median). This function will also plot the histogram of the partitioned *score1*, *score2* and *score_diff*. Note that after partitioning, the original *score1* and *score2* are overwritten with the new scores.
 
 
 ### Skewness check:
