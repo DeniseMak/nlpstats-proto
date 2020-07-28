@@ -1,0 +1,22 @@
+.header { text-align: center; }
+   
+.top_bar { text-align: center; text-decoration: none;}
+   
+   
+.roundpurplebottom {
+   
+    border-radius: 0px 0px 25px 25px;
+    border: 2px solid #4b2e83; /* Color Scheme (School Color) */
+    padding: 16px;
+}
+   
+   
+.roundgreen {
+    border-radius: 25px;
+    border: 2px solid DarkSeaGreen; /* Runs */
+    padding: 16px;
+}
+   
+   
+
+.footer { text-align: center; }
