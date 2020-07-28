@@ -118,7 +118,7 @@
                       Otherwise, we will not shuffle.</span>
                 </div>
 
-                <input id="seed" name="seed" type="number" placeholder="don't shuffle" {% if shuffle_seed %} value="{{ shuffle_seed }}" {% endif %} step="0.01" class="form-control input-md">
+                <input id="seed" name="seed" type="number" placeholder="don't shuffle" {% if shuffle_seed %} value="{{ shuffle_seed }}" {% endif %} step="1" class="form-control input-md">
 
                 <br><br>
                 <!-- Data Analysis Submit Button -->
@@ -425,36 +425,52 @@
 
                 </div>
                 -->
-                <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span> </div>
 
-                <input id="start" name="start" type="number" placeholder="Start" class="form-control input-md" required="">
-
-                <input id="step_size" name="step_size" type="number" placeholder="Step Size" class="form-control input-md" required="">
-<!--
-                <br><br> Sample Size:
-                <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div> -->
-                <!-- radio button to choose test -->
-                <br>
-
-                <input type="radio" name="target_sig_test" id="target_sig_test-1"
+                <b>Power method:</b><br>
+                    <!-- TODO: Display advice that takes into account the
+                     actual size of evaluation unit and the limits on min and max -->
+                    <p>The evaluation unit size is {{ eval_unit_size }}.</p>
+                <input type="radio" name="target_pow_test" id="target_sig_test-1"
                          checked="checked"
 
                        value={{ 'montecarlo' }}>
-                    Montecarlo
+                    Montecarlo (normal distribution required)
                 <div class="tooltip">?
                     <span class="tooltiptext">{{ value }}</span>
                 </div>
 
+                <input type="radio" name="target_pow_test" id="target_sig_test-1"
+                       value={{ 'bootstrap' }}>
+                    Bootstrap
+                <div class="tooltip">?
+                    <span class="tooltiptext">{{ value }}</span>
+                </div>
+                    <br>
+                    <br>
+                Minimum sample size: <input id="start" name="start" type="number"
+                       placeholder="Start" class="form-control input-md" value="30">
+                                    <div class="tooltip">?<span class="tooltiptext">"lower bound on number of samples (minimum number of evaluation units)"</span> </div>
+                <br/>
+                    Step size:
+                <input id="step_size" name="step_size" type="number" placeholder="Step Size"
+                       class="form-control input-md" value="50">
+                                    <div class="tooltip">?<span class="tooltiptext">"Step size for sample sizes at which to calculate power"</span> </div>
+<!--
+                <br><br> Sample Size:
+                <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div> -->
+                <!-- radio button to choose test -->
 
 
 
 
-                <br> <br> Iterations Per Sample Size:
+
+
+                <br> <br> Iterations Per Sample Size: <!-- TODO: add required range like '1 to 200'-->
                 <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div>
 
          
-           <input id="iterations" name="iterations" type="number" placeholder="default"
-                       class="form-control input-md" required="">
+           <input id="iterations" name="iterations" type="number" placeholder="default" value="200"
+                       class="form-control input-md">
                 <br><br>
                 <!-- Power Submit Button -->
 
@@ -467,6 +483,9 @@
 
     <div class="roundgreen" class="hiddendiv" id="hidden">
         <h2>Results:</h2>
+            <!-- Images -->
+            {% if power_file %}
+            <img id=power_file src="../{{ power_file }}?{{ rand }}"> {% endif %}
     </div>
     </div>
 

@@ -17,6 +17,8 @@ from logic.sig_testing import run_sig_test
 import logic.sig_testing
 import logic.power_analysis
 #FOLDER = os.path.join('user')
+from testing.logic.power_analysis import post_power_analysis
+
 FOLDER = os.path.join('static')
 app = Flask(__name__)
 app.config['FOLDER'] = FOLDER
@@ -166,6 +168,7 @@ def homepage(debug=True):
         # --------------Recommended Test Statistic (mean or median, by skewness test) ------------------
         mean_or_median = skew_test(score_diff_par[2])
         # ---------------normality test
+        # todo: add alpha parameter
         is_normal = normality_test(score_diff_par[2], alpha=0.05)
         # --------------Recommended Significance Tests -------------------------
         recommended_tests = recommend_test(mean_or_median, is_normal)
@@ -433,7 +436,68 @@ def effectsize():
             #full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2.svg')
         return render_template('tab_interface.html')
 
+@app.route('/power', methods= ["GET", "POST"])
+def power():
+    last_tab_name_clicked = 'Post-test Power Analysis'
+    fileName = request.cookies.get('fileName')
+    scores1, scores2 = read_score_file(FOLDER + "/" + fileName)  # todo: different FOLDER for session/user
+    # get dif
+    score_dif = calc_score_diff(scores1, scores2)
+    step_size = 40  #todo: get from form
+    pow_sampsizes = post_power_analysis('sig_test_name', 'montecarlo', score_dif, step_size,
+                        output_dir=FOLDER)
+    print(pow_sampsizes)
+    power_file = 'power_samplesizes.svg'
+    power_path = os.path.join(app.config['FOLDER'], power_file)
+
+
+    recommended_test_reasons = json.loads(request.cookies.get('recommended_test_reasons'))
+    recommended_tests = json.loads(request.cookies.get('recommended_tests'))
+    summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
+    rendered = render_template(template_filename,
+                               # specific to effect size test
+                               effect_size_estimators=estimators,
+                               eff_estimator=request.cookies.get('eff_estimator'),
+                               eff_size_val=request.cookies.get('eff_size_val'),
+                               # effect_size_estimates = estimates,
+                               # effect_estimator_dict = est_dict,
+                               help1=helper("function 1"),
+                               help2=helper("function 2"),
+                               # file_uploaded = "File uploaded!!: {}".format(fileName),
+                               last_tab_name_clicked=last_tab_name_clicked,
+                               # get from cookies
+                               eval_unit_size=request.cookies.get('eval_unit_size'),
+                               eval_unit_stat=request.cookies.get('eval_unit_stat'),
+                               shuffle_seed=request.cookies.get('shuffle_seed'),
+                               sigtest_heading=request.cookies.get('sig_test_heading'),  # todo: add teststat_heading
+                               summary_str=request.cookies.get('summary_str'),
+                               mean_or_median=request.cookies.get('mean_or_median'),
+                               is_normal=request.cookies.get('is_normal'),
+                               recommended_tests=recommended_tests,
+                               recommended_tests_reasons=recommended_test_reasons,
+                               summary_stats_dict=summary_stats_dict,
+                               hist_score1=request.cookies.get('hist_score1'),
+                               hist_score2=request.cookies.get('hist_score2'),
+                               hist_diff=request.cookies.get('hist_diff'),
+                               hist_diff_par=request.cookies.get('hist_diff_par'),
+                               # specific to sig_test
+                               sig_test_stat_val=request.cookies.get('sig_test_stat_val'),  # json.loads?
+                               pval=request.cookies.get('pval'),
+                               rejectH0=request.cookies.get('rejectH0'),
+                               sig_alpha=request.cookies.get('sig_test_alpha'),
+                               sig_test_name=request.cookies.get('sig_test_name'),
+                               # power
+                               power_file = power_path
+                               )
+
+    resp = make_response(rendered)
+    # -------- WRITE TO COOKIES ----------
+    # resp.set_cookie('pow_sampsizes', json.dumps(pow_sampsizes))
+    return resp
+
 """
+post_power_analysis(sig_test_name, sim_method, score, step_size,
+ output_dir=''):
 @app.route('/power_analysis', methods= ["GET", "POST"])
 def pa():
     if request.method == 'POST':
