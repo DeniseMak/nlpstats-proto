@@ -437,25 +437,14 @@
 
                 <br> <br> Iterations Per Sample Size:
                 <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div>
-
-                <input type="radio" name="method" id="method-0" value="monte_carlo" checked="checked"> Monte Carlo
-
-                <input type="radio" name="method" id="method-1" value="bootstrap"> Bootstrap
-
-                <!-- We don't need Analysis here, because it would be used for the pre-test power analysis
-                    <div class="radio">
-                        <label for="method-2">
-                          <input type="radio" name="method" id="method-2" value="analysis">
-                          Analysis
-                        </label>
-                    </div> -->
-
+                 <input id="iter_size" value="iter_size">
+         
+           
                 <br><br>
                 <!-- Power Submit Button -->
 
-                <input type="hidden" id="da_hidden" value="hidden101">
-
-                <button id="ef_submit" name="ef_submit" type=submit class="btn btn-success" onsubmit="pa_submit_func()">Run</button>
+             
+                <button id="pa_submit" name="pa_submit" type=submit class="btn btn-success" onsubmit="pa_submit_func()">Run</button>
 
         </div>
     </div>

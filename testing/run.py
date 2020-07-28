@@ -414,18 +414,16 @@ def effectsize():
             #full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2.svg')
         return render_template('tab_interface.html')
 
-
+"""
 @app.route('/power_analysis', methods= ["GET", "POST"])
 def pa():
     if request.method == 'POST':
-            last_tab_name_clicked = 'Effect Size'
-            fileName = request.cookies.get('fileName')
-            scores1, scores2 = read_score_file(fileName)
-            # get dif
-            score_dif = calc_score_diff(scores1, scores2)
+            effect_size = ('start', 'end', 'step_size')
+            iter_size = 'iter_size'
     elif request.method == 'GET':
             return render_template('tab_interface.html')
-            
+"""
+
 # https://www.roytuts.com/how-to-download-file-using-python-flask/
 @app.route('/download')
 def download_file():
