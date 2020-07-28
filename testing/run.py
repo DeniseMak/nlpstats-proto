@@ -416,7 +416,7 @@ def effectsize():
 # https://www.roytuts.com/how-to-download-file-using-python-flask/
 @app.route('/download')
 def download_file():
-        os.system("zip -r r.zip user/")
+        os.system("zip -r user/r.zip user/*")
         path = "user/r.zip"
         return send_file(path, as_attachment=True)
         
