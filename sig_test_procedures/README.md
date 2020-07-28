@@ -19,7 +19,8 @@ There is also a `main.py` script to test functions of the above 8 scripts, where
 * `<sys.argv[8]>` = `power.step_size` (for `post_power_analysis`)
 * `<sys.argv[9]>` = `sigTest.B` (for sig test functions)
 * `<sys.argv[10]>` = `power.B` (for `post_power_analysis`)
-
+* `<sys.argv[11]>` = `eff_size_ind` (for `calc_eff_size`, *cohend*, *hedgesg*, *wilcoxonr*, *hl*)
+* `<sys.argv[12]>` = `power_method` (for `post_power_analysis`, either *bootstrap* or *montecarlo*)
 
 ## Input file:
 The input file should be two columns of scores, separated by whitespace, like the following:
@@ -54,24 +55,20 @@ There is a built-in function:
 ## Stage 2: data analysis
 The script `dataAnalysis.py` conducts the pre-testing exploratory data analysis to plot histograms and check for test assumptions.
 
-### Plotting histograms:
-We will have three histograms for *score1* and *score2* and *score_diff* (their pairwise differences). The function `calc_score_diff(score1,score2)` calculates their pairwise differences and return a dictionary *score_diff*. The function `plot_hist(score1,score2)` plots two separate histograms for *score1* and *score2*. The sample mean and median are also shown in the plots as vertical dashed (--) and dash-dotted (-.) lines. 
-
-The function `plot_hist_diff(score_diff)` plots the histogram of *score_diff*.
-
-These two plot functions save the plots in the format of `.svg` in the directory `figures`, which is created by the script.
-
 ### Partitioning score difference:
-The function `partition_score(score_diff, eval_unit_size, shuffled, randomSeed, method, output_dir)` splits *score_diff* into evaluation units, of which the size is specified by the user. The user can also specify whether they want to reshuffle *score_diff* first and what method they want to use for calculation (mean or median). This function will also plot the histogram of the partitioned *score_diff*.
+The function `partition_score(score1, score2, score_diff, eval_unit_size, shuffled, randomSeed, method, output_dir)` splits *score1, score2, score_diff* into evaluation units, of which the size is specified by the user. The user can also specify whether they want to reshuffle first, the seed used for reshuffling and the method they want to use for calculation (mean or median). This function will also plot the histogram of the partitioned *score1*, *score2* and *score_diff*.
 
-### Normality test:
-The function `normality_test(score,alpha)` will conduct Shapiro-Wilks normality test for *score_diff* at a specified significance level `alpha`. The return value is a boolean, where `True` indicates normality and `False` indicates non-normality.
 
 ### Skewness check:
 The function `skew_test(score)` checks whether the distribution of *score_diff* is skewed in order to determine a good measure for central tendency. Note that here mean or median has nothing to do with the method of calculation in evaluation unit partitioning. The rules of thumb are:
 1. abs(skewness) > 1: highly skewed, use `median`.
 2. 0.5 <= abs(skewness) < 1: moderately skewed, use `median`.
 3. abs(skewness) < 0.5: roughly symmetric, use `mean` or `median`.
+If skewed, then the distribution is not normal for sure.
+
+### Normality test:
+The function `normality_test(score,alpha)` will conduct Shapiro-Wilks normality test for *score_diff* at a specified significance level `alpha`. The return value is a boolean, where `True` indicates normality and `False` indicates non-normality. 
+
 
 ### Recommending significance tests:
 The function `recommend_test` recommends a list of significance tests based on the results given before (from functions `skew_test` and `normality_test`):
@@ -93,7 +90,7 @@ The script `sigTesting.py` contains functions to run the significance testing ch
 
 
 ## Stage 4: reporting (effect size estimation and power analysis)
-The scripts `effectSize.py` and `powerAnalysis.py` partially provide functionalities for Stage 4.
+The scripts `effectSize.py` and `powerAnalysis.py` partially provide functionalities for Stage 4. The user needs to specify what effect size index to use and what power analysis method (*bootstrap* or *montecarlo*) to use (currently only normal distribution is implemented for the Monte Carlo method).
 
 ## `main.py` test case example:
 In this script, I choose the significance test to be the second in the list. If `eval_unit_size` is different (say 5), then the list of test might have different length, which may give rise to some bugs. 
@@ -102,55 +99,55 @@ Note that the power analysis part may take relatively longer time to complete.
 
 For example, run the following:
 
-`python main.py score 5 mean False 13 0.05 0.05 20 500 200`
+`python main.py score 5 mean False 1 0.05 0.05 20 500 200 cohend montecarlo`
 
 The output should be:
 
-> ------ EDA ------
+------ EDA ------
+Sample size after partitioning is: 400.0
 
-> Sample size after partitioning is: 400.0
+recommended tests: [('t', 'The student t test is most appropriate for normal sample and has the highest statistical power.'), ('bootstrap', 'The bootstrap test based on t ratios can be applied to normal sample.'), 'The sign test calibrated by permutation based on mean difference is also appropriate for normal sample, but its statistical power is relatively low due to loss of information.', ('wilcoxon', 'The Wilcoxon signed-rank test can be used for normal sample, but since it is a nonparametric test, it has relatively low statistical power. Also the null hypothesis is that the the pairwise difference has location 0.'), ('sign', 'The (exact) sign test can be used for normal sample, but it has relatively low statistical power due to loss of information.')]
 
-> recommended tests: ['bootstrap', 'sign', 'permutation', 'wilcoxon', 't']
+the test used: t
 
-> the test used: bootstrap
+normality: True
 
-> normality: False
+testing parameter: mean
 
-> testing parameter: mean
+------ Testing ------
 
-> ------ Testing ------
+------ Effect Size ------
 
-> ------ Effect Size ------
+------ Power Analysis ------
 
-> ------ Power Analysis ------
+Finished power analysis. Runtime: --- 0.8795456886291504 seconds ---
 
-> Finished power analysis. Runtime: --- 230.18052983283997 seconds ---
+------ Report ------
 
-> ------ Report ------
+test name: t
 
-> test name: bootstrap
+test statistic/CI: 1.6931857524657286
 
-> test statistic/CI: [-0.0051, 0.0048]
+p-value: 0.09120064130646023
 
-> p-value: None
+rejection of H0: False
 
-> rejection of H0: False
+-----------
 
-> -----------
+effect size estimates: 0.0847
 
-> effect size estimates: [0.0839, 0.0838]
+effect size estimator: cohend
 
-> effect size estimator: ["Cohen's d", "Hedges's g"]
+-----------
 
-> -----------
+obtained power: 0.44
 
-> obtained power:0.0
+Power analysis method: montecarlo
 
-The power analysis for the bootstrap test takes a bit longer (est. 230 secs) for this case.
 
-The final obtained power is the power level corresponding to the largest sample size. 
+Note: the final obtained power is the power level corresponding to the largest sample size. 
 
-Note that if the test is a bootstrap test, the return is a confidence interval and rejection boolean value, rather than a p-value. 
+If the test is a bootstrap test, the return is a confidence interval and rejection boolean value, rather than a p-value. 
 
 
 The saved plots are in `./figures/`.
