@@ -325,6 +325,7 @@ def sigtest(debug=True):
     resp.set_cookie('sig_test_name', sig_test_name)
     resp.set_cookie('sig_test_alpha', sig_alpha)
     resp.set_cookie('sig_test_stat_val', json.dumps(test_stat_val) )
+    print('test_stat_val={}, json_dumped={}'.format(test_stat_val, json.dumps(test_stat_val)))
     resp.set_cookie('pval', str(pval))
     resp.set_cookie('rejectH0', str(rejection))
     return resp
@@ -338,13 +339,9 @@ def effectsize():
         # get dif
         score_dif = calc_score_diff(scores1, scores2)
 
-        eval_unit_size = request.cookies.get('eval_unit_size')
-        seed = request.cookies.get('shuffle_seed')
-
         # target_stat is 'mean' or 'median'
         effect_size_target_stat= request.cookies.get('mean_or_median')
         print('target stat for effect size={}'.format(effect_size_target_stat))
-
 
         # TODO: make this not hardcoded
         (estimates, estimators) = calc_eff_size('not_wilcoxon', effect_size_target_stat, score_dif)
@@ -353,14 +350,13 @@ def effectsize():
             print("Warning (effect size): {} estimators but {} estimates".format(
                 len(estimators), len(estimates)
             ))
+
         # build dict
         est_dict = {}
         for i in range(len(estimators)):
             est_name = estimators[i]
             est_val = estimates[i]
             est_dict[est_name] = est_val
-
-
 
         recommended_test_reasons = json.loads(request.cookies.get('recommended_test_reasons'))
         recommended_tests = json.loads(request.cookies.get('recommended_tests'))
@@ -389,13 +385,17 @@ def effectsize():
                                    hist_diff=request.cookies.get('hist_diff'),
                                    hist_diff_par=request.cookies.get('hist_diff_par'),
                                    # specific to sig_test
-                                   sig_test_stat_val=request.cookies.get('test_stat_val'), # json.loads?
+                                   sig_test_stat_val=request.cookies.get('sig_test_stat_val'), # json.loads?
                                    pval=request.cookies.get('pval'),
-                                   rejectH0=request.cookies.get('rejection'),
-                                   sig_alpha=request.cookies.get('sig_alpha'),
+                                   rejectH0=request.cookies.get('rejectH0'),
+                                   sig_alpha=request.cookies.get('sig_test_alpha'),
                                    sig_test_name=request.cookies.get('sig_test_name')
                                    )
-        return rendered
+
+        resp = make_response(rendered)
+        # -------- WRITE TO COOKIES ----------
+        resp.set_cookie('effect_estimator_dict',json.dumps(est_dict))
+        return resp
 
     elif request.method == 'GET':
         # You got to the main page by navigating to the URL, not by clicking submit
