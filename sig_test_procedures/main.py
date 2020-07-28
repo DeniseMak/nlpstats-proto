@@ -33,6 +33,10 @@ if __name__ == '__main__':
 	B_boot = int(sys.argv[9])
 	B_pow = int(sys.argv[10])
 
+	eff_size_ind = str(sys.argv[11])
+
+	pow_method = str(sys.argv[12])
+
 
 	# output dir
 	#testCase_new.output_dir = sys.argv[10]
@@ -43,7 +47,7 @@ if __name__ == '__main__':
 	## data analysis
 	# plot histograms
 	print("------ EDA ------")
-	dataAnalysis.plot_hist(testCase_new.score1, testCase_new.score2, 'figures')
+	#dataAnalysis.plot_hist(testCase_new.score1, testCase_new.score2, 'figures')
 
 	# calculate score difference
 	testCase_new.calc_score_diff()
@@ -51,10 +55,14 @@ if __name__ == '__main__':
 	testCase_new.sample_size = np.floor(len(list(testCase_new.score1.values()))/float(testCase_new.eda.m))
 
 	# plot difference hist
-	dataAnalysis.plot_hist_diff(testCase_new.score_diff ,'figures')
+	#dataAnalysis.plot_hist_diff(testCase_new.score_diff ,'figures')
 
 	# partition score difference
-	testCase_new.score_diff_par = dataAnalysis.partition_score(testCase_new.score_diff, testCase_new.eda.m, testCase_new.eda.isShuffled, testCase_new.eda.randomSeed, testCase_new.eda.calc_method, 'figures')
+	testCase_new.score1, testCase_new.score2, testCase_new.score_diff_par = dataAnalysis.partition_score(testCase_new.score1, 
+		testCase_new.score2, 
+		testCase_new.score_diff, 
+		testCase_new.eda.m, testCase_new.eda.isShuffled, 
+		testCase_new.eda.randomSeed, testCase_new.eda.calc_method, 'figures')
 
 
 	# summary statistics for score1, score1, score_diff and partitioned score_diff
@@ -88,18 +96,19 @@ if __name__ == '__main__':
 	### effect size calculation
 
 	print("------ Effect Size ------")
-	eff_size_est, eff_size_name = effectSize.calc_eff_size(testCase_new.sigTest.testName, testCase_new.eda.testParam, testCase_new.score_diff_par)
+	testCase_new.es.estimator = eff_size_ind
+
+	eff_size_est = effectSize.calc_eff_size(testCase_new.es.estimator, testCase_new.score_diff_par)
 
 	testCase_new.es.estimate = eff_size_est
-	testCase_new.es.estimator = eff_size_name
 
 	### post power analysis
 
 	print("------ Power Analysis ------")
 	start_time = time.time()
 
-	(power_sampsize, power_method) = powerAnalysis.post_power_analysis(testCase_new.sigTest.testName,testCase_new.eda.normal,
-		testCase_new.score_diff_par, step_size = testCase_new.power.step_size, starting_size=30,
+	power_sampsize = powerAnalysis.post_power_analysis(testCase_new.sigTest.testName,pow_method,
+		testCase_new.score_diff_par, step_size = testCase_new.power.step_size, dist_name = "normal", starting_size=30,
 		output_dir = 'figures', B=B_pow, alpha=testCase_new.power.alpha)
 
 	sys.stderr.write("Finished power analysis. Runtime: --- %s seconds ---" % (time.time() - start_time) + '\n')
@@ -123,7 +132,7 @@ if __name__ == '__main__':
 	print('-----------')
 
 	print('obtained power: ' + str(list(testCase_new.power.powerCurve.values())[-1]))
-	print('Power analysis method: '+str(power_method))
+	print('Power analysis method: '+str(pow_method))
 
 
 
