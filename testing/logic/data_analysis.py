@@ -65,7 +65,7 @@ def plot_hist(score1, score2):
 	plt.xlabel("Score",fontsize=18)
 	plt.ylabel("Frequency",fontsize=18)
 	plt.title("Histogram of score1",fontsize=18)
-	plt.savefig('static/hist_score1.svg',dpi=500)
+	plt.savefig('user/hist_score1.svg')
 
 
 	plt.figure()
@@ -77,7 +77,7 @@ def plot_hist(score1, score2):
 	plt.ylabel("Frequency",fontsize=18)
 	plt.title("Histogram of score2",fontsize=18)
 
-	plt.savefig('static/hist_score2.svg',dpi=500)
+	plt.savefig('user/hist_score2.svg')
 
 def calc_score_diff(score1,score2):
 	"""

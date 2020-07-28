@@ -1,20 +1,21 @@
-# v2 - using tabs
+# v3
 from flask import *
 from flask import render_template
-from data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score,\
-    skew_test, normality_test, recommend_test
-from effectSize import calc_eff_size
-from help import helper
+
 from werkzeug.utils import secure_filename
 import os
 import numpy as np
-import testCase
-import sigTesting
 
-#from interface.sigTesting import run_sig_test
-from testing.sigTesting import run_sig_test
+# Haotian's Business Logic
+from logic.test_case import testCase
+import logic.sig_testing
+from logic.help import helper
+from logic.effect_size import calc_eff_size
+from logic.data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score,\
+skew_test, normality_test, recommend_test
+from logic.sig_testing import run_sig_test
 
-FOLDER = os.path.join('static')
+FOLDER = os.path.join('user')
 
 app = Flask(__name__)
 app.config['FOLDER'] = FOLDER
@@ -142,7 +143,7 @@ def homepage(debug=True):
 
         # --------------Summary Stats -------------
         ### initialize a new testCase object to use for summary statistics
-        tc = testCase.testCase(scores1,
+        tc = testCase(scores1,
                                scores2,
                                score_dif,
                                score_diff_par,
@@ -416,7 +417,8 @@ def effectsize():
 # https://www.roytuts.com/how-to-download-file-using-python-flask/
 @app.route('/download')
 def download_file():
-        path = "sample.txt"
+        os.system("zip -r r.zip user/")
+        path = "user/r.zip"
         return send_file(path, as_attachment=True)
         
 if __name__ == "__main__":
