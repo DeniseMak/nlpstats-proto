@@ -487,40 +487,40 @@ body
         class="form-horizontal"
         enctype="multipart/form-data"
         method="post">
-<div id='Effect Size' class="tabcontent">
+    <div id='Effect Size' class="tabcontent">
 
-  <!-- Effect Size Multiple Radios (inline)  -->
-  <div class="form-group">
-    <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
-    <div class="col-md-4">
-      <label class="radio-inline" for="target_statistic-0">
-        <input type="radio" name="effect_size_target_statistic" id="target_statistic-0" value="mean" checked="checked">
-        Mean
-      </label>
-      <label class="radio-inline" for="target_statistic-1">
-        <input type="radio" name="effect_size_target_statistic" id="target_statistic-1" value="median">
-        Median
-      </label>
-    </div>
-  </div>
-  
-  <br>
-  <!-- effect size Submit Button -->
-  <div class="form-group">
-    <label class="col-md-4 control-label" for="submit"></label>
-    <div class="col-md-4">
-        <input type="hidden" id="da_hidden" value="hidden101">
-        <!-- Is type=submit implied by class="btn btn-success" -->
-      <button id="ef_submit"
-              name="ef_submit"
-              type=submit
-              class="btn btn-success"
-              onsubmit="ef_submit_func()">Run</button>
-        <!-- Button for JS script-->
-        <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
-    </div>
-  </div>
-</div> <!-- end Effect Size tab -->
+      <!-- Effect Size Multiple Radios (inline)  -->
+      <div class="form-group">
+        <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
+        <div class="col-md-4">
+          <label class="radio-inline" for="target_statistic-0">
+            <input type="radio" name="effect_size_target_statistic" id="target_statistic-0" value="mean" checked="checked">
+            Mean
+          </label>
+          <label class="radio-inline" for="target_statistic-1">
+            <input type="radio" name="effect_size_target_statistic" id="target_statistic-1" value="median">
+            Median
+          </label>
+        </div>
+      </div>
+
+      <br>
+      <!-- effect size Submit Button -->
+      <div class="form-group">
+        <label class="col-md-4 control-label" for="submit"></label>
+        <div class="col-md-4">
+            <input type="hidden" id="da_hidden" value="hidden101">
+            <!-- Is type=submit implied by class="btn btn-success" -->
+          <button id="ef_submit"
+                  name="ef_submit"
+                  type=submit
+                  class="btn btn-success"
+                  onsubmit="ef_submit_func()">Run</button>
+            <!-- Button for JS script-->
+            <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
+        </div>
+      </div>
+    </div> <!-- end Effect Size tab -->
 
 </form>
 <!-- end form Effect Size tab -->

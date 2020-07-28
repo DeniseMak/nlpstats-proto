@@ -163,7 +163,7 @@
             </div> <!-- end purple box -->
         </form>
         <!-- End data analysis form -->
-
+        <!-- begin green results area -->
         <div class="roundgreen" class="hiddendiv" id="hidden1">
 
             <!-- SUMMARY STATISTICS -->
@@ -240,8 +240,8 @@
             <img id=hist_diff src="{{ hist_diff }}?{{ rand }}"> {% endif %} {% if hist_diff_par %}
             <img id=hist_diff_par src="{{ hist_diff_par }}?{{ rand }}"> {% endif %}
 
-        </div>
-    </div>
+        </div> <!-- end round green (data analysis) -->
+    </div> <!-- End data analysis -->
 
     <div id='Significance Test' class="tabcontent" style="display:none">
 
@@ -330,59 +330,70 @@
                 </div>
 
         </form>
-        <!-- End Significance Test form -->
-
-        <div class="roundgreen" class="hiddendiv" id="hidden">
-          {% if sig_test_stat_val %}
-            <h2>Results</h2>
-            <table border="1">
-                <tr><th>test statistic/CI</th>
-                    <td>{{ sig_test_stat_val }}<!--1.65562--></td></tr>
-                <tr><th>p-value</th>
-                    <td> {{ pval }}<!--0.098585--></td></tr>
-                <tr><th>Reject H0</th>
-                    <td>{{ rejectH0 }}</td></tr>
-            </table>
-          {% endif %}
+         <!-- End Significance Test form -->
         </div>
-    </div>
+
+            <div class="roundgreen" class="hiddendiv" id="hidden">
+              {% if sig_test_stat_val %}
+                <h2>Results</h2>
+                <table border="1">
+                    <tr><th>test statistic/CI</th>
+                        <td>{{ sig_test_stat_val }}<!--1.65562--></td></tr>
+                    <tr><th>p-value</th>
+                        <td> {{ pval }}<!--0.098585--></td></tr>
+                    <tr><th>Reject H0</th>
+                        <td>{{ rejectH0 }}</td></tr>
+                </table>
+              {% endif %}
+            </div>  <!-- End Significance Test results div -->
+    </div> <!-- end Significance Results Tab -->
+
 
     <div id='Effect Size' class="tabcontent" style="display:none">
 
         <div class="roundpurplebottom" style="position:relative; top: -18px;">
-
-            <!-- Effect Size Multiple Radios (inline)  -->
-            <div class="form-group">
+            <form
+                    action="/effectsize"
+                    class="form-horizontal"
+                    enctype="multipart/form-data"
+                    method="post">
+              <!-- Effect Size Multiple Radios (inline)  -->
+              <div class="form-group">
                 <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
                 <div class="col-md-4">
-                    <label class="radio-inline" for="target_statistic-0">
-              <input type="radio" name="effect_size_target_statistic" id="target_statistic-0" value="mean" checked="checked">
-              Mean
-            </label>
-                    <label class="radio-inline" for="target_statistic-1">
-              <input type="radio" name="effect_size_target_statistic" id="target_statistic-1" value="median">
-              Median
-            </label>
+                  <label class="radio-inline" for="target_statistic-0">
+                    <input type="radio" name="effect_size_target_statistic" id="target_statistic-0" value="mean" checked="checked">
+                    Mean
+                  </label>
+                  <label class="radio-inline" for="target_statistic-1">
+                    <input type="radio" name="effect_size_target_statistic" id="target_statistic-1" value="median">
+                    Median
+                  </label>
                 </div>
-            </div>
+              </div>
 
-            <br>
-            <!-- effect size Submit Button -->
-            <div class="form-group">
+              <br>
+              <!-- effect size Submit Button -->
+              <div class="form-group">
                 <label class="col-md-4 control-label" for="submit"></label>
                 <div class="col-md-4">
                     <input type="hidden" id="da_hidden" value="hidden101">
                     <!-- Is type=submit implied by class="btn btn-success" -->
-                    <button id="ef_submit" name="ef_submit" type=submit class="btn btn-success" onsubmit="ef_submit_func()">Run</button>
+                  <button id="ef_submit"
+                          name="ef_submit"
+                          type=submit
+                          class="btn btn-success"
+                          onsubmit="ef_submit_func()">Run</button>
                     <!-- Button for JS script-->
                     <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
                 </div>
-            </div>
+              </div>
+            </form>
         </div>
-        <!-- end Effect Size tab -->
+        <!-- end Effect Size purple input -->
 
         <div class="roundgreen" class="hiddendiv" id="hidden">
-
+            <p></p>
         </div>
     </div>
 
