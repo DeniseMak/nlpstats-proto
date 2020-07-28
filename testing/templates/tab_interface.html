@@ -466,12 +466,15 @@
             <!-- Multiple Radios -->
             <div class="form-group">
 
+                <!-- Don't need this Effect Size textbox here, because it'd be for Pre-test power analysis -->
+                <!--
                 <label class="col-md-4 control-label" for="effect_size">Effect Size:</label>
                 <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div>
                 <div class="col-md-4">
                     <input id="effect_size" name="effect_size" type="number" placeholder="default" class="form-control input-md" required="">
 
                 </div>
+                -->
                 <br>
 
                 <label class="col-md-4 control-label" for="sample_size">Sample Size:</label>
@@ -496,22 +499,23 @@
                 <div class="col-md-4">
                     <div class="radio">
                         <label for="method-0">
-              <input type="radio" name="method" id="method-0" value="monte_carlo" checked="checked">
-              Monte Carlo
-            </label>
+                          <input type="radio" name="method" id="method-0" value="monte_carlo" checked="checked">
+                          Monte Carlo
+                        </label>
                     </div>
                     <div class="radio">
                         <label for="method-1">
-              <input type="radio" name="method" id="method-1" value="bootstrap">
-              Bootstrap
-            </label>
+                          <input type="radio" name="method" id="method-1" value="bootstrap">
+                          Bootstrap
+                        </label>
                     </div>
+                    <!-- We don't need Analysis here, because it would be used for the pre-test power analysis
                     <div class="radio">
                         <label for="method-2">
-              <input type="radio" name="method" id="method-2" value="analysis">
-              Analysis
-            </label>
-                    </div>
+                          <input type="radio" name="method" id="method-2" value="analysis">
+                          Analysis
+                        </label>
+                    </div> -->
                 </div>
             </div>
             <br>
