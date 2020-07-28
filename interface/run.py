@@ -359,8 +359,8 @@ def sigtest(debug=False):
 @app.route('/effectsize', methods= ["GET", "POST"])
 def effectsize():
     if request.method == 'POST':
+        last_tab_name_clicked = 'Effect Size'
         fileName = request.cookies.get('fileName')
-
         scores1, scores2 = read_score_file(fileName)
         # get dif
         score_dif = calc_score_diff(scores1, scores2)
@@ -376,13 +376,26 @@ def effectsize():
         # TODO: make this not hardcoded
         (estimates, estimators) = calc_eff_size('not_wilcoxon', effect_size_target_stat, score_dif)
         print('Estimates: {}\nEstimators: {}'.format(estimates, estimators))
+        if len(estimators) != len(estimates):
+            print("Warning (effect size): {} estimators but {} estimates".format(
+                len(estimators), len(estimates)
+            ))
+        # build dict
+        est_dict = {}
+        for i in range(len(estimators)):
+            est_name = estimators[i]
+            est_val = estimates[i]
+            est_dict[est_name] = est_val
 
-        last_tab_name_clicked = 'Effect Size'  # request.form.get('last_tab_input')
+
 
         recommended_test_reasons = json.loads(request.cookies.get('recommended_test_reasons'))
         recommended_tests = json.loads(request.cookies.get('recommended_tests'))
         summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
         rendered = render_template(template_filename,
+                                   #effect_size_estimators = estimators,
+                                   #effect_size_estimates = estimates,
+                                   effect_estimator_dict = est_dict,
                                    help1=helper("function 1"),
                                    help2=helper("function 2"),
                                    # file_uploaded = "File uploaded!!: {}".format(fileName),

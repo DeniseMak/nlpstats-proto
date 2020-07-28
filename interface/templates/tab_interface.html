@@ -520,6 +520,15 @@ body
             <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
         </div>
       </div>
+        <!-- Display effect size results -->
+            {% if effect_estimator_dict|length %}
+                <table border="1">
+                 <tr><th>Estimator</th><th>Effect Size</th></tr>
+                    {% for est, eff_size in effect_estimator_dict.items() %}
+                        <tr><td>{{ est }}</td><td>{{ eff_size }}</td></tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
     </div> <!-- end Effect Size tab -->
 
 </form>

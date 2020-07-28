@@ -394,6 +394,15 @@
 
         <div class="roundgreen" class="hiddendiv" id="hidden">
             <p></p>
+            {% if effect_estimator_dict|length %}
+                <table border="1">
+                 <tr><th>Estimator</th><th>Effect Size</th></tr>
+                    {% for est, eff_size in effect_estimator_dict.items() %}
+                        <tr><td>{{ est }}</td><td>{{ eff_size }}</td></tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+
         </div>
     </div>
 
