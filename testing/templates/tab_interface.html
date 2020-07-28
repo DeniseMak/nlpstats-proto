@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html>
+    
 <head>
     <link href="{{ url_for('static', filename='modal.css')}}" rel="stylesheet"/>
     <link href="{{ url_for('static', filename='breadcrumbs.css')}}" rel="stylesheet"/>
     <link href="{{ url_for('static', filename='tooltip.css')}}" rel="stylesheet"/>
-        <link href="{{ url_for('static', filename='other.css')}}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='other.css')}}" rel="stylesheet"/>
 </head>
-<script type="text/javascript">
-    function da_submit_func() {
-            console.log(document.getElementById('da_hidden').value)
-            console.log("clicked DA submit!")
-        }
-        // document.getElementById('da_submit')
-        
-        
-        
-        
-        
-        function openTab(evt, tabName) {
+
+<script> // MODALS!
+    var modals = ["about",  "settings", "download"];
+    function make_modal(val){
+        eval("var modal_" + val + " = document.getElementById(\"" + val +"\");");
+        eval("var btn_" + val + " = document.getElementById(\"btn_" + val +"\");");
+        // When the user clicks the button, open the modal
+        eval("btn_" + val + ".onclick = function() { " + val + ".style.display = \"block\"; }");
+        eval("close_btn_" + val + ".onclick = function() { modal_" + val + ".style.display = \"none\"; }");
+    }
+    modals.forEach(make_modal);
+</script>
+
+<script> // BREADCRUMBS!
+    function openTab(evt, tabName) {
           var i, tabcontent, tablinks;
           tabcontent = document.getElementsByClassName("tabcontent");
           for (i = 0; i < tabcontent.length; i++) {
@@ -29,6 +33,14 @@
           }
           document.getElementById(tabName).style.display = "block";
           evt.currentTarget.className += " active";
+        }
+</script>
+
+<script> // SUBMIT (NEEDS WORK)
+    function da_submit_func() {
+            console.log(document.getElementById('da_hidden').value);
+            console.log("clicked DA submit!");
+            
         }
 </script>
 
@@ -72,7 +84,7 @@
                         <span class="tooltiptext">"{{help1}}"</span></div>
                     <div class="col-md-4">
                         <input type="file" id="system_file" name="system_file" style="display:none;" required/>
-                        <a href="#" class="button"><label for="system_file">Select</label></a> {{file_uploaded}}
+                        <a href="#" class="button"><label for="system_file">Select:</label></a> {{file_uploaded}}
 
                         <!--
           <input id="system_file" name="system_file" class="input-file" type="file"/>
@@ -129,7 +141,7 @@
                     <div class="col-md-4">
                         <input type="hidden" id="da_hidden" value="hidden101">
                         <!-- Is type=submit implied by class="btn btn-success" -->
-                        <button id="submit" name="submit" type=submit class="btn btn-success" onsubmit="da_submit_func()">Run</button>
+                        <button id="submit" name="submit" type=submit class="btn btn-success" onsubmit="document.getElementById('hidden1').style.borderColor = 'DarkSeaGreen'">Run</button>
                         <!-- Button for JS script-->
                         <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
                     </div>
@@ -139,7 +151,7 @@
         </form>
         <!-- End data analysis form -->
 
-        <div class="roundgreen" class="hiddendiv" id="hidden">
+        <div class="roundgreen" class="hiddendiv" id="hidden1">
 
             <!-- SUMMARY STATISTICS -->
             <h2>{{ summary_str }}</h2>
@@ -406,10 +418,7 @@
         </div>
         </div>
 
-        <!-- The Modal -->
         <div id="about" class="modal">
-
-            <!-- Modal content -->
             <div class="modal-content">
                 <button id="close_btn_about">&#x2715;</button>
                 <p>Copyright 2020 by AUTHORS. See our paper at LINK. This website is released under the LICENSE at LINK. LIST OF TECH USED AND THEIR LICENSES and CITATIONS.</p>
@@ -417,29 +426,23 @@
             </div>
         </div>
 
-        <!-- The Modal -->
         <div id="settings" class="modal">
-
-            <!-- Modal content -->
             <div class="modal-content">
-
                 <button id="close_btn_settings">&#x2715;</button>
                 <p>LIST OF SETTINGS ITEMS</p>
-
+                <button id="yellow" onclick="document.getElementById('hidden1').style.borderColor = '#ffcc00'">Make Yellow</button>
+                <button id="green" onclick="document.getElementById('hidden1').style.borderColor = 'DarkSeaGreen'">Make Green</button>
+                <br><br>
                 <button id="restore">Save Settings to File</button>
                 <button id="save">Restore Settings from File</button>
 
             </div>
         </div>
 
-        <!-- The Modal -->
+
         <div id="download" class="modal">
-
-            <!-- Modal content -->
             <div class="modal-content">
-
                 <button id="close_btn_download">&#x2715;</button>
-
                 <p>
                     <form action="{{ url_for('.download_file') }}" method="get" target="_blank">
                         <button type="submit">Download</button>
@@ -450,7 +453,6 @@
         </div>
 
         <script>
-            // Make modals and buttons
             var modals = ["about",  "settings", "download"];
             function make_modal(val){
                 eval("var modal_" + val + " = document.getElementById(\"" + val +"\");");
@@ -460,6 +462,10 @@
                 eval("close_btn_" + val + ".onclick = function() { modal_" + val + ".style.display = \"none\"; }");
             }
             modals.forEach(make_modal);
+            
+            
+            
+
         </script>
 
 </body>
