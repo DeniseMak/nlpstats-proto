@@ -261,7 +261,6 @@ body
                value="{{ shuffle_seed }}"
             {% endif %}
            step="0.01" class="form-control input-md">
-    
     </div>
   </div>
   <br>
@@ -653,7 +652,9 @@ function showLastTab(tabToShow) {
 </div>
 
 <script>
-    window.onload = showLastTab('{{ last_tab_name_clicked }}')
+    {% if last_tab_name_clicked %}
+      window.onload = showLastTab('{{ last_tab_name_clicked }}')
+    {% endif %}
 </script>
 </body>
 

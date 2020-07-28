@@ -106,37 +106,51 @@
                     </div>
                 </div>
                 <br>
-                <!-- Data Analysis: Multiple Radios (mean or median)  -->
-                <div class="form-group">
-                    <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
-                    <div class="tooltip">?
-                        <span class="tooltiptext">"{{help2}}"</span></div>
-                    <div class="col-md-4">
-                        <label class="radio-inline" for="target_statistic-0">
-            <input type="radio" name="target_statistic" id="target_statistic-0" value="mean" checked="checked">
-            Mean
-          </label>
-                        <label class="radio-inline" for="target_statistic-1">
-            <input type="radio" name="target_statistic" id="target_statistic-1" value="median">
-            Median
-          </label>
-                    </div>
+              <!-- Data Analysis: Radio Buttons (mean, median)  -->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="target_statistic">Evaluation Unit Metric:</label>
+                  <div class="tooltip">?
+                      <span class="tooltiptext"> The metric to use for each evaluation unit.
+                          <!-- "{{help2}}" -->
+                      </span></div>
+                <div class="col-md-4">
+                  <label class="radio-inline" for="target_statistic-0">
+                    <input type="radio" name="target_statistic" id="target_statistic-0" value="mean"
+                           {% if eval_unit_stat =="mean" %}
+                           checked="checked"
+                           {% endif %}
+                    >
+                    Mean
+                  </label>
+                  <label class="radio-inline" for="target_statistic-1">
+                    <input type="radio" name="target_statistic" id="target_statistic-1" value="median"
+                           {% if eval_unit_stat =="median" %}
+                           checked="checked"
+                           {% endif %}
+                    >
+                    Median
+                  </label>
                 </div>
-                <br>
-                <!-- Seed input-->
-                <div class="form-group">
-                    <label class="col-md-4 control-label" for="seed">Random Seed:</label>
-                    <div class="tooltip">?
-                        <span class="tooltiptext">If you would like to provide a (real number) seed number, enter it here. Otherwise, we will shuffle.</span>
-                    </div>
-                    <div class="col-md-4">
-                        <input id="seed" name="seed" type="number" placeholder="Shuffle" step="0.01" class="form-control input-md">
-
-                    </div>
+              </div>
+              <br>
+              <!-- Data Analysis: seed-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="seed">Random Seed:</label>
+                 <div class="tooltip">?
+                  <span class="tooltiptext">If you would like to provide a (real number) seed for random shuffling, enter it here.
+                      Otherwise, we will not shuffle.</span>
                 </div>
+                 <div class="col-md-4">
+                <input id="seed" name="seed" type="number" placeholder="don't shuffle"
+                       {% if shuffle_seed %}
+                           value="{{ shuffle_seed }}"
+                        {% endif %}
+                       step="0.01" class="form-control input-md">
+                </div>
+              </div>
                 <br>
-                <!-- Data Analysis Submit Button -->
-                <div class="form-group">
+              <!-- Data Analysis Submit Button -->
+              <div class="form-group">
                     <label class="col-md-4 control-label" for="submit"></label>
                     <div class="col-md-4">
                         <input type="hidden" id="da_hidden" value="hidden101">
@@ -146,8 +160,7 @@
                         <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
                     </div>
                 </div>
-
-            </div>
+            </div> <!-- end purple box -->
         </form>
         <!-- End data analysis form -->
 
@@ -240,7 +253,7 @@
                     <!-- SIGNIFICANCE TEST RECOMMENDATION for test statistics -->
                     <h2 id=sigtest_heading align='left'>{{ result_str }}</h2>
                     {% if recommended_tests_reasons|length %}
-                    <!--
+
                             <table border = 1>
 
                             <tr><th>Test</th><th>Reason</th></tr>
@@ -251,7 +264,8 @@
                                     </tr>
                                  {% endfor %}
                             </table>
-                        <ul>
+                        <!--<ul>
+
                                  {% for key, value in recommended_tests_reasons.items() %}
                             <li>{{ key }}
                                 <div class="tooltip">?
@@ -259,20 +273,28 @@
                                 </div>
                             </li>
                                  {% endfor %}
-                        </ul>
-                        -->
+
+                        </ul> -->
+
                     <!-- <h2>Choose the significance test to run</h2> -->
-                    <!-- radio button to choose test -->
-                    {% for key, value in recommended_tests_reasons.items() %}
-                    <label class="radio-inline" for="target_sig_test-1">
-                        <input type="radio" name="target_sig_test" id="target_sig_test-1" value={{ key }}>
-                            {{ key }}
-                                <div class="tooltip">?
-                                    <span class="tooltiptext">{{ value }}</span>
-                                </div>
-                        </label>
-                    <p></p>
-                    {% endfor %}
+                        <!-- radio button to choose test -->
+                        <br>
+                        {% for key, value in recommended_tests_reasons.items() %}
+                        <label class="radio-inline" for="target_sig_test-1">
+                            <input type="radio" name="target_sig_test" id="target_sig_test-1"
+                                {% if sig_test_name %}
+                                   {% if key==sig_test_name %}
+                                       checked="checked"
+                                       {% endif %}
+                                {% endif %}
+                                   value={{ key }}>
+                                {{ key }}
+                                    <div class="tooltip">?
+                                        <span class="tooltiptext">{{ value }}</span>
+                                    </div>
+                            </label>
+                        <p></p>
+                        {% endfor %}
                     {% endif %}
                     <br/>
                     <p></p>
@@ -511,7 +533,9 @@
         </script>
 
         <script>
-            window.onload = showLastTab('{{ last_tab_name_clicked }}')
+            {% if last_tab_name_clicked %}
+              window.onload = showLastTab('{{ last_tab_name_clicked }}')
+            {% endif %}
         </script>
 </body>
 
