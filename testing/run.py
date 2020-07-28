@@ -341,11 +341,15 @@ def effectsize():
 
         # target_stat is 'mean' or 'median'
         effect_size_target_stat= request.cookies.get('mean_or_median')
-        selected_test = request.cookies.get('sig_test_name')
-        print('target stat for effect size={}, test={}'.format(
-            effect_size_target_stat, selected_test))
 
-        (estimates, estimators) = calc_eff_size(selected_test,
+        previous_selected_test = request.cookies.get('sig_test_name')
+        # todo: check if different from previous
+        cur_selected_test = request.form.get('target_sig_test')
+
+        print('target stat for effect size={}, test={}'.format(
+            effect_size_target_stat, cur_selected_test))
+
+        (estimates, estimators) = calc_eff_size(cur_selected_test,
                                                 effect_size_target_stat,
                                                 score_dif)
         print('Estimates: {}\nEstimators: {}'.format(estimates, estimators))
@@ -388,16 +392,19 @@ def effectsize():
                                    hist_diff=request.cookies.get('hist_diff'),
                                    hist_diff_par=request.cookies.get('hist_diff_par'),
                                    # specific to sig_test
+                                   # TODO: update sig_test results if test_name changes in eff_size.
                                    sig_test_stat_val=request.cookies.get('sig_test_stat_val'), # json.loads?
                                    pval=request.cookies.get('pval'),
                                    rejectH0=request.cookies.get('rejectH0'),
                                    sig_alpha=request.cookies.get('sig_test_alpha'),
-                                   sig_test_name=request.cookies.get('sig_test_name')
+                                   sig_test_name=cur_selected_test  # request.cookies.get('sig_test_name')
                                    )
 
         resp = make_response(rendered)
         # -------- WRITE TO COOKIES ----------
         resp.set_cookie('effect_estimator_dict',json.dumps(est_dict))
+        if cur_selected_test != previous_selected_test:
+            resp.set_cookie('sig_test_name', cur_selected_test)
         return resp
 
     elif request.method == 'GET':
