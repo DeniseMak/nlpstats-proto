@@ -8,13 +8,14 @@ import numpy as np
 
 # Haotian's Business Logic
 from logic.test_case import testCase
-import logic.sig_testing
 from logic.help import helper
 from logic.effect_size import calc_eff_size
 from logic.data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score,\
 skew_test, normality_test, recommend_test
 from logic.sig_testing import run_sig_test
 
+import logic.sig_testing
+import logic.power_analysis
 FOLDER = os.path.join('user')
 app = Flask(__name__)
 app.config['FOLDER'] = FOLDER
@@ -413,6 +414,18 @@ def effectsize():
             #full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2.svg')
         return render_template('tab_interface.html')
 
+
+@app.route('/power_analysis', methods= ["GET", "POST"])
+def pa():
+    if request.method == 'POST':
+            last_tab_name_clicked = 'Effect Size'
+            fileName = request.cookies.get('fileName')
+            scores1, scores2 = read_score_file(fileName)
+            # get dif
+            score_dif = calc_score_diff(scores1, scores2)
+    elif request.method == 'GET':
+            return render_template('tab_interface.html')
+            
 # https://www.roytuts.com/how-to-download-file-using-python-flask/
 @app.route('/download')
 def download_file():
