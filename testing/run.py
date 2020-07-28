@@ -341,10 +341,13 @@ def effectsize():
 
         # target_stat is 'mean' or 'median'
         effect_size_target_stat= request.cookies.get('mean_or_median')
-        print('target stat for effect size={}'.format(effect_size_target_stat))
+        selected_test = request.cookies.get('sig_test_name')
+        print('target stat for effect size={}, test={}'.format(
+            effect_size_target_stat, selected_test))
 
-        # TODO: make this not hardcoded
-        (estimates, estimators) = calc_eff_size('not_wilcoxon', effect_size_target_stat, score_dif)
+        (estimates, estimators) = calc_eff_size(selected_test,
+                                                effect_size_target_stat,
+                                                score_dif)
         print('Estimates: {}\nEstimators: {}'.format(estimates, estimators))
         if len(estimators) != len(estimates):
             print("Warning (effect size): {} estimators but {} estimates".format(
