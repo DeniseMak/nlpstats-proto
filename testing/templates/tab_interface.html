@@ -357,6 +357,51 @@
                     class="form-horizontal"
                     enctype="multipart/form-data"
                     method="post">
+              <!-- Effect Size list of tests -->
+                    {% if recommended_tests_reasons|length %}
+
+                            <table border = 1>
+
+                            <tr><th>Test</th><th>Reason</th></tr>
+
+                                 {% for key, value in recommended_tests_reasons.items() %}
+                                    <tr>
+                                       <td> {{ key }} </td> <td>{{ value }}</td>
+                                    </tr>
+                                 {% endfor %}
+                            </table>
+                        <!--<ul>
+
+                                 {% for key, value in recommended_tests_reasons.items() %}
+                            <li>{{ key }}
+                                <div class="tooltip">?
+                                    <span class="tooltiptext">{{ value }}</span>
+                                </div>
+                            </li>
+                                 {% endfor %}
+
+                        </ul> -->
+
+                    <!-- <h2>Choose the significance test to run</h2> -->
+                        <!-- radio button to choose test -->
+                        <br>
+                        {% for key, value in recommended_tests_reasons.items() %}
+                        <label class="radio-inline" for="target_sig_test-1">
+                            <input type="radio" name="target_sig_test" id="target_sig_test-1"
+                                {% if sig_test_name %}
+                                   {% if key==sig_test_name %}
+                                       checked="checked"
+                                       {% endif %}
+                                {% endif %}
+                                   value={{ key }}>
+                                {{ key }}
+                                    <div class="tooltip">?
+                                        <span class="tooltiptext">{{ value }}</span>
+                                    </div>
+                            </label>
+                        <p></p>
+                        {% endfor %}
+                    {% endif %}
               <!-- Effect Size Multiple Radios (inline)  -->
               <div class="form-group">
                 <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
