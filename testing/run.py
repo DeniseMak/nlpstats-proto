@@ -104,9 +104,9 @@ def homepage(debug=True):
         print("***** LAST TAB: {}".format(last_tab_name_clicked))
         # ------- File ----------------
         f = request.files['system_file']  # new
-        f.save(secure_filename(f.filename))  # todo: change this to 'uploads' directory
+        f.save(FOLDER + "/" + secure_filename(f.filename))
 
-        scores1, scores2 = read_score_file(f.filename) #read_score_file("score")
+        scores1, scores2 = read_score_file(FOLDER + "/" + f.filename) #read_score_file("score")
         plot_hist(scores1, scores2)
         score_dif = calc_score_diff(scores1, scores2)
         eval_unit_size = request.form.get('eval_unit_size')
