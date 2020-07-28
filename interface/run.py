@@ -6,6 +6,7 @@ from data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist
 from effectSize import calc_eff_size
 from help import helper
 from werkzeug.utils import secure_filename
+import json
 import os
 import numpy as np
 import testCase
@@ -29,7 +30,7 @@ template_filename_sigtest = "tab_interface_sigtest_mockup.html"
 # strings to use in UI
 summary_str = "Summary of statistics"
 teststat_heading = "Test statistic recommendation"
-result_str = 'You can choose from the following significance tests'
+sig_test_heading = 'You can choose from the following significance tests'
 
 def calc_score_diff(score1,score2):
 	"""
@@ -97,7 +98,8 @@ def homepage(debug=True):
 
         # ------- Test if 'last_tab' was sent
         last_tab_clicked = request.form.get('last_tab')
-        last_tab_name_clicked = request.form.get('last_tab_name')
+        # todo: make this a cookie
+        last_tab_name_clicked = 'Data Analysis' #request.form.get('last_tab_name')
         print("***** LAST TAB: {}".format(last_tab_clicked))
         print("***** LAST TAB: {}".format(last_tab_name_clicked))
         # ------- File ----------------
@@ -120,19 +122,23 @@ def homepage(debug=True):
 
 
         # target_stat is 'mean' or 'median'
-        target_stat = request.form.get('target_statistic')
-        effect_size_target_stat= request.form.get('effect_size_target_statistic')
-        print('target stat={}\ntarget stat for effect size={}'.format(target_stat, effect_size_target_stat))
+        eval_unit_stat = request.form.get('target_statistic')
+        print('eval_unit_stat={}'.format(eval_unit_stat))
 
         seed = request.form.get('seed')
         if not seed:
-            seed = DEFAULT_SEED
+            shuffle = False
+            # seed = DEFAULT_SEED
+        else:
+            shuffle = True
+
+
 
         # partition score difference and save svg
         score_diff_par = partition_score(score_dif, float(eval_unit_size),
-                                         True, #shuffle
+                                         shuffle, # shuffle if we have seed
                                          seed,
-                                         target_stat, # mean or median
+                                         eval_unit_stat, # mean or median
                                          FOLDER)
 
         # --------------Summary Stats -------------
@@ -186,7 +192,7 @@ def homepage(debug=True):
 
             USE_JSON = False
             if USE_JSON:
-                return jsonify(result=result_str,
+                return jsonify(result=sig_test_heading,
                                hist_score1=full_filename1,
                                hist_score2=full_filename2)
             else:
@@ -195,26 +201,56 @@ def homepage(debug=True):
 
 
                 rendered = render_template(template_filename,
-                                       file_uploaded = "File uploaded: {}".format(f.filename),
+                                           file_uploaded = "File uploaded: {}".format(f.filename),
                                            last_tab_name_clicked=last_tab_name_clicked,
-                                       eval_unit_size = eval_unit_size,
-                                       result_str = result_str,
-                                       summary_str = summary_str,
-                                       summary_stats_dict = summary_stats_dict,
-                                       teststat_heading = teststat_heading,
-                                       mean_or_median = mean_or_median, # 'mean' if not skewed, 'median' if skewed.
-                                       is_normal = is_normal,           # True if normal, False if not.
-                                       recommended_tests = recommended_tests,  # this is a list.
-                                       recommended_tests_reasons = recommended_tests_reasons, # dict with reasons
-                                       #test_reason = test_reason,
-                                       hist_score1=full_filename1,
-                                       hist_score2=full_filename2,
-                                       hist_diff= full_filename_dif,
-                                       hist_diff_par= full_filename_dif_par,
-                                           rand=rand)
+                                           eval_unit_size = eval_unit_size,
+                                           eval_unit_stat = eval_unit_stat,
+                                           shuffle_seed = seed,
+                                           sig_test_heading = sig_test_heading,
+                                           summary_str = summary_str,
+                                           summary_stats_dict = summary_stats_dict,
+                                           teststat_heading = teststat_heading,
+                                           mean_or_median = mean_or_median,  # 'mean' if not skewed, 'median' if skewed.
+                                           is_normal = is_normal,  # True if normal, False if not.
+                                           recommended_tests = recommended_tests,  # this is a list.
+                                           recommended_tests_reasons = recommended_tests_reasons,  # dict with reasons
+                                           hist_score1=full_filename1,
+                                           hist_score2=full_filename2,
+                                           hist_diff= full_filename_dif,
+                                           hist_diff_par= full_filename_dif_par,
+                                           rand=rand  # rand is for image URL to force reload (avoid caching)
+                                           )
                 resp = make_response(rendered)
+
+                # -------------- Set all cookies -------------
                 resp.set_cookie('fileName', f.filename)
-                #resp.set_cookie('score_diff_par', json.dumps(score_diff_par))  # won't work, cookie too large
+                resp.set_cookie('eval_unit_size', eval_unit_size)
+                resp.set_cookie('eval_unit_stat', eval_unit_stat)
+                resp.set_cookie('shuffle_seed', seed)
+
+                resp.set_cookie('summary_str', summary_str)
+                serialized_summary_stats_dict = json.dumps(summary_stats_dict)
+                resp.set_cookie('summary_stats_dict', serialized_summary_stats_dict)
+
+                resp.set_cookie('teststat_heading', teststat_heading)
+                resp.set_cookie('mean_or_median', mean_or_median)
+                resp.set_cookie('is_normal', json.dumps(is_normal))
+
+                resp.set_cookie('sig_test_heading', sig_test_heading)
+                serialized_recommended_tests = json.dumps(recommended_tests)
+                serialized_recommended_tests_reasons = json.dumps(recommended_tests_reasons)
+                resp.set_cookie('recommended_tests', serialized_recommended_tests)
+                resp.set_cookie('recommended_test_reasons', serialized_recommended_tests_reasons)
+
+                resp.set_cookie('hist_score1', full_filename1)
+                resp.set_cookie('hist_score2', full_filename2)
+                resp.set_cookie('hist_diff', full_filename_dif)
+                resp.set_cookie('hist_diff_par', full_filename_dif_par)
+
+
+
+
+
                 return resp   # return rendered
         else:
             # we shouldn't get here since we used default values for the seed and eval unit size
@@ -224,6 +260,7 @@ def homepage(debug=True):
     elif request.method == 'GET':
         # You got to the main page by navigating to the URL, not by clicking submit
         return render_template(template_filename,
+                               last_tab_name_clicked='Data Analysis',
                                help1 = helper("function 1"),
                                help2 = helper("function 2"),
                                file_uploaded = "Upload a file.",
@@ -255,80 +292,125 @@ def tab_clicked():
 #   SIGNIFICANCE TEST
 # ********************************************************************************************
 @app.route('/sig_test', methods= ["GET", "POST"])
-def sigtest():
-    print(' ********* Running /sig_test')
-    # ------- Test if 'last_tab' was sent
-
-    last_tab_name_clicked = 'Significance Test' #request.form.get('last_tab_input')
-
-    print("***** LAST TAB (from INPUT element): {}".format(last_tab_name_clicked))
-
+def sigtest(debug=False):
+    # ------- Get cookies
+    recommended_test_reasons = json.loads(request.cookies.get('recommended_test_reasons'))
     fileName = request.cookies.get('fileName')
-    # partition_score = request.cookies.get('score_diff_par') # doesn't work
+    # ------- Get form data
+    sig_test_name = request.form.get('target_sig_test')
+    sig_alpha = request.form.get('significance_level')
+
+    if debug:
+        print(' ********* Running /sig_test')
+        print('Recommended tests reasons={}'.format(recommended_test_reasons))
+        print('Sig_test_name={}, sig_alpha={}'.format(sig_test_name, sig_alpha))
+
+    # ------- Test if 'last_tab' was sent
+    last_tab_name_clicked = 'Significance Test' #request.form.get('last_tab_input')
+    print("***** LAST TAB (from POST): {}".format(last_tab_name_clicked))
+
     scores1, scores2 = read_score_file(fileName)  # read_score_file("score")
     score_dif = calc_score_diff(scores1, scores2)
-    print("THE SCORE_DIF:{}".format(score_dif))
-    test_stat, pval, rejection = run_sig_test('t',
+    if debug: print("THE SCORE_DIF:{}".format(score_dif))
+    test_stat_val, pval, rejection = run_sig_test(sig_test_name, # 't'
                                               score_dif,
-                                              0.05, # todo: alpha
+                                              float(sig_alpha), #0.05,
                                               B=500) # todo: B_boot
-    return render_template(template_filename_sigtest,
+
+
+    recommended_tests = json.loads(request.cookies.get('recommended_tests'))
+    summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
+    rendered = render_template(template_filename,
                                help1 = helper("function 1"),
                                help2 = helper("function 2"),
-                               file_uploaded = "File uploaded!!: {}".format(fileName),
+                               #file_uploaded = "File uploaded!!: {}".format(fileName),
                                last_tab_name_clicked= last_tab_name_clicked,
-                               recommended_tests = [],
-                               recommended_tests_reasons ={},
-                               summary_stats_dict = {},
-                               test_stat = test_stat,
+                           # get from cookies
+                           eval_unit_size=request.cookies.get('eval_unit_size'),
+                           eval_unit_stat=request.cookies.get('eval_unit_stat'),
+                           shuffle_seed=request.cookies.get('shuffle_seed'),
+                           sig_test_heading=request.cookies.get('sig_test_heading'),
+                           summary_str=request.cookies.get('summary_str'),
+                           mean_or_median = request.cookies.get('mean_or_median'),
+                           is_normal = request.cookies.get('is_normal'),
+                               recommended_tests = recommended_tests,
+                               recommended_tests_reasons = recommended_test_reasons,
+                               summary_stats_dict = summary_stats_dict,
+                               hist_score1=request.cookies.get('hist_score1'),
+                               hist_score2=request.cookies.get('hist_score2'),
+                               hist_diff=request.cookies.get('hist_diff'),
+                               hist_diff_par=request.cookies.get('hist_diff_par'),
+                           # specific to sig_test
+                               sig_test_stat_val = test_stat_val,
                                pval = pval,
                                rejectH0 = rejection,
+                               sig_alpha = sig_alpha,
+                               sig_test_name = sig_test_name
                                )
+    resp = make_response(rendered)
+    # -------- WRITE TO COOKIES ----------
+    resp.set_cookie('sig_test_name', sig_test_name)
+    resp.set_cookie('sig_test_alpha', sig_alpha)
+    resp.set_cookie('sig_test_stat_val', json.dumps(test_stat_val) )
+    resp.set_cookie('pval', str(pval))
+    resp.set_cookie('rejectH0', str(rejection))
+    return resp
 
 @app.route('/effectsize', methods= ["GET", "POST"])
 def effectsize():
     if request.method == 'POST':
-        f = request.files['system_file']  # new
-        f.save(secure_filename(f.filename))  # todo: change this to 'uploads' directory
+        fileName = request.cookies.get('fileName')
 
-        scores1, scores2 = read_score_file("score")  # todo: get actual filename
+        scores1, scores2 = read_score_file(fileName)
         # get dif
         score_dif = calc_score_diff(scores1, scores2)
 
-        eval_unit_size = request.form.get('eval_unit_size')
-        seed = request.form.get('seed')
+        eval_unit_size = request.cookies.get('eval_unit_size')
+        seed = request.cookies.get('shuffle_seed')
 
         # target_stat is 'mean' or 'median'
-        effect_size_target_stat= request.form.get('effect_size_target_statistic')
+        effect_size_target_stat= request.cookies.get('mean_or_median')
         print('target stat for effect size={}'.format(effect_size_target_stat))
 
 
         # TODO: make this not hardcoded
         (estimates, estimators) = calc_eff_size('not_wilcoxon', effect_size_target_stat, score_dif)
         print('Estimates: {}\nEstimators: {}'.format(estimates, estimators))
-        if seed and eval_unit_size:
-            result_str = 'Your results are displayed below. '\
-                   + '; Seed is: ' + seed \
-                   + "; Evaluation unit is: " + eval_unit_size
 
-            full_filename1 = os.path.join(app.config['FOLDER'], 'hist_score1.svg')
-            full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2.svg')
-            filename_str =  "input_filename: {} img1: {}, img2: {}".format(f.filename, full_filename1, full_filename2)
-            print(filename_str)
+        last_tab_name_clicked = 'Effect Size'  # request.form.get('last_tab_input')
 
-            USE_JSON = False
-            if USE_JSON:
-                return jsonify(result=result_str,
-                               hist_score1=full_filename1,
-                               hist_score2=full_filename2)
-            else:
-                rendered = render_template('tab_interface.html',
-                                       result_str=result_str,
-                                       hist_score1=full_filename1,
-                                       hist_score2=full_filename2)
-                return rendered
-        else:
-            return jsonify(result='Input needed for more details.')
+        recommended_test_reasons = json.loads(request.cookies.get('recommended_test_reasons'))
+        recommended_tests = json.loads(request.cookies.get('recommended_tests'))
+        summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
+        rendered = render_template(template_filename,
+                                   help1=helper("function 1"),
+                                   help2=helper("function 2"),
+                                   # file_uploaded = "File uploaded!!: {}".format(fileName),
+                                   last_tab_name_clicked=last_tab_name_clicked,
+                                   # get from cookies
+                                   eval_unit_size=request.cookies.get('eval_unit_size'),
+                                   eval_unit_stat=request.cookies.get('eval_unit_stat'),
+                                   shuffle_seed=request.cookies.get('shuffle_seed'),
+                                   sig_test_heading=request.cookies.get('sig_test_heading'),
+                                   summary_str=request.cookies.get('summary_str'),
+                                   mean_or_median=request.cookies.get('mean_or_median'),
+                                   is_normal=request.cookies.get('is_normal'),
+                                   recommended_tests=recommended_tests,
+                                   recommended_tests_reasons=recommended_test_reasons,
+                                   summary_stats_dict=summary_stats_dict,
+                                   hist_score1=request.cookies.get('hist_score1'),
+                                   hist_score2=request.cookies.get('hist_score2'),
+                                   hist_diff=request.cookies.get('hist_diff'),
+                                   hist_diff_par=request.cookies.get('hist_diff_par'),
+                                   # specific to sig_test
+                                   sig_test_stat_val=request.cookies.get('test_stat_val'), # json.loads?
+                                   pval=request.cookies.get('pval'),
+                                   rejectH0=request.cookies.get('rejection'),
+                                   sig_alpha=request.cookies.get('sig_alpha'),
+                                   sig_test_name=request.cookies.get('sig_test_name')
+                                   )
+        return rendered
+
     elif request.method == 'GET':
         # You got to the main page by navigating to the URL, not by clicking submit
             #full_filename1 = os.path.join(app.config['FOLDER'], 'hist_score1.svg')

@@ -94,6 +94,26 @@ body
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script type=text/javascript>
+        // sig_test_input handler for sig_test
+        // Note: This doesn't work for the file fields
+        $(function() {
+          $('a#sig_test_input').bind('click', function() {
+            $.post('/sig_test', {  // alternatively, .getJSON instead of .post
+              chosen_sig_test: $('input[name="target_sig_test"]').val(),
+                sig_value: $('input[name="significance_level"]').val(),
+              //eval_unit_size: $('input[name="eval_unit_size"]').val(),
+              //seed: $('input[name="seed"]').val(),
+                last_tab_str: 'SIGNIFICANCE_TAB', // todo: use variable for this
+            }, function(data) {
+              $('#last_tab').text(data.result);
+              $('#chosen_sig_test').text(data.chosen_sig_test);
+              $('#sig_value').text(data.sig_value);
+            });
+            return false;
+          });
+        });
+
+        // process_input handler for tab_clicked
         // Note: This doesn't work for the file fields
         $(function() {
           $('a#process_input').bind('click', function() {
@@ -101,15 +121,30 @@ body
 
               eval_unit_size: $('input[name="eval_unit_size"]').val(),
               seed: $('input[name="seed"]').val(),
-                last_tab_str: 'SIGNIFICANCE_TAB', // todo: use variable for this
+                last_tab_str: 'Significance Test', // todo: use variable for this
                 // last_tab_input: $('input[name="sig_tab_name"]').val()
               //system_file: $('input[name="system_file"]').val() // Note: I don't think this is working.
 
             }, function(data) {
               $('#last_tab').text(data.result);
+            });
+            return false;
+          });
+        });
 
-              //$('#hist_score1').src(data.hist_score1);
-              //$('#hist_score2').src(data.hist_score2);
+        // click handler for Data Analysis tab_clicked
+        $(function() {
+          $('a#clicked_da_tab').bind('click', function() {
+            $.post('/tab_clicked', {  // alternatively, .getJSON instead of .post
+
+              eval_unit_size: $('input[name="eval_unit_size"]').val(),
+              seed: $('input[name="seed"]').val(),
+                last_tab_str: 'Data Analysis', // todo: use variable for this
+                // last_tab_input: $('input[name="sig_tab_name"]').val()
+              //system_file: $('input[name="system_file"]').val() // Note: I don't think this is working.
+
+            }, function(data) {
+              $('#last_tab').text(data.result);
             });
             return false;
           });
@@ -131,12 +166,15 @@ body
 
 
 <div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Data Analysis')">Data Analysis</button>
-  <a href=# id="process_input">  <!-- handle click event in JS -->
-      <button class="tablinks" onclick="openTab(event, 'Significance Test')">Significance Test</button></a>
-  <button class="tablinks" onclick="openTab(event, 'Effect Size')">Effect Size</button>
-  <button class="tablinks" onclick="openTab(event, 'Post-test Power Analysis')">Post-test Power Analysis</button>
-  <button class="tablinks" onclick="openTab(event, 'Download Test Results')">Download Test Results</button>
+    <a href=# id='clicked_da_tab'>
+        <button class="tablinks" onclick="openTab(event, 'Data Analysis')">Data Analysis</button>
+    </a>
+    <a href=# id="process_input">  <!-- handle click event in JS -->
+      <button class="tablinks" onclick="openTab(event, 'Significance Test')">Significance Test</button>
+    </a>
+     <button class="tablinks" onclick="openTab(event, 'Effect Size')">Effect Size</button>
+    <button class="tablinks" onclick="openTab(event, 'Post-test Power Analysis')">Post-test Power Analysis</button>
+    <button class="tablinks" onclick="openTab(event, 'Download Test Results')">Download Test Results</button>
 </div>
 
 
@@ -150,7 +188,7 @@ body
 <div id='Data Analysis' class="tabcontent" style="display:block">
 
   
-  <!-- File Button -->
+  <!-- Data Analysis File Button -->
   <div class="form-group">
     
     <label class="col-md-4 control-label" for="system_file">System File:</label>
@@ -168,7 +206,7 @@ body
     </div>
   </div>
   <br>
-  <!-- Text input-->
+  <!-- Data Analysis: Evaluation Unit Size-->
   <div class="form-group">
     <label class="col-md-4 control-label" for="eval_unit_size">Evaluation Unit Size:</label>
       <div class="tooltip">?
@@ -183,36 +221,51 @@ body
     </div>
   </div>
   <br>
-  <!-- Data Analysis: Multiple Radios (inline)  -->
+  <!-- Data Analysis: Radio Buttons (mean, median)  -->
   <div class="form-group">
-    <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
+    <label class="col-md-4 control-label" for="target_statistic">Evaluation Unit Metric:</label>
       <div class="tooltip">?
-          <span class="tooltiptext">"{{help2}}"</span></div>
+          <span class="tooltiptext"> The metric to use for each evaluation unit.
+              <!-- "{{help2}}" -->
+          </span></div>
     <div class="col-md-4">
       <label class="radio-inline" for="target_statistic-0">
-        <input type="radio" name="target_statistic" id="target_statistic-0" value="mean" checked="checked">
+        <input type="radio" name="target_statistic" id="target_statistic-0" value="mean"
+               {% if eval_unit_stat =="mean" %}
+               checked="checked"
+               {% endif %}
+        >
         Mean
       </label>
       <label class="radio-inline" for="target_statistic-1">
-        <input type="radio" name="target_statistic" id="target_statistic-1" value="median">
+        <input type="radio" name="target_statistic" id="target_statistic-1" value="median"
+               {% if eval_unit_stat =="median" %}
+               checked="checked"
+               {% endif %}
+        >
         Median
       </label>
     </div>
   </div>
   <br>
-  <!-- Text input-->
+  <!-- Data Analysis: seed-->
   <div class="form-group">
     <label class="col-md-4 control-label" for="seed">Random Seed:</label>
      <div class="tooltip">?
-      <span class="tooltiptext">If you would like to provide a (real number) seed number, enter it here. Otherwise, we will shuffle.</span>
+      <span class="tooltiptext">If you would like to provide a (real number) seed for random shuffling, enter it here.
+          Otherwise, we will not shuffle.</span>
     </div>
      <div class="col-md-4">
-    <input id="seed" name="seed" type="number" placeholder="Shuffle" step="0.01" class="form-control input-md">
+    <input id="seed" name="seed" type="number" placeholder="don't shuffle"
+           {% if shuffle_seed %}
+               value="{{ shuffle_seed }}"
+            {% endif %}
+           step="0.01" class="form-control input-md">
     
     </div>
   </div>
   <br>
-  <!-- Data Analysis Submit Button -->
+  <!-- Data Analysis: Submit Button -->
   <div class="form-group">
     <label class="col-md-4 control-label" for="submit"></label>
     <div class="col-md-4">
@@ -266,7 +319,7 @@ body
 
     <!-- RECOMMENDATION for significance tests with REASONS -->
           <h2 id=sigtest_heading align='left'>
-              {{ result_str }}</h2>
+              {{ sig_test_heading }}</h2>
                 {% if recommended_tests_reasons|length %}
                     <table border = 1>
 
@@ -305,7 +358,7 @@ body
 
     </div>
 </div>
-</form>  <!-- (comment out to try one form for all tabs -->
+</form>  <!-- End data analysis form -->
 
 
 <!-- SIGNIFICANCE TEST TAB -->
@@ -346,7 +399,13 @@ body
            <!-- radio button to choose test -->
                 {% for key, value in recommended_tests_reasons.items() %}
                 <label class="radio-inline" for="target_sig_test-1">
-                <input type="radio" name="target_sig_test" id="target_sig_test-1" value={{ key }}>
+                <input type="radio" name="target_sig_test" id="target_sig_test-1"
+                       {% if sig_test_name %}
+                           {% if key==sig_test_name %}
+                               checked="checked"
+                               {% endif %}
+                        {% endif %}
+                       value={{ key }}>
                     {{ key }}
                         <div class="tooltip">?
                             <span class="tooltiptext">{{ value }}</span>
@@ -354,32 +413,70 @@ body
                 </label> <p></p>
                 {% endfor %}
             {% endif %}
-<br/><p></p>
-    <label class="col-md-4 control-label" for="effect_size">Significance level &alpha;:</label>
-      <div class="tooltip">?
-        <span class="tooltiptext">The significance level.</span>
-      </div>
-    <div class="col-md-4">
-    <input id="significance_level" name="significance_level" type="number" placeholder="0.00" class="form-control input-md" required="" step="0.01" min="0" max="1">
-    </div>
+    <br/><p></p>
+            <!-- SIGNIFICANCE alpha -->
+            <label class="col-md-4 control-label" for="effect_size">Significance level &alpha;:</label>
+                      <div class="tooltip">?
+                        <span class="tooltiptext">The significance level.</span>
+                      </div>
+                <div class="col-md-4">
+                <input id="significance_level" name="significance_level" type="number"
+                       {% if sig_alpha %}
+                            placeholder="{{ sig_alpha }}"
+                            value="{{ sig_alpha }}"
+                        {% else %}
+                            placeholder="0.00"
+                       {% endif %}
+                       class="form-control input-md" required="" step="0.01" min="0" max="1">
+                </div>
+              <!-- SIGNIFICANCE bootstrap -->
+            <!--
+            <label class="col-md-4 control-label" for="effect_size">Bootstrap iterations:</label>
+                      <div class="tooltip">?
+                        <span class="tooltiptext">Number of iterations of bootstrap</span>
+                      </div>
+                <div class="col-md-4">
+                <input id="bootstrap iterations" name="bootstrap iterations" type="number"
+                       placeholder="500"
+                       class="form-control input-md" required="" step="1" min="1" max="2000">
+                </div> -->
   </div>
   
   <br>
-  <div class="form-group">
-    <label class="col-md-4 control-label" for="submit"></label>
-    <div class="col-md-4">
-        <input type="hidden" id="sa_hidden" value="hidden101">
-        <!-- Is type=submit implied by class="btn btn-success" ? -->
-        <input type="hidden" id="sig_tab_name" name="sig_tab_name" value="SignificanceTabHidden-2"/>
-      <button id="submit"
-              name="submit"
-              type=submit
-              class="btn btn-success"
-              >Run</button>
-        <!-- Button for JS script-->
-        <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
-    </div>
-  </div>
+
+      <!-- Significance Test: Submit button -->
+      <div class="form-group">
+        <label class="col-md-4 control-label" for="submit"></label>
+        <div class="col-md-4">
+            <input type="hidden" id="sa_hidden" value="hidden101">
+            <!-- Is type=submit implied by class="btn btn-success" ? -->
+            <input type="hidden" id="sig_tab_name" name="sig_tab_name" value="SignificanceTabHidden-2"/>
+          <button id="submit"
+                  name="submit"
+                  type=submit
+                  class="btn btn-success"
+                  >Run</button>
+            <!-- Button for JS script-->
+            <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
+        </div>
+          <h2>Results</h2>
+        <!-- <ul>
+            <li><b>test statistic/CI:</b>1.65562</li>
+            <li><b>p-value</b>: 0.098585</li>
+            <li><b>Reject H0</b>: False</li>
+        </ul> -->
+
+          {% if sig_test_stat_val %}
+            <table border="1">
+                <tr><th>test statistic/CI</th>
+                    <td>{{ sig_test_stat_val }}<!--1.65562--></td></tr>
+                <tr><th>p-value</th>
+                    <td> {{ pval }}<!--0.098585--></td></tr>
+                <tr><th>Reject H0</th>
+                    <td>{{ rejectH0 }}</td></tr>
+            </table>
+          {% endif %}
+      </div> <!-- end sig test submit button -->
 
 </div>
 </form> <!-- End Significance Test form -->
@@ -531,6 +628,22 @@ function showdiv() {
 }
 </script>
 
+<script>
+function showLastTab(tabToShow) {
+  // document.getElementById("hidden").style.display="block"
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+    console.log('In showLastTab(), tabToShow=' + tabToShow);
+    document.getElementById(tabToShow).style.display="block"
+}
+</script>
 
 <div class="hiddendiv" id = "hidden">
         <b>Debugging info:</b> <p/>
@@ -538,6 +651,9 @@ function showdiv() {
   Last tab:<p id=last_tab>{{ last_tab_name_clicked }}</p>
 </div>
 
+<script>
+    window.onload = showLastTab('{{ last_tab_name_clicked }}')
+</script>
 </body>
 
 </html>
