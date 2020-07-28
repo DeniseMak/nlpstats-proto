@@ -1,14 +1,16 @@
 ## Errors:
 
 * Why do images not display?
-* Hardcoded folder in Haotian code
+* Hardcoded folder in Haotian's data analysis code
 * File upload crashes if empty
 * SVG Size
 
 ## Todo:
 * Plumb power analysis
+* Merge Denise and Jesse versions
+* Client side file validation
 * Yellow tab if things change
-* Show graphics button
+* Show/hide graphics button
 * Highlight selected tab and grey out impossible tabs
 * SVG Screenshot
 * Config upload and download
@@ -24,4 +26,4 @@
 * Copy editing
 * Explanatory text inline
 * Edit paper
-
+* Prepower analysis
