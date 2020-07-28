@@ -2,11 +2,15 @@
 <html>
     
 <head>
+
     <link href="{{ url_for('static', filename='modal.css')}}" rel="stylesheet"/>
     <link href="{{ url_for('static', filename='breadcrumbs.css')}}" rel="stylesheet"/>
     <link href="{{ url_for('static', filename='tooltip.css')}}" rel="stylesheet"/>
     <link href="{{ url_for('static', filename='other.css')}}" rel="stylesheet"/>
     <link href="{{ url_for('static', filename='tables.css')}}" rel="stylesheet"/>
+   
+
+
 </head>
 
 <script> // MODALS!
@@ -53,12 +57,9 @@
     </div>
 
     <div class="top_bar">
-
-        <!-- Trigger/Open The Modal -->
         <button id="btn_about">About</button>
         <button id="btn_settings">Modify or Save/Restore Settings</button>
         <button id="btn_download">Download Report</button>
-
     </div>
 
     <div class="roundpurple">
@@ -75,83 +76,68 @@
         <form action="/" class="form-horizontal" enctype="multipart/form-data" method="post">
             <!-- Begin Data Analysis div -->
             <div class="roundpurplebottom" style="position:relative; top: -18px;">
-
-                <!-- Data Analysis: File Button -->
-                <div class="form-group">
-
-                    <label class="col-md-4 control-label" for="system_file">System File:</label>
-
+                <h2>Data and Parameters</h2>
+             
+                   System File:
                     <div class="tooltip">?
                         <span class="tooltiptext">"{{help1}}"</span></div>
-                    <div class="col-md-4">
-                        <input type="file" id="system_file" name="system_file" style="display:none;" required/>
-                        <a href="#" class="button"><label for="system_file">Select:</label></a> {{file_uploaded}}
-
-                        <!--
-          <input id="system_file" name="system_file" class="input-file" type="file"/>
-             -->
-
-                    </div>
-                </div>
-                <br>
+                    <input id="system_file" name="system_file" class="input-file" type="file"/>
+                           
+                 <!--         <input type="file" id="system_file" name="system_file" style="display:none;" required/>
+                        <a href="#" class="button"> Select: {{file_uploaded}}
+                -->
+                <br><br>
+                
+                
                 <!-- Data Analysis: Evaluation Unit size-->
-                <div class="form-group">
-                    <label class="col-md-4 control-label" for="eval_unit_size">Evaluation Unit Size:</label>
+      Evaluation Unit Size:
                     <div class="tooltip">?
                         <span class="tooltiptext">This should be a whole number between one and the number of data points.</span>
                     </div>
-                    <div class="col-md-4">
+                   
                         <input id="eval_unit_size" name="eval_unit_size" type="number" value="{{ eval_unit_size }}" class="form-control input-md" required="">
-                        <!-- previously had value="1" -->
+                  
 
-                    </div>
-                </div>
-                <br>
+                <br><br>
               <!-- Data Analysis: Radio Buttons (mean, median)  -->
-              <div class="form-group">
-                <label class="col-md-4 control-label" for="target_statistic">Evaluation Unit Metric:</label>
+  
+               Evaluation Unit Metric:
                   <div class="tooltip">?
                       <span class="tooltiptext"> The metric to use for each evaluation unit.
                           <!-- "{{help2}}" -->
                       </span></div>
-                <div class="col-md-4">
-                  <label class="radio-inline" for="target_statistic-0">
+                
+                
                     <input type="radio" name="target_statistic" id="target_statistic-0" value="mean"
                            {% if eval_unit_stat =="mean" %}
                            checked="checked"
-                           {% endif %}
-                    >
-                    Mean
-                  </label>
-                  <label class="radio-inline" for="target_statistic-1">
+                           {% endif %} > Mean
+       
+            
                     <input type="radio" name="target_statistic" id="target_statistic-1" value="median"
                            {% if eval_unit_stat =="median" %}
                            checked="checked"
-                           {% endif %}
-                    >
-                    Median
-                  </label>
-                </div>
-              </div>
-              <br>
+                           {% endif %} > Median
+         
+         
+              <br> <br>
               <!-- Data Analysis: seed-->
-              <div class="form-group">
-                <label class="col-md-4 control-label" for="seed">Random Seed:</label>
+        
+                Random Seed:
                  <div class="tooltip">?
                   <span class="tooltiptext">If you would like to provide a (real number) seed for random shuffling, enter it here.
                       Otherwise, we will not shuffle.</span>
                 </div>
-                 <div class="col-md-4">
+            
                 <input id="seed" name="seed" type="number" placeholder="don't shuffle"
                        {% if shuffle_seed %}
                            value="{{ shuffle_seed }}"
                         {% endif %}
                        step="0.01" class="form-control input-md">
-                </div>
-              </div>
-                <br>
+            
+                <br><br>
               <!-- Data Analysis Submit Button -->
-              <div class="form-group">
+             
                     <label class="col-md-4 control-label" for="submit"></label>
                     <div class="col-md-4">
                         <input type="hidden" id="da_hidden" value="hidden101">
@@ -160,7 +146,7 @@
                         <!-- Button for JS script-->
                         <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
                     </div>
-                </div>
+      
             </div> <!-- end purple box -->
         </form>
         <!-- End data analysis form -->
@@ -170,7 +156,7 @@
             <!-- SUMMARY STATISTICS -->
             <h2>{{ summary_str }}</h2>
             {% if summary_stats_dict|length %}
-            <table border=1>
+            <table>
 
                 <tr>
                     <th>Score</th>
@@ -249,10 +235,8 @@
         <div class="roundpurplebottom" style="position:relative; top: -18px;">
 
          <form action="/sig_test" class="form-horizontal" enctype="multipart/form-data" method="post">
-
-                <div class="form-group">
                     <!-- SIGNIFICANCE TEST RECOMMENDATION for test statistics -->
-                    <h2 id=sigtest_heading align='left'>{{ result_str }}</h2>
+                    <h2>{{ result_str }}</h2>
                     {% if recommended_tests_reasons|length %}
 
                             <table border = 1>
@@ -281,7 +265,7 @@
                         <!-- radio button to choose test -->
                         <br>
                         {% for key, value in recommended_tests_reasons.items() %}
-                        <label class="radio-inline" for="target_sig_test-1">
+                
                             <input type="radio" name="target_sig_test" id="target_sig_test-1"
                                 {% if sig_test_name %}
                                    {% if key==sig_test_name %}
@@ -293,18 +277,18 @@
                                     <div class="tooltip">?
                                         <span class="tooltiptext">{{ value }}</span>
                                     </div>
-                            </label>
-                        <p></p>
+            
+                  
                         {% endfor %}
                     {% endif %}
-                    <br/>
-                    <p></p>
+                    <br> <br>
+                   
             <!-- SIGNIFICANCE alpha -->
-                    <label class="col-md-4 control-label" for="effect_size">Significance level &alpha;:</label>
-                          <div class="tooltip">?
+                   
+                   Significance level &alpha;: <div class="tooltip">?
                             <span class="tooltiptext">The significance level.</span>
                           </div>
-                        <div class="col-md-4">
+                     
                         <input id="significance_level" name="significance_level" type="number"
                                {% if sig_alpha %}
                                     placeholder="{{ sig_alpha }}"
@@ -313,22 +297,21 @@
                                     placeholder="0.00"
                                {% endif %}
                                class="form-control input-md" required="" step="0.01" min="0" max="1">
-                        </div>
-                </div>
+         
+        
 
-                <br>
+                <br>  <br>
                 <!-- Significance: Submit Button -->
-                <div class="form-group">
-                    <label class="col-md-4 control-label" for="submit"></label>
-                    <div class="col-md-4">
+           
+               
                         <input type="hidden" id="sa_hidden" value="hidden101">
                         <!-- Is type=submit implied by class="btn btn-success" ? -->
                         <input type="hidden" id="sig_tab_name" name="sig_tab_name" value="SignificanceTabHidden-2" />
                         <button id="submit" name="submit" type=submit class="btn btn-success">Run</button>
                         <!-- Button for JS script-->
                         <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
-                    </div>
-                </div>
+              
+             
 
         </form>
          <!-- End Significance Test form -->
@@ -387,7 +370,7 @@
                         <!-- radio button to choose test -->
                         <br>
                         {% for key, value in recommended_tests_reasons.items() %}
-                        <label class="radio-inline" for="target_sig_test-1">
+                   
                             <input type="radio" name="target_sig_test" id="target_sig_test-1"
                                 {% if sig_test_name %}
                                    {% if key==sig_test_name %}
@@ -399,38 +382,33 @@
                                     <div class="tooltip">?
                                         <span class="tooltiptext">{{ value }}</span>
                                     </div>
-                            </label>
-                        <p></p>
+                      
+                  
                         {% endfor %}
                     {% endif %}
               <!-- Effect Size Multiple Radios (inline)  -->
-              <div class="form-group">
-                <label class="col-md-4 control-label" for="target_statistic">Target Statistic:</label>
-                <div class="col-md-4">
+             
+               Target Statistic:
+               
                   <label class="radio-inline" for="target_statistic-0">
                     <input type="radio" name="effect_size_target_statistic" id="target_statistic-0" value="mean"
                            {%  if mean_or_median == 'mean' %}
                              checked="checked"
                            {% endif %}
-                    >
-                    Mean
-                  </label>
-                  <label class="radio-inline" for="target_statistic-1">
+                    >Mean
+                 
+                 
                     <input type="radio" name="effect_size_target_statistic" id="target_statistic-1" value="median"
                           {% if mean_or_median == 'median' %}
                             checked="checked"
                           {% endif %}
-                    >
-                    Median
-                  </label>
-                </div>
-              </div>
+                    >Median
+         
+            
 
-              <br>
+              <br>    <br>
               <!-- effect size Submit Button -->
-              <div class="form-group">
-                <label class="col-md-4 control-label" for="submit"></label>
-                <div class="col-md-4">
+        
                     <input type="hidden" id="da_hidden" value="hidden101">
                     <!-- Is type=submit implied by class="btn btn-success" -->
                   <button id="ef_submit"
@@ -440,8 +418,7 @@
                           onsubmit="ef_submit_func()">Run</button>
                     <!-- Button for JS script-->
                     <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
-                </div>
-              </div>
+        
             </form>
         </div>
         <!-- end Effect Size purple input -->
@@ -476,40 +453,34 @@
 
                 </div>
                 -->
-                <br>
-
-                <label class="col-md-4 control-label" for="sample_size">Sample Size:</label>
-                <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span> </div>
-                <div class="col-md-4">
+             
+             Effect Size:    <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span> </div>
+                
                     <input id="start" name="start" type="number" placeholder="Start" class="form-control input-md" required="">
                     <input id="end" name="end" type="number" placeholder="End" class="form-control input-md" required="">
                     <input id="step_size" name="step_size" type="number" placeholder="Step Size" class="form-control input-md" required="">
-                </div>
+          
 
-                <br>
-                <label class="col-md-4 control-label" for="iterations">Iterations Per Sample Size:</label>
-                <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div>
-                <div class="col-md-4">
+                <br><br>
+           
+           Sample Size:  <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div>
+        
                     <input id="iterations" name="iterations" type="number" placeholder="default" class="form-control input-md" required="">
 
-                </div>
-
-                <br>
-                <label class="col-md-4 control-label" for="method">Power Analysis Method:</label>
-                <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div>
-                <div class="col-md-4">
-                    <div class="radio">
-                        <label for="method-0">
+                <br>      <br>
+               
+            Iterations Per Sample Size:     <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div>
+              
+              
+                        
                           <input type="radio" name="method" id="method-0" value="monte_carlo" checked="checked">
                           Monte Carlo
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label for="method-1">
+                
+                     
                           <input type="radio" name="method" id="method-1" value="bootstrap">
                           Bootstrap
-                        </label>
-                    </div>
+                  
+             
                     <!-- We don't need Analysis here, because it would be used for the pre-test power analysis
                     <div class="radio">
                         <label for="method-2">
@@ -517,19 +488,18 @@
                           Analysis
                         </label>
                     </div> -->
-                </div>
-            </div>
-            <br>
+     
+     
+            <br><br>
             <!-- Power Submit Button -->
-            <div class="form-group">
-                <label class="col-md-4 control-label" for="submit"></label>
-                <div class="col-md-4">
+
+         
                     <input type="hidden" id="da_hidden" value="hidden101">
 
                     <button id="ef_submit" name="ef_submit" type=submit class="btn btn-success" onsubmit="pa_submit_func()">Run</button>
-                </div>
-            </div>
 
+
+ </div>
         </div>
 
         <div class="roundgreen" class="hiddendiv" id="hidden">
