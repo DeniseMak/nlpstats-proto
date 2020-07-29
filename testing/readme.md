@@ -1,9 +1,9 @@
 ## Errors:
-* Why do images not display?
+* Why do images not display in User folder.
 * Hardcoded folder in Haotian's data analysis code
 * File upload crashes if empty
 * SVG Size
-
+* Config upload and download, readable
 
 ## Todo:
 * Report score file and exported data file
@@ -13,7 +13,6 @@
 * Show/hide graphics button
 * Highlight selected tab and grey out impossible tabs
 * SVG Screenshot
-* Config upload and download, readable
 * generate report zip
 * Set fixed x dimension
 * Patas running
