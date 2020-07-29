@@ -17,7 +17,7 @@ from logic.sig_testing import run_sig_test
 import logic.sig_testing
 import logic.power_analysis
 #FOLDER = os.path.join('user')
-from testing.logic.power_analysis import post_power_analysis
+from logic.power_analysis import post_power_analysis
 
 FOLDER = os.path.join('static')
 app = Flask(__name__)
