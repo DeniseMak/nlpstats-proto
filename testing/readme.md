@@ -1,5 +1,4 @@
 ## Errors:
-
 * Why do images not display?
 * Hardcoded folder in Haotian's data analysis code
 * File upload crashes if empty
@@ -7,14 +6,14 @@
 
 
 ## Todo:
-* Plumb power analysis
+* Report score file and exported data file
 * Merge Denise and Jesse versions
 * Client side file validation
 * Yellow tab if things change
 * Show/hide graphics button
 * Highlight selected tab and grey out impossible tabs
 * SVG Screenshot
-* Config upload and download
+* Config upload and download, readable
 * generate report zip
 * Set fixed x dimension
 * Patas running
@@ -22,7 +21,6 @@
 * Code cleanup and review
 
 ## Questions:
-
 * Huge headlines?
 * Copy editing
 * Explanatory text inline
