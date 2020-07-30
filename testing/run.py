@@ -6,16 +6,18 @@ from werkzeug.utils import secure_filename
 import os
 import numpy as np
 
-# Haotian's Business Logic
+# Business Logic
 from logic.test_case import testCase
-from logic.help import helper
+from logic.helper import helper
 from logic.effectSize import calc_eff_size
 from logic.data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score,\
 skew_test, normality_test, recommend_test
 from logic.sig_testing import run_sig_test
-
 import logic.sig_testing
 import logic.power_analysis
+
+# Report Function
+from logic.report import gen_report
 
 FOLDER = os.path.join('user')
 from logic.power_analysis import post_power_analysis
@@ -282,9 +284,24 @@ def homepage(debug=True):
     elif request.method == 'GET':
         # You got to the main page by navigating to the URL, not by clicking submit
         return render_template(template_filename,
-                               help1 = helper("function 1"),
-                               help2 = helper("function 2"),
-                               # file_uploaded = "Upload a file.",
+                               tooltip_read_score_file = helper("read_score_file"),
+                               tooltip_plot_hist = helper("plot_hist"),
+                               tooltip_plot_hist_diff = helper("plot_hist_diff"),
+                               tooltip_partition_score = helper("partition_score"),
+                               tooltip_normality_test = helper("normality_test"),
+                               tooltip_skew_test = helper("skew_test"),
+                               tooltip_recommend_test =  helper("recommend_test"),
+                               tooltip_calc_eff_size = helper("calc_eff_size"),
+                               tooltip_cohend = helper("cohend"),
+                               tooltip_hedgesg = helper("hedgesg"),
+                               tooltip_wilcoxon_r = helper("wilcoxon_r"),
+                               tooltip_hodgeslehmann = helper("hodgeslehmann"),
+                               tooltip_run_sig_test = helper("run_sig_test"),
+                               tooltip_bootstrap_test = helper("bootstrap_test"),
+                               tooltip_permutation_test = helper("permutation_test"),
+                               tooltip_post_power_analysis = helper("post_power_analysis"),
+                               
+                               file_uploaded = "Upload a file.",
                                recommended_tests = [],
                                recommended_tests_reasons ={},
                                summary_stats_dict = {})
@@ -326,8 +343,6 @@ def sigtest(debug=True):
                                effect_size_estimators=estimators,
                                eff_estimator=request.cookies.get('eff_estimator'),
                                eff_size_val=request.cookies.get('eff_size_val'),
-                               help1 = helper("function 1"),
-                               help2 = helper("function 2"),
                                #file_uploaded = "File uploaded!!: {}".format(fileName),
                                last_tab_name_clicked= last_tab_name_clicked,
                            # get from cookies
@@ -404,8 +419,6 @@ def effectsize():
                                    eff_size_val = eff_size_val,
                                    #effect_size_estimates = estimates,
                                    #effect_estimator_dict = est_dict,
-                                   help1=helper("function 1"),
-                                   help2=helper("function 2"),
                                    # file_uploaded = "File uploaded!!: {}".format(fileName),
                                    last_tab_name_clicked=last_tab_name_clicked,
                                    # get from cookies
@@ -471,8 +484,6 @@ def power():
                                eff_size_val=request.cookies.get('eff_size_val'),
                                # effect_size_estimates = estimates,
                                # effect_estimator_dict = est_dict,
-                               help1=helper("function 1"),
-                               help2=helper("function 2"),
                                # file_uploaded = "File uploaded!!: {}".format(fileName),
                                last_tab_name_clicked=last_tab_name_clicked,
                                # get from cookies
@@ -509,6 +520,11 @@ def power():
 # https://www.roytuts.com/how-to-download-file-using-python-flask/
 @app.route('/download')
 def download_file():
+        selections = {
+          "x": 1,
+          "y": 2,
+        }
+        gen_report(selections)
         os.system("zip -r user/r.zip user/*")
         path = "user/r.zip"
         return send_file(path, as_attachment=True)
