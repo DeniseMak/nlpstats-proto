@@ -15,13 +15,13 @@ from logic.dataAnalysis import partition_score,\
 skew_test, normality_test, recommend_test
 from logic.sigTesting import run_sig_test
 import logic.sig_testing
-import logic.power_analysis   # old import
+import logic.powerAnalysis
 
 # Report Function
 from logic.report import gen_report
 
 FOLDER = os.path.join('user')
-from logic.power_analysis import post_power_analysis
+from logic.powerAnalysis import post_power_analysis
 
 
 app = Flask(__name__)
@@ -155,7 +155,7 @@ def homepage(debug=False):
                 if len(scores1) > 0 and len(scores2):
                     score_dif = calc_score_diff(scores1, scores2)
                 # todo: display how many samples there are
-                    num_eval_units = np.floor(len(list(score_dif)) / float(eval_unit_size))
+                    num_eval_units = int(np.floor(len(list(score_dif)) / float(eval_unit_size)))
                     if debug: print('SAMPLE SIZE (#eval units)={}'.format(num_eval_units))
                     have_file = True
             except:
@@ -366,6 +366,8 @@ def sigtest(debug=True):
                                    hist_diff=request.cookies.get('hist_diff'),
                                    hist_diff_par=request.cookies.get('hist_diff_par'),
                                # specific to sig_test
+                                   mu = mu,
+                                   sig_boot_iterations = sig_boot_iterations,
                                    sig_test_stat_val = test_stat_val,
                                    pval = pval,
                                    rejectH0 = rejection,
@@ -378,6 +380,8 @@ def sigtest(debug=True):
         resp.set_cookie('sig_test_alpha', sig_alpha)
         resp.set_cookie('sig_test_stat_val', json.dumps(test_stat_val) )
         print('test_stat_val={}, json_dumped={}'.format(test_stat_val, json.dumps(test_stat_val)))
+        resp.set_cookie('sig_boot_iterations', str(sig_boot_iterations))
+        resp.set_cookie('mu', str(mu))
         resp.set_cookie('pval', str(pval))
         resp.set_cookie('rejectH0', str(rejection))
         return resp
@@ -468,7 +472,7 @@ def effectsize():
         return render_template('tab_interface.html')
 
 @app.route('/power', methods= ["GET", "POST"])
-def power():
+def power(debug=True):
     if request.method == "POST":
         last_tab_name_clicked = 'Post-test Power Analysis'
         fileName = request.cookies.get('fileName')
@@ -477,14 +481,19 @@ def power():
         power_test = request.form.get('target_pow_test')
         power_num_intervals = int(request.form.get('num_intervals'))  #todo: get from form
         sig_test_name = request.cookies.get('sig_test_name')
+        alpha = float(request.cookies.get('sig_test_alpha'))
+        mu = float(request.cookies.get('mu'))
+        boot_B = int(request.cookies.get('sig_boot_iterations'))
         pow_sampsizes = post_power_analysis(sig_test_name, power_test, score_dif, power_num_intervals,
                             dist_name= 'normal', #todo: handle not normal
                             B=200,
-                            alpha=0.05,
-                            mu=0,
-                            #boot_B=None,
+                            alpha=alpha,
+                            mu=mu,
+                            boot_B=boot_B,
                             output_dir=FOLDER)
         print(pow_sampsizes)
+        print('In PowerAnalysis: sig_test_name={} alpha={} mu={} bootB={}'.format(
+            sig_test_name, alpha,mu, boot_B))
         power_file = 'power_samplesizes.svg'
         rand = np.random.randint(10000)
         power_path = os.path.join(app.config['FOLDER'], power_file)

@@ -4,7 +4,7 @@ import os
 import sys
 import random
 from scipy import stats
-import logic.sig_testing
+import logic.sigTesting
 from statsmodels.stats.descriptivestats import sign_test
 import matplotlib
 matplotlib.use('Svg')
@@ -35,9 +35,10 @@ def post_power_analysis(sig_test_name, sim_method, score, step_size, dist_name =
 	if sim_method == "bootstrap":
 		for i in sample_sizes:
 			count = 0
+			print('Sig_test_name={}'.format(sig_test_name))
 			for b in range(0,B):
 				z_b = np.random.choice(a = z, size = int(i), replace=True)
-				(test_stats, pval, rejection) = sigTesting.run_sig_test(sig_test_name, z_b, alpha, mu, B)
+				(test_stats, pval, rejection) = logic.sigTesting.run_sig_test(sig_test_name, z_b, alpha, mu, B)
 				if rejection:
 					count+=1
 			power_sampsizes[i] = float(count)/B

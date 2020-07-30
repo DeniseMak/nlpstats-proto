@@ -523,31 +523,29 @@ function showdiv() {
                 </div>
                     <br>
                     <br>
-                    <p><b>Minimum sample size:</b> This is a value between 1 and the number of evaluation units</p>
+                    <b>Minimum sample size:</b> <!--This is a value between 1 and the number of evaluation units-->
                     <input id="min_sample_size" name="min_sample_size" type="number"
                        placeholder="min" class="form-control input-md" value="1">
                                     <div class="tooltip">?<span class="tooltiptext">"lower bound on number of samples (minimum number of evaluation units)"</span> </div>
                 <br/><br>
-                    <p><b>Maximum sample size:</b> The number of evaluation units is the upper bound.</p>
+                    <b>Maximum sample size:</b> <!--The number of evaluation units is the upper bound.-->
                     <input id="max_sample_size" name="max_sample_size" type="number"
-                       placeholder="max" class="form-control input-md" value="10">
+                       placeholder="max" class="form-control input-md" value="{{ num_eval_units }}">
                                     <div class="tooltip">?<span class="tooltiptext">
                                         "upper bound on number of samples (max number of evaluation units)"</span> </div>
                 <br/><br>
-                    <p><b>Number of intervals:</b> <!-- max 20 -->
-                        Specify the number of sample size intervals between the minimum and maximum at which to calculate power.</p>
+                    <b>Number of intervals:</b> <!-- max 20 -->
                 <input id="num_intervals" name="num_intervals" type="number" placeholder="Number of intervals"
                        class="form-control input-md"
-                       {% if power_num_intervals %} value="{{ power_num_intervals }}" {% else %} value="20" {% endif %}
+                       {% if power_num_intervals %} value="{{ power_num_intervals }}" {% else %} value="20" max="50"{% endif %}
                        max="200" >
                                     <div class="tooltip">?<span class="tooltiptext">
-                                        "Step size for sample sizes at which to calculate power"</span> </div>
+                                      Specify the number of sample size intervals between the minimum and maximum at which to calculate power.</span> </div>
 
-                <br> <br> Iterations Per Step: <!-- TODO: add required range like '1 to 200'-->
-                <div class="tooltip">?<span class="tooltiptext">The number of iterations at each sample size.</span></div>
-
-         
-           <input id="iterations" name="iterations" type="number" placeholder="default" value="200"
+                    <br> <br>
+                    <b>Iterations at each sample size:</b><!-- TODO: add required range like '1 to 200'-->
+                    <div class="tooltip">?<span class="tooltiptext">The number of bootstrap iterations at each sample size.</span></div><br>
+                    <input id="iterations" name="iterations" type="number" placeholder="default" value="200" max="200"
                        class="form-control input-md">
                 <br><br>
                 <!-- Power Submit Button -->
