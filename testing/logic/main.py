@@ -158,7 +158,7 @@ if __name__ == '__main__':
 		sig_test_name = testCase_new.sigTest.testName,
 		method = testCase_new.power.method,
 		score = testCase_new.score_diff_par, 
-		num_of_sim= testCase_new.power.num_of_subsample, 
+		num_of_subsample= testCase_new.power.num_of_subsample, 
 		dist_name = testCase_new.power.dist_name, 
 		B = testCase_new.power.B,
 		alpha = testCase_new.power.alpha,
