@@ -6,7 +6,12 @@
 * Config upload and download, readable
 
 ## Todo:
+### Jesse's
 * Report score file and exported data file
+* Plumb all help functions
+* Yellow tab if things change
+* typos
+### Other
 * Merge Denise and Jesse versions
 * Client side file validation
 * Yellow tab if things change
@@ -16,7 +21,6 @@
 * generate report zip
 * Set fixed x dimension
 * Patas running
-* Plumb all help functions
 * Code cleanup and review
 
 ## Questions:
