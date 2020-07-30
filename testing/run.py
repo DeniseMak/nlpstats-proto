@@ -104,7 +104,7 @@ def create_summary_stats_dict(tc):
 
 
 @app.route('/', methods= ["GET", "POST"])
-def homepage(debug=True):
+def homepage(debug=False):
     if request.method == 'POST':
         # ------- Test if 'last_tab' was sent
         last_tab_clicked = request.form.get('last_tab')
@@ -207,13 +207,6 @@ def homepage(debug=True):
             full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2_partitioned.svg')
             full_filename_dif = os.path.join(app.config['FOLDER'], 'hist_score_diff.svg')
             full_filename_dif_par = os.path.join(app.config['FOLDER'], 'hist_score_diff_partitioned.svg')
-            filename_str =  "input_filename: {} img1: {}, img2: {}, dif={}, dif_par={}".format(
-                f.filename,
-                full_filename1,
-                full_filename2,
-                full_filename_dif,
-                full_filename_dif_par)
-            print(filename_str)
 
             USE_JSON = False
             if USE_JSON:
@@ -530,7 +523,7 @@ def download_file():
         return send_file(path, as_attachment=True)
 
 @app.route('/img_url/<image_path>')
-def send_img_file(image_path, debug=True):
+def send_img_file(image_path, debug=False):
     '''
     if the file path is known to be a relative path then alternatively:
         return send_from_directory(dir_name, image_name)

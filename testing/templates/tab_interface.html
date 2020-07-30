@@ -23,6 +23,13 @@
   border-bottom: 1px solid #333333;
   border-left: 1px solid #CCCCCC;
 }
+.hiddendiv{
+display:none;
+}
+
+.clicker:focus + .hiddendiv{
+display:block;
+}
 </style>
 <script>
     // MODALS!
@@ -68,6 +75,19 @@
         fileLabel.innerHTML = "File selected: " + theSplit[theSplit.length-1];
     }
 };
+</script>
+
+<script>
+    // toggle the histogram div
+function showdiv() {
+    if (document.getElementById("hidden").style.display=="block"){
+        document.getElementById("hidden").style.display="none"
+        hist_button.innerHTML = "View Histograms"
+    } else {
+        document.getElementById("hidden").style.display="block"
+        hist_button.innerHTML = "Hide Histograms"
+    }
+}
 </script>
 
 <body>
@@ -202,6 +222,19 @@
             </table>
             {% endif %}
 
+            <!-- HISTOGRAM Images -->
+            <br>
+            <button id="hist_button" class='btn btn-default' onclick = "showdiv()">View Histograms</button>
+            <div class="hiddendiv" id = "hidden">
+            {% if hist_score1 %}
+                <img id=hist_score1 src="{{ url_for('send_img_file', image_path=hist_score1) }}?{{ rand }}">{% endif %}
+            {% if hist_score2 %}
+                <img id=hist_score2 src="../{{ url_for('send_img_file', image_path=hist_score2) }}?{{ rand }}"> {% endif %}
+            {% if hist_diff_par %}
+                <img id=hist_diff_par src="../{{ url_for('send_img_file', image_path=hist_diff_par) }}?{{ rand }}"> {% endif %}
+            </div>
+
+
             <!-- RECOMMENDATION for test statistics -->
             <h2 id=teststat_heading align='left'>{{ teststat_heading }}</h2>
             {% if mean_or_median %}
@@ -241,13 +274,6 @@
                        </ul>
                        -->
 
-            <!-- Histogram Images -->
-            {% if hist_score1 %}
-                <img id=hist_score1 src="{{ url_for('send_img_file', image_path=hist_score1) }}?{{ rand }}">{% endif %}
-            {% if hist_score2 %}
-                <img id=hist_score2 src="../{{ url_for('send_img_file', image_path=hist_score2) }}?{{ rand }}"> {% endif %}
-            {% if hist_diff %}
-                <img id=hist_diff_par src="../{{ url_for('send_img_file', image_path=hist_diff_par) }}?{{ rand }}"> {% endif %}
 
         </div>
         <!-- end round green (data analysis) -->
@@ -563,11 +589,7 @@
             modals.forEach(make_modal);
     </script>
 
-    <script>
-        function showdiv() {
-          document.getElementById("hidden").style.display="block"
-        }
-    </script>
+
 
     <script>
         function showLastTab(tabToShow) {
