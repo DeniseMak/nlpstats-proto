@@ -16,10 +16,11 @@ from logic.sig_testing import run_sig_test
 
 import logic.sig_testing
 import logic.power_analysis
-#FOLDER = os.path.join('user')
+
+FOLDER = os.path.join('user')
 from logic.power_analysis import post_power_analysis
 
-FOLDER = os.path.join('static')
+
 app = Flask(__name__)
 app.config['FOLDER'] = FOLDER
 
@@ -30,7 +31,7 @@ DEFAULT_EVAL_SIZE = 1
 # template filename
 # Note: "tab_inteface2.html" has histograms before recommendations
 template_filename = "tab_interface.html"
-template_filename_sigtest = "tab_interface_sigtest_mockup.html"
+
 # strings to use in UI
 summary_str = "Summary of statistics"
 teststat_heading = "Test statistic recommendation"
@@ -192,7 +193,7 @@ def homepage(debug=True):
             # full_filename_dif = os.path.join(app.config['FOLDER'], 'hist_score_diff.svg')
             # full_filename_dif_par = app.config['FOLDER'] + '/' + 'hist_score_diff_partitioned.svg'
 
-            full_filename1 = os.path.join('static', 'hist_score1_partitioned.svg')
+            full_filename1 = os.path.join(app.config['FOLDER'], 'hist_score1_partitioned.svg')
             full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2_partitioned.svg')
             full_filename_dif = os.path.join(app.config['FOLDER'], 'hist_score_diff.svg')
             full_filename_dif_par = os.path.join(app.config['FOLDER'], 'hist_score_diff_partitioned.svg')
@@ -495,17 +496,6 @@ def power():
     # resp.set_cookie('pow_sampsizes', json.dumps(pow_sampsizes))
     return resp
 
-"""
-post_power_analysis(sig_test_name, sim_method, score, step_size,
- output_dir=''):
-@app.route('/power_analysis', methods= ["GET", "POST"])
-def pa():
-    if request.method == 'POST':
-            effect_size = ('start', 'end', 'step_size')
-            iter_size = 'iter_size'
-    elif request.method == 'GET':
-            return render_template('tab_interface.html')
-"""
 
 # https://www.roytuts.com/how-to-download-file-using-python-flask/
 @app.route('/download')
@@ -513,7 +503,21 @@ def download_file():
         os.system("zip -r user/r.zip user/*")
         path = "user/r.zip"
         return send_file(path, as_attachment=True)
-        
+
+@app.route('/img_url/<image_path>')
+def send_img_file(image_path, debug=True):
+    '''
+    if the file path is known to be a relative path then alternatively:
+        return send_from_directory(dir_name, image_name)
+    @param image_path: The full path to the image
+    @param debug: print out the path
+    @return:
+    '''
+    if debug: print('display image: {}'.format(image_path))
+    return send_file(image_path)
+
+# --- End examples ----
+
 if __name__ == "__main__":
     app.debug=True
     app.run()

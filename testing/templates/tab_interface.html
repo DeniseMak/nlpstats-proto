@@ -206,12 +206,13 @@
                        </ul>
                        -->
 
-            <!-- Images -->
+            <!-- Histogram Images -->
             {% if hist_score1 %}
-            <img id=hist_score1 src="../{{ hist_score1 }}?{{ rand }}"> {% endif %} {% if hist_score2 %}
-            <img id=hist_score2 src="../{{ hist_score2 }}?{{ rand }}"> {% endif %} {% if hist_diff %}
-            <!-- <img id=hist_diff src="{{ hist_diff }}?{{ rand }}"> {% endif %} {% if hist_diff_par %} -->
-            <img id=hist_diff_par src="../{{ hist_diff_par }}?{{ rand }}"> {% endif %}
+                <img id=hist_score1 src="{{ url_for('send_img_file', image_path=hist_score1) }}?{{ rand }}">{% endif %}
+            {% if hist_score2 %}
+                <img id=hist_score2 src="../{{ url_for('send_img_file', image_path=hist_score2) }}?{{ rand }}"> {% endif %}
+            {% if hist_diff %}
+                <img id=hist_diff_par src="../{{ url_for('send_img_file', image_path=hist_diff_par) }}?{{ rand }}"> {% endif %}
 
         </div>
         <!-- end round green (data analysis) -->
@@ -426,47 +427,48 @@
                 </div>
                 -->
 
-                <b>Power method:</b><br>
+                <b>Choose power analysis method:</b><br>
                     <!-- TODO: Display advice that takes into account the
                      actual size of evaluation unit and the limits on min and max -->
                     <p>The evaluation unit size is {{ eval_unit_size }}.</p>
                 <input type="radio" name="target_pow_test" id="target_sig_test-1"
+                       {% if target_power_test == 'montecarlo' %}
                          checked="checked"
-
+                       {% endif %}
                        value={{ 'montecarlo' }}>
-                    Montecarlo (normal distribution required)
-                <div class="tooltip">?
-                    <span class="tooltiptext">{{ value }}</span>
-                </div>
+                        Montecarlo (normal distribution required)
+                    <div class="tooltip">? <!-- todo: use helper function for tooltip text -->
+                        <span class="tooltiptext">Conduct retrospective power analysis using Montecarlo simulation.</span>
+                    </div>
 
                 <input type="radio" name="target_pow_test" id="target_sig_test-1"
                        value={{ 'bootstrap' }}>
                     Bootstrap
-                <div class="tooltip">?
-                    <span class="tooltiptext">{{ value }}</span>
+                <div class="tooltip">?  <!-- todo: use helper function for tooltip text -->
+                    <span class="tooltiptext">Conduct retrospective power analysis using bootstrap simulation.</span>
                 </div>
                     <br>
                     <br>
-                Minimum sample size: <input id="start" name="start" type="number"
+                    <p><b>Minimum sample size:</b> This is a value between 1 and the number of evaluation units</p>
+                    <input id="start" name="start" type="number"
                        placeholder="Start" class="form-control input-md" value="30">
                                     <div class="tooltip">?<span class="tooltiptext">"lower bound on number of samples (minimum number of evaluation units)"</span> </div>
-                <br/>
-                    Step size:
+                <br/><br>
+                    <p><b>Maximum sample size:</b> The number of evaluation units is the upper bound.</p>
+                    <input id="start" name="start" type="number"
+                       placeholder="Start" class="form-control input-md" value="30">
+                                    <div class="tooltip">?<span class="tooltiptext">
+                                        "upper bound on number of samples (max number of evaluation units)"</span> </div>
+                <br/><br>
+                    <p><b>Number of intervals:</b>
+                        max 20 (50). used to specify the sample sizes at which to calculate power.</p>
                 <input id="step_size" name="step_size" type="number" placeholder="Step Size"
-                       class="form-control input-md" value="50">
-                                    <div class="tooltip">?<span class="tooltiptext">"Step size for sample sizes at which to calculate power"</span> </div>
-<!--
-                <br><br> Sample Size:
-                <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div> -->
-                <!-- radio button to choose test -->
+                       class="form-control input-md" value="20">
+                                    <div class="tooltip">?<span class="tooltiptext">
+                                        "Step size for sample sizes at which to calculate power"</span> </div>
 
-
-
-
-
-
-                <br> <br> Iterations Per Sample Size: <!-- TODO: add required range like '1 to 200'-->
-                <div class="tooltip">?<span class="tooltiptext">"{{help1}}"</span></div>
+                <br> <br> Iterations Per Step: <!-- TODO: add required range like '1 to 200'-->
+                <div class="tooltip">?<span class="tooltiptext">The number of iterations at each sample size.</span></div>
 
          
            <input id="iterations" name="iterations" type="number" placeholder="default" value="200"
@@ -485,7 +487,7 @@
         <h2>Results:</h2>
             <!-- Images -->
             {% if power_file %}
-            <img id=power_file src="../{{ power_file }}?{{ rand }}"> {% endif %}
+                <img id=power_file src="../{{ url_for('send_img_file', image_path=power_file) }}?{{ rand }}"> {% endif %}
     </div>
     </div>
 
