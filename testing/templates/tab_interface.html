@@ -11,6 +11,19 @@
 
 </head>
 
+<style>
+.button {
+  font: bold 11px Arial;
+  text-decoration: none;
+  background-color: #EEEEEE;
+  color: #333333;
+  padding: 2px 6px 2px 6px;
+  border-top: 1px solid #CCCCCC;
+  border-right: 1px solid #333333;
+  border-bottom: 1px solid #333333;
+  border-left: 1px solid #CCCCCC;
+}
+</style>
 <script>
     // MODALS!
         var modals = ["about",  "settings", "download"];
@@ -42,12 +55,19 @@
 </script>
 
 <script>
-    // SUBMIT (NEEDS WORK)
-        function da_submit_func() {
-                console.log(document.getElementById('da_hidden').value);
-                console.log("clicked DA submit!");
-                
-            }
+    // change file upload message when upload button is clicked
+    window.pressed = function(){
+    var a = document.getElementById('system_file');
+    if(a.value == "")
+    {
+        fileLabel.innerHTML = "Upload a file";
+    }
+    else
+    {
+        var theSplit = a.value.split('\\');
+        fileLabel.innerHTML = "File selected: " + theSplit[theSplit.length-1];
+    }
+};
 </script>
 
 <body>
@@ -78,15 +98,19 @@
             <div class="roundpurplebottom" style="position:relative; top: -18px;">
                 <h2>Data and Parameters</h2>
 
-                System File: <b>{{ error_str }}</b>
+                System File:
                     <div class="tooltip">?
                         <span class="tooltiptext">Upload a text file containing metrics comparing two systems.
                         The file should have two colummns, one for each system.</span></div>
+                <!-- Original (works):
                 <input id="system_file" name="system_file" class="input-file" type="file" />
-
-                <!--         <input type="file" id="system_file" name="system_file" style="display:none;" required/>
-                        <a href="#" class="button"> Select: {{file_uploaded}}
                 -->
+                <!-- Display name of previously uploaded file in file_uploaded -->
+                    <input type="file" id="system_file" onchange="pressed()"
+                           name="system_file" style="display:none;" {% if error_str %}required{% endif %}/>
+                            <!-- todo: make a {file_error} variable if no file found -->
+                    <a href="#" class="button"><label for="system_file">Upload file</label></a>
+                           <label id="fileLabel" >{{file_uploaded}}{% if error_str %}<b>{{ error_str }}</b>{% endif %}</label>
                 <br><br>
 
                 <!-- Data Analysis: Evaluation Unit size-->

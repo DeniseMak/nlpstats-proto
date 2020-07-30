@@ -147,6 +147,7 @@ def homepage(debug=True):
         if have_filename:
             if debug: print('have filename:{}'.format(data_filename))
             try:
+                # todo: Throw FormatException if scores1 or scores2 empty due to bad file
                 scores1, scores2 = read_score_file(FOLDER + "/" + data_filename)
                 if len(scores1) > 0 and len(scores2):
                     score_dif = calc_score_diff(scores1, scores2)
@@ -223,7 +224,7 @@ def homepage(debug=True):
 
 
                 rendered = render_template(template_filename,
-                                           file_uploaded = "File uploaded: {}".format(f.filename),
+                                           file_uploaded = "File selected: {}".format(data_filename),
                                            last_tab_name_clicked=last_tab_name_clicked,
                                            eval_unit_size = eval_unit_size,
                                            eval_unit_stat = eval_unit_stat,
@@ -283,7 +284,7 @@ def homepage(debug=True):
         return render_template(template_filename,
                                help1 = helper("function 1"),
                                help2 = helper("function 2"),
-                               file_uploaded = "Upload a file.",
+                               # file_uploaded = "Upload a file.",
                                recommended_tests = [],
                                recommended_tests_reasons ={},
                                summary_stats_dict = {})
