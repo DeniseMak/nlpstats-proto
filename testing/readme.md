@@ -4,7 +4,6 @@
 * File upload crashes if empty  <-- **Should work now**
 * SVG Size
 * Config upload and download, readable
-
 ## Todo:
 ### Jesse's
 * Report score file and exported data file
@@ -14,16 +13,18 @@
 ### Denise's
 * Debug issue with effect size output.
 * Fix missing input field for bootstrap B in significance test.
-* Power Analysis: Automatically generate intelligent defaults and explain why 
 * **done. Now we show error message if they haven't uploaded a file and make the submission required.** Empty upload crash
 * **done. We check the cookie** check if already uploaded the score file. 
 * throw format exception for bad system file
 * **done** Persist the file uploaded notification after submit by using class="button" and hiding <input>
+* **done** Show/hide graphics button
+* Power Analysis: non-normal MonteCarlo case (get normality from cookie) 
+* Power Analysis: Bootstrap update 
 ### Up for grabs
+* Need formulas for Effect Size
 * Merge Denise and Jesse versions
 * Client side file validation
 * Yellow tab if things change
-* Show/hide graphics button
 * Highlight selected tab and grey out impossible tabs
 * SVG Screenshot
 * generate report zip
