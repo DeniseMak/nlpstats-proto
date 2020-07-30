@@ -573,7 +573,7 @@ def download_file():
         options["statistic/CI"]= "3"
         rand = np.random.randint(10000)
         gen_report(options, str(rand))
-        return send_file("user/r" + str(rand) + ".zip", as_attachment=True)
+        return send_file("user/report.zip", as_attachment=True)
 
 @app.route('/img_url/<image_path>')
 def send_img_file(image_path, debug=False):

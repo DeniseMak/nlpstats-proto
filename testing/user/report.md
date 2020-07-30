@@ -1,30 +1,26 @@
-%
 
-\documentclass{article}
 
-\begin{document}
+# System Performance Report
 
-\section{Data Analysis}
+## Data Analysis
 
-Tests indicate the following about the data in the file \texttt{score}:
+Tests indicate the following about the data in the file `score`:
+  * 3
+  * 3
+  * 3
 
-\begin{itemize}
-  \item 3
-  \item 3
-  \item 3
-\end{itemize}
 
 Based on this information, the following significance tests are appropriate for your data:
 
 3
 
-\section{Significance testing}
+## Significance testing
 
 Requiring a significance level $\alpha = 3$, 3 iterations for bootstraping tests, and an expected mean difference for null hypothesis mean of 3 and using the 3 significance test, we can conclude that you 3 the null hypothesis. The test statistic and confidence interval are 3 respectively.
 
-\section{Effect Size}
+## Effect Size
 
-\section{Power Analysis}
+## Power Analysis
 
-\end{document}
+
 
