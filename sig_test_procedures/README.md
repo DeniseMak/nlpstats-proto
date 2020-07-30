@@ -8,19 +8,49 @@ There are `8` Python files in total:
 * `effectSize.py`: choose an effect size estimator/index and estimate effect size
 * `powerAnalysis.py`: conduct post-testing power analysis
 
+This is one config file `config.yml`. The parameters to specify are:
+* eval_unit_size
+* eval_unit_met
+* shuffled
+* random_seed
+* normal_test_alpha
+
+* sig_test_alpha
+* sig_boot_perm_B
+
+* eff_size_ind
+
+* power_alpha
+* power_method
+* power_dist_name
+* power_num_of_sim
+* power_B
+
+* fig_output_dir
+* report_output_dir
+
+The following parameters are system specifications:
+* MIN_eval_unit_size
+* MIN_normal_test_alpha
+* MAX_normal_test_alpha
+
+* MIN_sig_test_alpha
+* MAX_sig_test_alpha
+
+* MAX_sig_boot_perm_B
+
+* MIN_power_alpha
+* MAX_power_alpha
+
+* MIN_power_samplesize
+* MIN_power_num_of_sim
+* MAX_power_B
+
+* mu
+
 There is also a `main.py` script to test functions of the above 8 scripts, where the arguments are:
 * `<sys.argv[1]>` = `score_file`
-* `<sys.argv[2]>` = `m` (evaluation unit size for `partition_score`)
-* `<sys.argv[3]>` = `calc_method` (for `partition_score`)
-* `<sys.argv[4]>` = `isShuffled` (for `partition_score`)
-* `<sys.argv[5]>` = `randomSeed` (for `partition_score`)
-* `<sys.argv[6]>` = `sigTest.alpha` (for sig test functions)
-* `<sys.argv[7]>` = `power.alpha` (for `post_power_analysis`)
-* `<sys.argv[8]>` = `power.step_size` (for `post_power_analysis`)
-* `<sys.argv[9]>` = `sigTest.B` (for sig test functions)
-* `<sys.argv[10]>` = `power.B` (for `post_power_analysis`)
-* `<sys.argv[11]>` = `eff_size_ind` (for `calc_eff_size`, *cohend*, *hedgesg*, *wilcoxonr*, *hl*)
-* `<sys.argv[12]>` = `power_method` (for `post_power_analysis`, either *bootstrap* or *montecarlo*)
+* `<sys.argv[2]>` = `config.yml`
 
 ## Input file:
 The input file should be two columns of scores, separated by whitespace, like the following:
@@ -99,55 +129,4 @@ Note that the power analysis part may take relatively longer time to complete.
 
 For example, run the following:
 
-`python main.py score 5 mean False 1 0.05 0.05 20 500 200 cohend montecarlo`
-
-The output should be:
-
------- EDA ------
-Sample size after partitioning is: 400.0
-
-recommended tests: [('t', 'The student t test is most appropriate for normal sample and has the highest statistical power.'), ('bootstrap', 'The bootstrap test based on t ratios can be applied to normal sample.'), 'The sign test calibrated by permutation based on mean difference is also appropriate for normal sample, but its statistical power is relatively low due to loss of information.', ('wilcoxon', 'The Wilcoxon signed-rank test can be used for normal sample, but since it is a nonparametric test, it has relatively low statistical power. Also the null hypothesis is that the the pairwise difference has location 0.'), ('sign', 'The (exact) sign test can be used for normal sample, but it has relatively low statistical power due to loss of information.')]
-
-the test used: t
-
-normality: True
-
-testing parameter: mean
-
------- Testing ------
-
------- Effect Size ------
-
------- Power Analysis ------
-
-Finished power analysis. Runtime: --- 0.8795456886291504 seconds ---
-
------- Report ------
-
-test name: t
-
-test statistic/CI: 1.6931857524657286
-
-p-value: 0.09120064130646023
-
-rejection of H0: False
-
------------
-
-effect size estimates: 0.0847
-
-effect size estimator: cohend
-
------------
-
-obtained power: 0.44
-
-Power analysis method: montecarlo
-
-
-Note: the final obtained power is the power level corresponding to the largest sample size. 
-
-If the test is a bootstrap test, the return is a confidence interval and rejection boolean value, rather than a p-value. 
-
-
-The saved plots are in `./figures/`.
+`python main.py score config.yml`
