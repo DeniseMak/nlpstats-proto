@@ -6,16 +6,18 @@ from werkzeug.utils import secure_filename
 import os
 import numpy as np
 
-# Haotian's Business Logic
+# Business Logic
 from logic.test_case import testCase
 from logic.help import helper
 from logic.effectSize import calc_eff_size
 from logic.data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score,\
 skew_test, normality_test, recommend_test
 from logic.sig_testing import run_sig_test
-
 import logic.sig_testing
 import logic.power_analysis
+
+# Report Function
+from logic.report import gen_report
 
 FOLDER = os.path.join('user')
 from logic.power_analysis import post_power_analysis
@@ -508,6 +510,11 @@ def power():
 # https://www.roytuts.com/how-to-download-file-using-python-flask/
 @app.route('/download')
 def download_file():
+        selections = {
+          "": ,
+          "": ,
+        }
+        gen_report(selections)
         os.system("zip -r user/r.zip user/*")
         path = "user/r.zip"
         return send_file(path, as_attachment=True)
