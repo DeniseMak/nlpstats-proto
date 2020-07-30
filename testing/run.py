@@ -563,10 +563,9 @@ def download_file():
           "x": 1,
           "y": 2,
         }
-        gen_report(selections)
-        os.system("zip -r user/r.zip user/*")
-        path = "user/r.zip"
-        return send_file(path, as_attachment=True)
+        rand = np.random.randint(10000)
+        gen_report(selections, str(rand))
+        return send_file("user/r" + str(rand) + ".zip", as_attachment=True)
 
 @app.route('/img_url/<image_path>')
 def send_img_file(image_path, debug=False):
