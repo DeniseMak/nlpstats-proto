@@ -14,7 +14,6 @@ from logic.effectSize import calc_eff_size
 from logic.dataAnalysis import partition_score,\
 skew_test, normality_test, recommend_test
 from logic.sigTesting import run_sig_test
-import logic.sig_testing
 import logic.powerAnalysis
 
 # Report Function

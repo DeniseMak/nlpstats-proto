@@ -170,7 +170,7 @@ def recommend_test(test_param,is_norm):
 	if is_norm==True:
 		return([('t','The student t test is most appropriate for normal sample and has the highest statistical power.'), 
 			('bootstrap','The bootstrap test based on t ratios can be applied to normal sample.'),
-			('The sign test calibrated by permutation based on mean difference is also appropriate for normal sample, but its statistical power is relatively low due to loss of information.'),
+			('sign','The sign test calibrated by permutation based on mean difference is also appropriate for normal sample, but its statistical power is relatively low due to loss of information.'),
 			('wilcoxon','The Wilcoxon signed-rank test can be used for normal sample, but since it is a nonparametric test, it has relatively low statistical power. Also the null hypothesis is that the the pairwise difference has location 0.'),
 			('sign','The (exact) sign test can be used for normal sample, but it has relatively low statistical power due to loss of information.')])
 	else:
