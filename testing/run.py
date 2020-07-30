@@ -123,6 +123,8 @@ def homepage(debug=False):
         eval_unit_stat = request.form.get('target_statistic')
         print('eval_unit_stat={}'.format(eval_unit_stat))
 
+        # normality
+        normality_alpha = request.form.get('normality_alpha')
         seed = request.form.get('seed')
         if not seed:
             shuffle = False
@@ -202,6 +204,7 @@ def homepage(debug=False):
                 if debug: print('random number to append to image url={}'.format(rand))
 
                 rendered = render_template(template_filename,
+                                           normality_alpha=normality_alpha,
                                            hist_score1_file='hist_score1_partitioned.svg',
                                            hist_score2_file='hist_score2_partitioned.svg',
                                            hist_diff_file='hist_score_diff.svg',
@@ -487,14 +490,14 @@ def power(debug=True):
 
         power_file = 'power_samplesizes.svg'
         rand = np.random.randint(10000)
-        power_path = os.path.join(app.config['FOLDER'], power_file)
+        #power_path = os.path.join(app.config['FOLDER'], power_file)
 
         recommended_test_reasons = json.loads(request.cookies.get('recommended_test_reasons'))
         recommended_tests = json.loads(request.cookies.get('recommended_tests'))
         summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
         rendered = render_template(template_filename,
                                    # power
-                                   power_path=power_path,
+                                   power_file=power_file,
                                    power_test=power_test,
                                    power_num_intervals=power_num_intervals,
                                    power_iterations=power_iterations,

@@ -176,6 +176,16 @@ function showdiv() {
                         {% if shuffle_seed %} value="{{ shuffle_seed }}" {% endif %} step="1" class="form-control input-md">
 
                 <br><br>
+
+                &alpha; (for calculating normality):
+                <div class="tooltip">?
+                    <span class="tooltiptext">A threshold value for the normality test. Default value is 0.5.</span>
+                </div>
+
+                <input id="normality_alpha" name="normality_alpha" type="number" value="0.5"
+                        {% if normality_alpha %} value="{{ normality_alpha }}" {% endif %}  class="form-control input-md">
+
+                <br><br>
                 <!-- Data Analysis Submit Button -->
 
                 <label class="col-md-4 control-label" for="submit"></label>
@@ -306,10 +316,7 @@ function showdiv() {
                         <td>
                             <input type="radio" name="target_sig_test" id="target_sig_test-1"
                                     {% if sig_test_name %} {% if key==sig_test_name %} checked="checked" {% endif %}
-                                    {% endif %} value={{ key }}> {% if key=='t' %}t-test {% else %} {{ key }} {% endif %}<!--{{ key }}
-                            <div class="tooltip">?
-                                <span class="tooltiptext">{{ value }}</span>
-                            </div> -->
+                                    {% endif %} value={{ key }}>&nbsp;{% if key=='t' %}t-test{% else %}{{ key }}{% endif %}
                         </td>
                         <td>{{ value }}</td>
                     </tr>
@@ -414,7 +421,14 @@ function showdiv() {
 
                     {% for key, value in effect_size_estimators.items() %}
                     <tr>
-                        <td> {{ key }} </td>
+                        <td>
+                            <input type="radio" name="target_eff_test" id="target_eff_test-{{ key }}"
+                                    {% if eff_estimator %} {% if key==eff_estimator %} checked="checked"
+                                    {% else %}
+                                    {% endif %}
+                                    {% endif %} value={{ key }}>
+                                        {% if key=='hl' %}Hodges-Lehmann{% else %}{{ key }}{% endif %}
+                        </td>
                         <td>{{ value }}</td>
                     </tr>
                     {% endfor %}
@@ -432,7 +446,7 @@ function showdiv() {
                         </ul> -->
 
                 <!-- <h2>Choose the significance test to run</h2> -->
-                <!-- radio button to choose test -->
+                <!-- radio button to choose test
                 <br> {% for key, value in effect_size_estimators.items() %}
 
                 <input type="radio" name="target_eff_test" id="target_eff_test-1"
@@ -442,7 +456,7 @@ function showdiv() {
                     <span class="tooltiptext">{{ value }}</span>
                 </div>
 
-                {% endfor %} {% endif %}
+                {% endfor %} --> {% endif %}
                 <!-- Effect Size Multiple Radios (inline)  -->
                 <!--
                 <br><br> Target Statistic:
@@ -566,9 +580,10 @@ function showdiv() {
     <div class="roundgreen" class="hiddendiv" id="hidden">
 
             <!-- Images -->
-            {% if power_path %}
+            {% if power_file %}
                 <h3>Results:</h3>
-                <img id=power_path src="../{{ url_for('send_img_file', image_path=power_path) }}?{{ rand }}"> {% endif %}
+
+                <img id=power_file src="../{{ url_for('send_img_file_dir', image_path=power_file) }}?{{ rand }}"> {% endif %}
     </div>
     </div>
 
