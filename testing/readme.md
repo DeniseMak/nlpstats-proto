@@ -7,7 +7,6 @@ Data shape as table (why is it bold)
 
 Jesse:
 
-
 By 630PM
 * Yellow results if things change above. Grey tabs if impossible, highlight current tab
 * Set fixed x dimension and  SVG Size
@@ -15,7 +14,7 @@ By 630PM
 
 * Tooltips wider than tall.
 * Make first column of tables wider in css
-
+* result div should be totally hidden before run is pressed
 * Take good screenshots in SVG.
 * Upload and download config file, config file in user dir
 * Copy editing
