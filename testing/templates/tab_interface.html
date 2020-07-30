@@ -116,7 +116,7 @@ function showdiv() {
         <form action="/" class="form-horizontal" enctype="multipart/form-data" method="post">
             <!-- Begin Data Analysis div -->
             <div class="roundpurplebottom" style="position:relative; top: -18px;">
-                <h2>Data and Parameters</h2>
+                <h3>Data and Parameters</h3>
 
                 System File:
                     <div class="tooltip">?
@@ -182,7 +182,7 @@ function showdiv() {
                     <span class="tooltiptext">A threshold value for the normality test. Default value is 0.5.</span>
                 </div>
 
-                <input id="normality_alpha" name="normality_alpha" type="number" value="0.5"
+                <input id="normality_alpha" name="normality_alpha" type="number" value="0.05" step="0.001"
                         {% if normality_alpha %} value="{{ normality_alpha }}" {% endif %}  class="form-control input-md">
 
                 <br><br>
@@ -205,7 +205,7 @@ function showdiv() {
         <div class="roundgreen" class="hiddendiv" id="hidden1">
 
             <!-- SUMMARY STATISTICS -->
-            <h2>{{ summary_str }}</h2>
+            <h3>{{ summary_str }}</h3>
             {% if summary_stats_dict|length %}
             <table>
 
@@ -251,7 +251,7 @@ function showdiv() {
 
 
             <!-- RECOMMENDATION for test statistics -->
-            <h2 id=teststat_heading align='left'>{{ teststat_heading }}</h2>
+            <h3 id=teststat_heading align='left'>{{ teststat_heading }}</h3>
             {% if mean_or_median %}
             <b>Normality:</b>The data distribution {% if is_normal %} passes {% else %} does not pass {% endif %} the normality test.
             <p></p>
@@ -261,8 +261,8 @@ function showdiv() {
             <b>{{ mean_or_median }}</b> {% endif %}
 
             <!-- RECOMMENDATION for significance tests with REASONS -->
-            <h2 id=sigtest_heading align='left'>
-                {{ sigtest_heading }}</h2>
+            <h3 id=sigtest_heading align='left'>
+                {{ sigtest_heading }}</h3>
             {% if recommended_tests_reasons|length %}
             <table border=1>
 
@@ -383,7 +383,7 @@ function showdiv() {
 
         <div class="roundgreen" class="hiddendiv" id="hidden">
             {% if sig_test_stat_val %}
-            <h2>Results</h2>
+            <h3>Results</h3>
             <table border="1">
                 <tr>
                     <th>test statistic/CI</th>
@@ -513,9 +513,14 @@ function showdiv() {
             <form action="/power" class="form-horizontal" enctype="multipart/form-data" method="post">
                 <div class="form-group">
 
-    
+            <p><b>Post-test power analysis:</b> This test involves plotting a power curve that shows how the statistical power
+                increases as the number of samples increase. This test performs a bootstrap or Monte Carlo analysis to measure
+                the power at evenly spaced increasing sample sizes. </p>
+                <p>For example, if you have 100 evaluation units, and want to take 5 power measurements, this test calculates
+                the power for partitions of your data into 20, 40, 60, 80 and 100 evaluation units. At each of these sample sizes
+                the test uses either the Monte Carlo or bootstrap method to run the specified number of iterations.</p>
 
-                <b>Choose power analysis method:</b><br>
+               <p> <b>Choose power analysis method:</b></p>
                     <!-- TODO: Display advice that takes into account the
                      actual size of evaluation unit and the limits on min and max -->
 
@@ -524,8 +529,8 @@ function showdiv() {
                          checked="checked"
                        {% endif %}
                        value={{ 'montecarlo' }}>
-                        Montecarlo (normal distribution required)
-                    <div class="tooltip">? <!-- todo: use helper function for tooltip text -->
+                        Monte Carlo (normal distribution required) <!-- todo: get normality -->
+                    <div class="tooltip">?
                         <span class="tooltiptext">Conduct retrospective power analysis using Montecarlo simulation.</span>
                     </div>
 
@@ -535,24 +540,25 @@ function showdiv() {
                        {% endif %}
                        value={{ 'bootstrap' }}>
                     Bootstrap
-                <div class="tooltip">?  <!-- todo: use helper function for tooltip text -->
+                <div class="tooltip">?  <!-- todo: get significance tests -->
                     <span class="tooltiptext">Conduct retrospective power analysis using bootstrap simulation.</span>
                 </div>
                     <br>
-                    <br>
-                <p>The evaluation unit size is {{ eval_unit_size }}, and the number of evaluation units is {{ num_eval_units }}.</p>
-                    <b>Minimum sample size:</b> <!--This is a value between 1 and the number of evaluation units-->
+
+                <!--
+                    <b>Minimum sample size:</b>
                     <input id="min_sample_size" name="min_sample_size" type="number"
                        placeholder="min" class="form-control input-md" value="1">
                                     <div class="tooltip">?<span class="tooltiptext">"lower bound on number of samples (minimum number of evaluation units)"</span> </div>
                 <br/><br>
-                    <b>Maximum sample size:</b> <!--The number of evaluation units is the upper bound.-->
+                    <b>Maximum sample size:</b>
                     <input id="max_sample_size" name="max_sample_size" type="number"
                        placeholder="max" class="form-control input-md" value="{{ num_eval_units }}">
                                     <div class="tooltip">?<span class="tooltiptext">
                                         "upper bound on number of samples (max number of evaluation units)"</span> </div>
+                -->
                 <br/><br>
-                    <b>Number of intervals:</b> <!-- max 20 -->
+                    <b>Number of power measurements:</b> <!-- was number of intervals, 20-ish -->
                 <input id="num_intervals" name="num_intervals" type="number" placeholder="Number of intervals"
                        class="form-control input-md"
                        {% if power_num_intervals %} value="{{ power_num_intervals }}" {% else %} value="20" {% endif %}
@@ -562,11 +568,12 @@ function showdiv() {
 
                     <br> <br>
                     <b>Iterations at each sample size:</b><!-- TODO: add required range like '1 to 200'-->
-                    <div class="tooltip">?<span class="tooltiptext">The number of bootstrap iterations at each sample size.</span></div><br>
+
                     <input id="iterations" name="power_iterations" type="number" placeholder="default"
                            {% if power_iterations %}value="{{ power_iterations }}" {% else %}value="200"{% endif %}
                            min="10" max="200"
                        class="form-control input-md">
+                    <div class="tooltip">?<span class="tooltiptext">The number of bootstrap iterations at each sample size.</span></div>
                 <br><br>
                 <!-- Power Submit Button -->
 
