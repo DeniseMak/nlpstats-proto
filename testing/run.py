@@ -480,20 +480,24 @@ def power(debug=True):
         score_dif = calc_score_diff(scores1, scores2)
         power_test = request.form.get('target_pow_test')
         power_num_intervals = int(request.form.get('num_intervals'))  #todo: get from form
+        #if request.cookies.get('power_iterations'):
+        power_iterations = int(request.form.get('power_iterations'))
+
         sig_test_name = request.cookies.get('sig_test_name')
         alpha = float(request.cookies.get('sig_test_alpha'))
         mu = float(request.cookies.get('mu'))
         boot_B = int(request.cookies.get('sig_boot_iterations'))
+        print('In PowerAnalysis: sig_test_name={} alpha={} mu={} bootB={} pow_iter={}'.format(
+            sig_test_name, alpha,mu, boot_B, power_iterations))
         pow_sampsizes = post_power_analysis(sig_test_name, power_test, score_dif, power_num_intervals,
                             dist_name= 'normal', #todo: handle not normal
-                            B=200,
+                            B=power_iterations,
                             alpha=alpha,
                             mu=mu,
                             boot_B=boot_B,
                             output_dir=FOLDER)
         print(pow_sampsizes)
-        print('In PowerAnalysis: sig_test_name={} alpha={} mu={} bootB={}'.format(
-            sig_test_name, alpha,mu, boot_B))
+
         power_file = 'power_samplesizes.svg'
         rand = np.random.randint(10000)
         power_path = os.path.join(app.config['FOLDER'], power_file)
@@ -507,6 +511,7 @@ def power(debug=True):
                                    power_path=power_path,
                                    power_test=power_test,
                                    power_num_intervals=power_num_intervals,
+                                   power_iterations=power_iterations,
                                    # random number for forcing reload of images
                                    rand=rand,
                                    # specific to effect size test

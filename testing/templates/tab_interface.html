@@ -501,7 +501,7 @@ function showdiv() {
                 <b>Choose power analysis method:</b><br>
                     <!-- TODO: Display advice that takes into account the
                      actual size of evaluation unit and the limits on min and max -->
-                    <p>The evaluation unit size is {{ eval_unit_size }}, and the number of evaluation units is {{ num_eval_units }}.</p>
+
                 <input type="radio" name="target_pow_test" id="target_sig_test-1"
                        {% if power_test != 'bootstrap'%}
                          checked="checked"
@@ -523,6 +523,7 @@ function showdiv() {
                 </div>
                     <br>
                     <br>
+                <p>The evaluation unit size is {{ eval_unit_size }}, and the number of evaluation units is {{ num_eval_units }}.</p>
                     <b>Minimum sample size:</b> <!--This is a value between 1 and the number of evaluation units-->
                     <input id="min_sample_size" name="min_sample_size" type="number"
                        placeholder="min" class="form-control input-md" value="1">
@@ -537,15 +538,17 @@ function showdiv() {
                     <b>Number of intervals:</b> <!-- max 20 -->
                 <input id="num_intervals" name="num_intervals" type="number" placeholder="Number of intervals"
                        class="form-control input-md"
-                       {% if power_num_intervals %} value="{{ power_num_intervals }}" {% else %} value="20" max="50"{% endif %}
-                       max="200" >
+                       {% if power_num_intervals %} value="{{ power_num_intervals }}" {% else %} value="20" {% endif %}
+                       min=1 max="50">
                                     <div class="tooltip">?<span class="tooltiptext">
                                       Specify the number of sample size intervals between the minimum and maximum at which to calculate power.</span> </div>
 
                     <br> <br>
                     <b>Iterations at each sample size:</b><!-- TODO: add required range like '1 to 200'-->
                     <div class="tooltip">?<span class="tooltiptext">The number of bootstrap iterations at each sample size.</span></div><br>
-                    <input id="iterations" name="iterations" type="number" placeholder="default" value="200" max="200"
+                    <input id="iterations" name="power_iterations" type="number" placeholder="default"
+                           {% if power_iterations %}value="{{ power_iterations }}" {% else %}value="200"{% endif %}
+                           min="10" max="200"
                        class="form-control input-md">
                 <br><br>
                 <!-- Power Submit Button -->
