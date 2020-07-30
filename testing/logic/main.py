@@ -20,6 +20,9 @@ if __name__ == '__main__':
 	with open(config_file, 'r') as ymlfile:
 		config = yaml.load(ymlfile)
 
+	with open('sysconfig.yml', 'r') as ymlfile:
+		sysconfig = yaml.load(ymlfile)
+
 
 	### initialize a new testCase object
 	testCase_new = testCase.testCase(None, None, None, None, None)
@@ -48,10 +51,10 @@ if __name__ == '__main__':
 
 	# output dir
 	fig_output_dir = str(config['fig_output_dir'])
-	report_output_dir = str(config['report_output_dir'])
+	#report_output_dir = str(config['report_output_dir'])
 
 	# null hypothesis
-	mu = float(config['mu'])
+	mu = float(sysconfig['mu'])
 
 
 	### read score file
@@ -83,7 +86,7 @@ if __name__ == '__main__':
 
 	# check for minimum sample size requirement for power analysis
 	# this check is here because wilcoxon test needs more than 10 data points
-	MIN_power_samplesize = config['MIN_power_samplesize']
+	MIN_power_samplesize = sysconfig['MIN_power_samplesize']
 	if MIN_power_samplesize>float(testCase_new.sample_size)/testCase_new.power.num_of_sim:
 		print("Sample size too small for power analysis simulation for certain significance tests. Decrease the number of simulations.")
 		sys.exit()
