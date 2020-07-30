@@ -1,7 +1,7 @@
 ## Errors:
-* Why do images not display in User folder.
+* Why do images not display in User folder. <-- **Should be fixed**
 * Hardcoded folder in Haotian's data analysis code
-* File upload crashes if empty
+* File upload crashes if empty  <-- **Denise working on exception handling
 * SVG Size
 * Config upload and download, readable
 
@@ -15,8 +15,7 @@
 * Debug issue with effect size output.
 * Fix missing input field for bootstrap B in significance test.
 * Automatically generate intelligent defaults and explain why for Power Analysis
-* Validation for existence of score file in Data Analysis (if re-POSTing is optional)
-### Other
+* Empty upload crash -- check if already uploaded the score file -is there a way to avoid having to re-post in Data Analysis. If we can't find a way, then we need to make file input required)
 * Merge Denise and Jesse versions
 * Client side file validation
 * Yellow tab if things change
