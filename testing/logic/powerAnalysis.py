@@ -4,7 +4,7 @@ import os
 import sys
 import random
 from scipy import stats
-import sigTesting
+import logic.sigTesting
 from statsmodels.stats.descriptivestats import sign_test
 import matplotlib
 matplotlib.use('Svg')
