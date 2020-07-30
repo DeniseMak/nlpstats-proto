@@ -11,6 +11,11 @@
 * Plumb all help functions
 * Yellow tab if things change
 * typos
+### Denise's
+* Debug issue with effect size output.
+* Fix missing input field for bootstrap B in significance test.
+* Automatically generate intelligent defaults and explain why for Power Analysis
+* Validation for existence of score file in Data Analysis (if re-POSTing is optional)
 ### Other
 * Merge Denise and Jesse versions
 * Client side file validation
