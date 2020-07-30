@@ -2,21 +2,29 @@
 
 Jesse:
 
-* Yellow results if things change above. Grey tabs if impossible, highlight current tab
+By 330
 * Change name.
-* Take good screenshots in SVG.
-* Subsamples and inline box on last page.
-* Upload and download config file, config file in user dir
-* SVG Size
 * Huge headlines?
 * Copy editing
-* Finish plumbing report. (make partial report work)
+* Subsamples and inline box on last page.
+
+By 5PM
+* Yellow results if things change above. Grey tabs if impossible, highlight current tab
+* Set fixed x dimension and  SVG Size
+
+
+* can .button go back into CSS file? Couldn't get it to work when it was in `other.css`, so for now it's in `<style>` in `tab_interface.html`.
 * Tooltips wider than tall.
 * Make first column of tables wider in css
-* Set fixed x dimension
-* can .button go back into CSS file? Couldn't get it to work when it was in `other.css`, so for now it's in `<style>` in `tab_interface.html`.
+
+* Take good screenshots in SVG.
+* Upload and download config file, config file in user dir
+
+* Finish plumbing report. (make partial report work)
+
 Low Priority:
 * Two column
+* Webserver host
 
 Denise:
 
