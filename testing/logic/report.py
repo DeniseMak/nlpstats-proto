@@ -10,7 +10,6 @@ def gen_report(options: dict, string: str):
 
 Tests indicate the following about the data in the file \\texttt{""" + options["filename"] + """}:
 
-  \item """ + options["normality_message"] + """
 \\begin{itemize}
   \\item """ + options["normality_message"] + """
   \\item """ + options["skewness_message"] + """
