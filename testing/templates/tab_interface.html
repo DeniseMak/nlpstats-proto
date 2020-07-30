@@ -11,26 +11,6 @@
 
 </head>
 
-<style>
-.button {
-  font: bold 11px Arial;
-  text-decoration: none;
-  background-color: #EEEEEE;
-  color: #333333;
-  padding: 2px 6px 2px 6px;
-  border-top: 1px solid #CCCCCC;
-  border-right: 1px solid #333333;
-  border-bottom: 1px solid #333333;
-  border-left: 1px solid #CCCCCC;
-}
-.hiddendiv{
-display:none;
-}
-
-.clicker:focus + .hiddendiv{
-display:block;
-}
-</style>
 <script>
     // MODALS!
         var modals = ["about",  "settings", "download"];
@@ -93,7 +73,7 @@ function showdiv() {
 <body>
 
     <div class="header">
-        <h1>System Performance Calculator</h1>
+        <h1>NlpStatTest</h1>
     </div>
 
     <div class="top_bar">
@@ -116,7 +96,9 @@ function showdiv() {
         <form action="/" class="form-horizontal" enctype="multipart/form-data" method="post">
             <!-- Begin Data Analysis div -->
             <div class="roundpurplebottom" style="position:relative; top: -18px;">
+
                 <h3>Data and Parameters</h3>
+
 
                 System File:
                     <div class="tooltip">?
@@ -129,7 +111,7 @@ function showdiv() {
                     <input type="file" id="system_file" onchange="pressed()"
                            name="system_file" style="display:none;" {% if error_str %}required{% endif %}/>
                             <!-- todo: make a {file_error} variable if no file found -->
-                    <a href="#" class="button"><label for="system_file">Upload file</label></a>
+                    <a href="#" class="button1"><label for="system_file">Upload file</label></a>
                            <label id="fileLabel" >{{file_uploaded}}{% if error_str %}<b>{{ error_str }}</b>{% endif %}</label>
                 <br><br>
 
@@ -205,17 +187,18 @@ function showdiv() {
         <div class="roundgreen" class="hiddendiv" id="hidden1">
 
             <!-- SUMMARY STATISTICS -->
-            <h3>{{ summary_str }}</h3>
+            <b>{{ summary_str }}</b><br><br>
+
             {% if summary_stats_dict|length %}
             <table>
 
                 <tr>
                     <th>Score</th>
-                    <th>mean</th>
-                    <th>median</th>
-                    <th>std_dev</th>
-                    <th>min</th>
-                    <th>max</th>
+                    <th>Mean</th>
+                    <th>Median</th>
+                    <th>Standard Deviation</th>
+                    <th>Minimum</th>
+                    <th>Maximum</th>
                 </tr>
 
                 {% for key, value in summary_stats_dict.items() %}
@@ -236,7 +219,7 @@ function showdiv() {
             <br>
             {% if hist_score1_file %}
             <button id="hist_button" class='btn btn-default' onclick = "showdiv()">View Histograms</button>
-            {% endif %}
+            {% endif %} <br><br>
             <div class="hiddendiv" id = "hidden">
 
             <!-- new way -->
@@ -251,18 +234,23 @@ function showdiv() {
 
 
             <!-- RECOMMENDATION for test statistics -->
+
             <h3 id=teststat_heading align='left'>{{ teststat_heading }}</h3>
+
             {% if mean_or_median %}
             <b>Normality:</b>The data distribution {% if is_normal %} passes {% else %} does not pass {% endif %} the normality test.
             <p></p>
             <b>Skewness:</b> The data distribution {% if mean_or_median == 'median' %} exceeds {% else %} does not exceed {% endif %} the skew threshold.
             <p></p>
             <b>Test statistic:</b> Based on the skewness, the recommended test statistic to use is:
-            <b>{{ mean_or_median }}</b> {% endif %}
+            <b>{{ mean_or_median }}</b> {% endif %} <br><br>
 
             <!-- RECOMMENDATION for significance tests with REASONS -->
+
             <h3 id=sigtest_heading align='left'>
                 {{ sigtest_heading }}</h3>
+
+
             {% if recommended_tests_reasons|length %}
             <table border=1>
 
@@ -301,7 +289,7 @@ function showdiv() {
 
             <form action="/sig_test" class="form-horizontal" enctype="multipart/form-data" method="post">
                 <!-- SIGNIFICANCE TEST RECOMMENDATION for test statistics -->
-                <h2>{{ result_str }}</h2>
+                <b>Choose one of the following recommended tests.</b><br><br>
                 {% if recommended_tests_reasons|length %}
 
                 <table border=1>
@@ -334,7 +322,7 @@ function showdiv() {
 
                         </ul> -->
 
-                <!-- <h2>Choose the significance test to run</h2> -->
+                <!-- <b>Choose the significance test to run</b> -->
                 <!-- radio button to choose test -->
                     <!--
                 <br> {% for key, value in recommended_tests_reasons.items() %}
@@ -345,7 +333,7 @@ function showdiv() {
                 </div>
 
                 {% endfor %} --> {% endif %}
-                <br> <br>
+      <br>
 
                 <!-- SIGNIFICANCE alpha -->
 
@@ -409,6 +397,7 @@ function showdiv() {
 
         <div class="roundpurplebottom" style="position:relative; top: -18px;">
             <form action="/effectsize" class="form-horizontal" enctype="multipart/form-data" method="post">
+                <b>Choose an effect size estimator.</b><br><br>
                 <!-- Effect Size list of tests -->
                 {% if effect_size_estimators|length %}
 
@@ -445,7 +434,7 @@ function showdiv() {
 
                         </ul> -->
 
-                <!-- <h2>Choose the significance test to run</h2> -->
+                <!-- <b>Choose the significance test to run</b> -->
                 <!-- radio button to choose test
                 <br> {% for key, value in effect_size_estimators.items() %}
 
@@ -568,7 +557,6 @@ function showdiv() {
 
                     <br> <br>
                     <b>Iterations at each sample size:</b><!-- TODO: add required range like '1 to 200'-->
-
                     <input id="iterations" name="power_iterations" type="number" placeholder="default"
                            {% if power_iterations %}value="{{ power_iterations }}" {% else %}value="200"{% endif %}
                            min="10" max="200"

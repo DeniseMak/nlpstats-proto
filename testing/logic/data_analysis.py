@@ -127,6 +127,7 @@ def partition_score(score1, score2, score_diff, eval_unit_size, shuffled, random
 	@param shuffled: a boolean value indicating whether reshuffling is done
 	@param method: how to calculate score in an evaluation unit (mean or median)
 	@return: score1_new, score2_new, score_diff_new, the partitioned scores, dictionary
+	@return: ind_shuffled, indices for scores before grouping
 	"""
 	ind = list(score_diff.keys()) # the keys should be the same for three scores
 
@@ -193,7 +194,7 @@ def partition_score(score1, score2, score_diff, eval_unit_size, shuffled, random
 
 	plt.savefig(output_dir+'/hist_score_diff_partitioned.svg')
 
-	return([score1_new, score2_new, score_diff_new])
+	return([score1_new, score2_new, score_diff_new, ind_shuffled])
 
 
 def normality_test(score, alpha):

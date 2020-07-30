@@ -1,62 +1,29 @@
-### Config file for testing proc
+# user's config file for testing proc
 
-## user's specs
-# data analysis:
-eval_unit_size: 5
+## data analysis:
+eval_unit_size: 1
 eval_unit_met: mean
 shuffled: False
-random_seed: 0
+random_seed: 1
 normal_test_alpha: 0.05
 
 
-# sig testing
+## sig testing
 sig_test_alpha: 0.05
 sig_boot_perm_B: 500
 
-# effect size
-eff_size_ind: wilcoxonr
+## effect size
+eff_size_ind: cohend
 
-# power analysis
+## power analysis
 power_alpha: 0.05
 power_method: bootstrap
 power_dist_name: normal
-power_num_of_sim: 35 # number of simulations 
+power_num_of_subsample: 35 # number of simulations 
 power_B: 200
 
 
 
-# output
+## output
 fig_output_dir: figures
-report_output_dir: report
-
-
-
-
-
-
-## system specs
-MIN_eval_unit_size: 1
-#MAX_eval_unit_size: #this should be equal to original sample size
-MIN_normal_test_alpha: 0
-MAX_normal_test_alpha: 1
-
-MIN_sig_test_alpha: 0
-MAX_sig_test_alpha: 1
-
-MAX_sig_boot_perm_B: 2000
-
-MIN_power_alpha: 0
-MAX_power_alpha: 1
-
-MIN_power_samplesize: 11 # the first simulation sample size should be bigger than this
-#MAX_power_samplesize:  # this should be the number of eval units 
-MIN_power_num_of_sim: 5 # minimum number of simulations for power analysis, i.e. points on x-axis
-#MAX_power_num_of_sim:  # this should be the number of eval units
-MAX_power_B: 500
-
-mu: 0 # null hypothesis
-
-
-
-
-
+#report_output_dir: report

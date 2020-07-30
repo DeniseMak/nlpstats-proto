@@ -1,43 +1,50 @@
-## Errors:
-* Why do images not display in User folder. <-- **Should work now**
-* Hardcoded folder in Haotian's data analysis code
-* File upload crashes if empty  <-- **Should work now**
-* SVG Size
-* Config upload and download, readable
-## Todo:
-### Jesse's
-* Report score file and exported data file
-* Plumb all help functions
-* Yellow tab if things change
-* typos
-### Denise's
-* Debug issue with effect size output.
-* Fix missing input field for bootstrap B in significance test.
-* **done. Now we show error message if they haven't uploaded a file and make the submission required.** Empty upload crash
-* **done. We check the cookie** check if already uploaded the score file. 
-* throw format exception for bad system file
-* **done** Persist the file uploaded notification after submit by using class="button" and hiding <input>
-* **done** Show/hide graphics button
-* Power Analysis: non-normal MonteCarlo case (get normality from cookie) 
-* Power Analysis: Bootstrap update 
-### Up for grabs
-* Need formulas for Effect Size
-* Merge Denise and Jesse versions
-* Client side file validation
-* Yellow tab if things change
-* Highlight selected tab and grey out impossible tabs
-* SVG Screenshot
-* generate report zip
-* Set fixed x dimension
-* Patas running
-* Code cleanup and review
-* Make file upload required if we can see that the fileName cookie doesn't exist.
-* can .button go back into CSS file? Couldn't get it to work when it was in `other.css`, so for now it's in `<style>` in `tab_interface.html`.
-* clear old cookies (maybe this is done automatically)
+# Todo
 
-## Questions:
+Jesse:
+
+By 330
+* Change name.
 * Huge headlines?
 * Copy editing
-* Explanatory text inline
-* Edit paper
-* Prepower analysis
+* Subsamples and inline box on last page.
+
+By 5PM
+* Yellow results if things change above. Grey tabs if impossible, highlight current tab
+* Set fixed x dimension and  SVG Size
+
+
+* can .button go back into CSS file? Couldn't get it to work when it was in `other.css`, so for now it's in `<style>` in `tab_interface.html`.
+* Tooltips wider than tall.
+* Make first column of tables wider in css
+
+* Take good screenshots in SVG.
+* Upload and download config file, config file in user dir
+
+* Finish plumbing report. (make partial report work)
+
+Low Priority:
+* Two column
+* Webserver host
+
+Denise:
+
+* Make effect size tab have checkboxes inline. Readable names
+* Hidden significance test parameters.
+* Explanatory text inline (PA).
+* Fix missing input field for bootstrap B in significance test.
+* throw format exception for bad system file
+* Power Analysis: non-normal MonteCarlo case (get normality from cookie) 
+* Power Analysis: Bootstrap update 
+
+Low Priotity:
+
+* Show/hide graphics button PA Tab?
+* Need formulas for Effect Size (KaTeX)
+* Reset button - clear old cookies (maybe this is done automatically)
+
+Haotian:
+
+* Make new config file with separation between user and system.
+* Better name for "Expected mean difference for null hypothesis μ"
+
+

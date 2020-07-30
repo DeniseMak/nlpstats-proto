@@ -41,7 +41,7 @@ def run_sig_test(recommended_test, score, alpha=0.05, mu=0, B=2000):
 		rejection = pval<alpha
 
 
-	return((test_stats_value, pval, rejection))
+	return((round(test_stats_value,4), round(pval,4), rejection))
 
 def bootstrap_test(x, alpha, mu, B, method='mean'):
 	if method == 'mean':
