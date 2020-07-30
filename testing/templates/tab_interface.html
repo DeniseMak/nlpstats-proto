@@ -78,9 +78,10 @@
             <div class="roundpurplebottom" style="position:relative; top: -18px;">
                 <h2>Data and Parameters</h2>
 
-                System File:
-                <div class="tooltip">?
-                    <span class="tooltiptext">"{{help1}}"</span></div>
+                System File: <b>{{ error_str }}</b>
+                    <div class="tooltip">?
+                        <span class="tooltiptext">Upload a text file containing metrics comparing two systems.
+                        The file should have two colummns, one for each system.</span></div>
                 <input id="system_file" name="system_file" class="input-file" type="file" />
 
                 <!--         <input type="file" id="system_file" name="system_file" style="display:none;" required/>
@@ -94,20 +95,29 @@
                     <span class="tooltiptext">This should be a whole number between one and the number of data points.</span>
                 </div>
 
-                <input id="eval_unit_size" name="eval_unit_size" type="number" value="{{ eval_unit_size }}" class="form-control input-md" required="">
+                <input id="eval_unit_size" name="eval_unit_size"
+                       type="number"
+                       {% if eval_unit_size %}
+                            value="{{ eval_unit_size }}"
+                       {% else %}
+                            value="1"
+                       {% endif %}
+                       class="form-control input-md" required="">
 
                 <br><br>
                 <!-- Data Analysis: Radio Buttons (mean, median)  -->
 
                 Evaluation Unit Metric:
                 <div class="tooltip">?
-                    <span class="tooltiptext"> The metric to use for each evaluation unit.
-                          <!-- "{{help2}}" -->
+                    <span class="tooltiptext"> The metric to use as the representative value for each evaluation unit.
+                          <!-- TODO: Use "{{help2}}" or another server side help string -->
                       </span></div>
 
-                <input type="radio" name="target_statistic" id="target_statistic-0" value="mean" {% if eval_unit_stat=="mean" %} checked="checked" {% endif %}> Mean
+                <input type="radio" name="target_statistic" id="target_statistic-0" value="mean" checked="checked"
+                        {% if eval_unit_stat=="mean" %} checked="checked" {% else %} checked="checked"{% endif %}> Mean
 
-                <input type="radio" name="target_statistic" id="target_statistic-1" value="median" {% if eval_unit_stat=="median" %} checked="checked" {% endif %}> Median
+                <input type="radio" name="target_statistic" id="target_statistic-1" value="median"
+                        {% if eval_unit_stat=="median" %} checked="checked" {% endif %}> Median
 
                 <br> <br>
                 <!-- Data Analysis: seed-->
@@ -118,7 +128,8 @@
                       Otherwise, we will not shuffle.</span>
                 </div>
 
-                <input id="seed" name="seed" type="number" placeholder="don't shuffle" {% if shuffle_seed %} value="{{ shuffle_seed }}" {% endif %} step="1" class="form-control input-md">
+                <input id="seed" name="seed" type="number" placeholder="don't shuffle"
+                        {% if shuffle_seed %} value="{{ shuffle_seed }}" {% endif %} step="1" class="form-control input-md">
 
                 <br><br>
                 <!-- Data Analysis Submit Button -->

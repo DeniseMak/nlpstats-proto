@@ -110,24 +110,12 @@ def homepage(debug=True):
         last_tab_name_clicked = 'Data Analysis' #request.form.get('last_tab_name')
         print("***** LAST TAB: {}".format(last_tab_clicked))
         print("***** LAST TAB: {}".format(last_tab_name_clicked))
-        # ------- File ----------------
-        f = request.files['system_file']  # new
-        f.save(FOLDER + "/" + secure_filename(f.filename))
 
-        scores1, scores2 = read_score_file(FOLDER + "/" + f.filename) #read_score_file("score")
-        # plot_hist(scores1, scores2)
-        score_dif = calc_score_diff(scores1, scores2)
         eval_unit_size = request.form.get('eval_unit_size')
 
         # Handle case of no eval unit size
         if not eval_unit_size:
             eval_unit_size = DEFAULT_EVAL_SIZE
-
-        sample_size = np.floor(len(list(score_dif))/float(eval_unit_size))
-
-        # plot difference hist
-        # plot_hist_diff(score_dif, FOLDER)
-
 
         # target_stat is 'mean' or 'median'
         eval_unit_stat = request.form.get('target_statistic')
@@ -140,58 +128,77 @@ def homepage(debug=True):
         else:
             shuffle = True
 
+        # ------- File ----------------
+        f = request.files['system_file']  # new
+        have_file = False
+        have_filename = False
+        if f.filename:
+            have_filename = True
+            data_filename = f.filename
+            f.save(FOLDER + "/" + secure_filename(data_filename))
+            have_file = True # assume the above worked
+        elif request.cookies.get('fileName'):
+            data_filename = request.cookies.get('fileName')
+            have_filename = True
+        else:
+            # no filename, print error message
+            print('ERROR: submitted without filename! You must resubmit!')
 
+        if have_filename:
+            if debug: print('have filename:{}'.format(data_filename))
+            try:
+                scores1, scores2 = read_score_file(FOLDER + "/" + data_filename)
+                if len(scores1) > 0 and len(scores2):
+                    score_dif = calc_score_diff(scores1, scores2)
+                # todo: display how many samples there are
+                    sample_size = np.floor(len(list(score_dif)) / float(eval_unit_size))
+                    if debug: print('SAMPLE SIZE (#eval units)={}'.format(sample_size))
+                    have_file = True
+            except:
+                print('Exception occurred reading file: filename={}'.format(data_filename))
 
-        # partition score difference and save svg
-        score_diff_par = partition_score(scores1, scores2, score_dif, float(eval_unit_size),
+        if have_file:
+            # partition score difference and save svg
+            score_diff_par = partition_score(scores1, scores2, score_dif, float(eval_unit_size),
                                          shuffle, # shuffle if we have seed
                                          seed,
                                          eval_unit_stat, # mean or median
                                          FOLDER)
 
-        # --------------Summary Stats -------------
-        ### initialize a new testCase object to use for summary statistics
-        tc = testCase(scores1,
-                               scores2,
-                               score_dif,
-                               score_diff_par[2],#score_diff_par,
-                               sample_size,
-                               FOLDER)
-        tc.get_summary_stats()
-        # todo make this a function for score1, score2, score_dif, score_dif_par:
-        summary_stats_dict = create_summary_stats_dict(tc)
-        # if debug: print('Score 1: mean={}, med={}, sd={}, min={}, max={}'.format(tc.eda.summaryStat_score1.mu,
-        #                                                                tc.eda.summaryStat_score1.med,
-        #                                                                tc.eda.summaryStat_score1.sd,
-        #                                                                tc.eda.summaryStat_score1.min_val,
-        #                                                                tc.eda.summaryStat_score1.max_val))
+            # --------------Summary Stats -------------
+            ### initialize a new testCase object to use for summary statistics
+            tc = testCase(scores1,
+                                   scores2,
+                                   score_dif,
+                                   score_diff_par[2],#score_diff_par,
+                                   sample_size,
+                                   FOLDER)
+            tc.get_summary_stats()
+            # todo make this a function for score1, score2, score_dif, score_dif_par:
+            summary_stats_dict = create_summary_stats_dict(tc)
+            # if debug: print('Score 1: mean={}, med={}, sd={}, min={}, max={}'.format(tc.eda.summaryStat_score1.mu,
+            #                                                                tc.eda.summaryStat_score1.med,
+            #                                                                tc.eda.summaryStat_score1.sd,
+            #                                                                tc.eda.summaryStat_score1.min_val,
+            #                                                                tc.eda.summaryStat_score1.max_val))
 
-        # --------------Recommended Test Statistic (mean or median, by skewness test) ------------------
-        mean_or_median = skew_test(score_diff_par[2])
-        # ---------------normality test
-        # todo: add alpha parameter
-        is_normal = normality_test(score_diff_par[2], alpha=0.05)
-        # --------------Recommended Significance Tests -------------------------
-        recommended_tests = recommend_test(mean_or_median, is_normal)
+            # --------------Recommended Test Statistic (mean or median, by skewness test) ------------------
+            mean_or_median = skew_test(score_diff_par[2])
+            # ---------------normality test
+            # todo: add alpha parameter
+            is_normal = normality_test(score_diff_par[2], alpha=0.05)
+            # --------------Recommended Significance Tests -------------------------
+            recommended_tests = recommend_test(mean_or_median, is_normal)
 
-        # recommended tests reasons (temp function)
-        recommended_tests_reasons = create_test_reasons(recommended_tests)
+            # recommended tests reasons (temp function)
+            recommended_tests_reasons = create_test_reasons(recommended_tests)
 
-        if debug: print(recommended_tests_reasons)
-        # test reason
-        # if mean_or_median == 'mean' and is_normal:
-        #     test_reason = "This test is appropriate for data in a normal distribution that is not skewed"
-        # elif mean_or_median == 'mean':
-        #     test_reason = "This test is appropriate for data that is not skewed, which uses the mean as the test statistic."
-
-
-        if eval_unit_size:
-
-            # full_filename1 = app.config['FOLDER'] + '/' + 'hist_score1.svg'
-            # # os.path.join(app.config['FOLDER'], 'hist_score1.svg')
-            # full_filename2 = app.config['FOLDER'] + '/' + 'hist_score2.svg'
-            # full_filename_dif = os.path.join(app.config['FOLDER'], 'hist_score_diff.svg')
-            # full_filename_dif_par = app.config['FOLDER'] + '/' + 'hist_score_diff_partitioned.svg'
+            if debug: print(recommended_tests_reasons)
+            # test reason
+            # if mean_or_median == 'mean' and is_normal:
+            #     test_reason = "This test is appropriate for data in a normal distribution that is not skewed"
+            # elif mean_or_median == 'mean':
+            #     test_reason = "This test is appropriate for data that is not skewed, which uses the mean as the test statistic."
 
             full_filename1 = os.path.join(app.config['FOLDER'], 'hist_score1_partitioned.svg')
             full_filename2 = os.path.join(app.config['FOLDER'], 'hist_score2_partitioned.svg')
@@ -241,7 +248,8 @@ def homepage(debug=True):
                 resp = make_response(rendered)
 
                 # -------------- Set all cookies -------------
-                resp.set_cookie('fileName', f.filename)
+                if f.filename:
+                    resp.set_cookie('fileName', f.filename)
                 resp.set_cookie('eval_unit_size', eval_unit_size)
                 resp.set_cookie('eval_unit_stat', eval_unit_stat)
                 resp.set_cookie('shuffle_seed', seed)
@@ -266,9 +274,9 @@ def homepage(debug=True):
                 resp.set_cookie('hist_diff_par', full_filename_dif_par)
                 return resp   # return rendered
         else:
-            # we shouldn't get here since we used default values for the seed and eval unit size
+            # no file
             rendered = render_template(template_filename,
-                                       result_str='evaluation unit size or seed not defined',)
+                                       error_str='You must submit a file.',)
             return rendered
     elif request.method == 'GET':
         # You got to the main page by navigating to the URL, not by clicking submit
