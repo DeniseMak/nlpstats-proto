@@ -8,12 +8,11 @@ Data shape as table (why is it bold)
 Jesse:
 
 
-By 5PM
+By 630PM
 * Yellow results if things change above. Grey tabs if impossible, highlight current tab
 * Set fixed x dimension and  SVG Size
 
 
-* can .button go back into CSS file? Couldn't get it to work when it was in `other.css`, so for now it's in `<style>` in `tab_interface.html`.
 * Tooltips wider than tall.
 * Make first column of tables wider in css
 
