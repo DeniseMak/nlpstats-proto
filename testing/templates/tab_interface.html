@@ -224,7 +224,9 @@ function showdiv() {
 
             <!-- HISTOGRAM Images -->
             <br>
+            {% if hist_score1 %}
             <button id="hist_button" class='btn btn-default' onclick = "showdiv()">View Histograms</button>
+            {% endif %}
             <div class="hiddendiv" id = "hidden">
             {% if hist_score1 %}
                 <img id=hist_score1 src="{{ url_for('send_img_file', image_path=hist_score1) }}?{{ rand }}">{% endif %}
@@ -298,7 +300,14 @@ function showdiv() {
 
                     {% for key, value in recommended_tests_reasons.items() %}
                     <tr>
-                        <td> {{ key }} </td>
+                        <td>
+                            <input type="radio" name="target_sig_test" id="target_sig_test-1"
+                                    {% if sig_test_name %} {% if key==sig_test_name %} checked="checked" {% endif %}
+                                    {% endif %} value={{ key }}> {% if key=='t' %}t-test {% else %} {{ key }} {% endif %}<!--{{ key }}
+                            <div class="tooltip">?
+                                <span class="tooltiptext">{{ value }}</span>
+                            </div> -->
+                        </td>
                         <td>{{ value }}</td>
                     </tr>
                     {% endfor %}
@@ -317,6 +326,7 @@ function showdiv() {
 
                 <!-- <h2>Choose the significance test to run</h2> -->
                 <!-- radio button to choose test -->
+                    <!--
                 <br> {% for key, value in recommended_tests_reasons.items() %}
 
                 <input type="radio" name="target_sig_test" id="target_sig_test-1" {% if sig_test_name %} {% if key==sig_test_name %} checked="checked" {% endif %} {% endif %} value={{ key }}> {{ key }}
@@ -324,24 +334,35 @@ function showdiv() {
                     <span class="tooltiptext">{{ value }}</span>
                 </div>
 
-                {% endfor %} {% endif %}
+                {% endfor %} --> {% endif %}
                 <br> <br>
 
                 <!-- SIGNIFICANCE alpha -->
 
-                Significance level &alpha;:
+                Required significance level &alpha;:
                 <div class="tooltip">?
-                    <span class="tooltiptext">The significance level.</span>
+                    <span class="tooltiptext">Reject the null hypothesis if the p-value is less than this value.</span>
                 </div>
 
-                <input id="significance_level" name="significance_level" type="number" {% if sig_alpha %} placeholder="{{ sig_alpha }}" value="{{ sig_alpha }}" {% else %} placeholder="0.00" {% endif %} class="form-control input-md" required="" step="0.01" min="0" max="1">
+                <input id="significance_level" name="significance_level" type="number" {% if sig_alpha %} placeholder="{{ sig_alpha }}" value="{{ sig_alpha }}" {% else %} value=0.05 {% endif %} class="form-control input-md" required="" step="0.01" min="0" max="1">
 
-                <br> <br>
+                <br><br>
+                <!-- Bootstrap (for bootstrap and permutation tests) -->
+                Number of iterations for bootstrap significance tests:
+                <div class="tooltip">?<span class="tooltiptext">The number of iterations.</span></div>:
+                <input id="sig_boot_iterations" name="sig_boot_iterations" type="number" value="2000">  <!-- todo: disable if not bootstrap -->
+                <br><br>
+                <!-- mu (for t-test and bootstrap) -->
+                Expected mean difference for null hypothesis &mu;:
+                <div class="tooltip">?<span class="tooltiptext">The expected value of the mean for the null hypothesis.</span></div>:
+                <input id="mu" name="mu" type="number" value="0">  <!-- todo: disable if not t or bootstrap -->
+
                 <!-- Significance: Submit Button -->
 
                 <input type="hidden" id="sa_hidden" value="hidden101">
                 <!-- Is type=submit implied by class="btn btn-success" ? -->
                 <input type="hidden" id="sig_tab_name" name="sig_tab_name" value="SignificanceTabHidden-2" />
+                <br><br>
                 <button id="submit" name="submit" type=submit class="btn btn-success">Run</button>
                 <!-- Button for JS script-->
                 <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
@@ -356,19 +377,16 @@ function showdiv() {
             <table border="1">
                 <tr>
                     <th>test statistic/CI</th>
-                    <td>{{ sig_test_stat_val }}
-                        <!--1.65562-->
-                    </td>
+                    <td>{{ sig_test_stat_val }}</td>
                 </tr>
                 <tr>
                     <th>p-value</th>
                     <td> {{ pval }}
-                        <!--0.098585-->
                     </td>
                 </tr>
                 <tr>
                     <th>Reject H0</th>
-                    <td>{{ rejectH0 }}</td>
+                    <td>{% if rejectH0 %}Yes{% else %}No{% endif %}</td>
                 </tr>
             </table>
             {% endif %}
@@ -542,9 +560,10 @@ function showdiv() {
     </div>
 
     <div class="roundgreen" class="hiddendiv" id="hidden">
-        <h2>Results:</h2>
+
             <!-- Images -->
             {% if power_path %}
+                <h3>Results:</h3>
                 <img id=power_path src="../{{ url_for('send_img_file', image_path=power_path) }}?{{ rand }}"> {% endif %}
     </div>
     </div>

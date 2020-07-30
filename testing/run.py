@@ -7,12 +7,13 @@ import os
 import numpy as np
 
 # Business Logic
-from logic.test_case import testCase
+from logic.fileReader import read_score_file
+from logic.testCase import testCase
 from logic.helper import helper
 from logic.effectSize import calc_eff_size
-from logic.data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score,\
+from logic.dataAnalysis import partition_score,\
 skew_test, normality_test, recommend_test
-from logic.sig_testing import run_sig_test
+from logic.sigTesting import run_sig_test
 import logic.sig_testing
 import logic.power_analysis   # old import
 
@@ -174,8 +175,7 @@ def homepage(debug=False):
                                    scores2,
                                    score_dif,
                                    score_diff_par[2],#score_diff_par,
-                                   num_eval_units,
-                                   FOLDER)
+                                   num_eval_units)
             tc.get_summary_stats()
             # todo make this a function for score1, score2, score_dif, score_dif_par:
             summary_stats_dict = create_summary_stats_dict(tc)
@@ -318,6 +318,8 @@ def sigtest(debug=True):
         # ------- Get form data
         sig_test_name = request.form.get('target_sig_test')
         sig_alpha = request.form.get('significance_level')
+        mu = float(request.form.get('mu'))
+        sig_boot_iterations = int(request.form.get('sig_boot_iterations'))
 
         if debug:
             print(' ********* Running /sig_test')
@@ -334,7 +336,8 @@ def sigtest(debug=True):
         test_stat_val, pval, rejection = run_sig_test(sig_test_name, # 't'
                                                   score_dif,
                                                   float(sig_alpha), #0.05,
-                                                  B=500) # todo: B_boot
+                                                  B=sig_boot_iterations,  # todo: B_boot default 2000
+                                                      mu=mu)        # todo: mu default 0
         if debug: print("test_stat_val={}, pval={}, rejection={}".format(test_stat_val, pval, rejection))
 
         recommended_tests = json.loads(request.cookies.get('recommended_tests'))
@@ -349,6 +352,7 @@ def sigtest(debug=True):
                                # get from cookies
                                eval_unit_size=request.cookies.get('eval_unit_size'),
                                eval_unit_stat=request.cookies.get('eval_unit_stat'),
+                               num_eval_units=request.cookies.get('num_eval_units'),
                                shuffle_seed=request.cookies.get('shuffle_seed'),
                                sigtest_heading=request.cookies.get('sig_test_heading'), # todo: add teststat_heading
                                summary_str=request.cookies.get('summary_str'),
@@ -427,6 +431,7 @@ def effectsize():
                                    # get from cookies
                                    eval_unit_size=request.cookies.get('eval_unit_size'),
                                    eval_unit_stat=request.cookies.get('eval_unit_stat'),
+                                   num_eval_units=request.cookies.get('num_eval_units'),
                                    shuffle_seed=request.cookies.get('shuffle_seed'),
                                    sigtest_heading=request.cookies.get('sig_test_heading'), # todo: add teststat_heading
                                    summary_str=request.cookies.get('summary_str'),
@@ -506,6 +511,7 @@ def power():
                                    # get from cookies
                                    eval_unit_size=request.cookies.get('eval_unit_size'),
                                    eval_unit_stat=request.cookies.get('eval_unit_stat'),
+                                   num_eval_units= request.cookies.get('num_eval_units'),
                                    shuffle_seed=request.cookies.get('shuffle_seed'),
                                    sigtest_heading=request.cookies.get('sig_test_heading'),  # todo: add teststat_heading
                                    summary_str=request.cookies.get('summary_str'),
