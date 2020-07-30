@@ -185,7 +185,7 @@ function showdiv() {
         <div class="roundgreen" class="hiddendiv" id="hidden1">
 
             <!-- SUMMARY STATISTICS -->
-            <b>{{ summary_str }}</b><br><br>
+            <b>Summary Statistics</b><br><br>
             {% if summary_stats_dict|length %}
             <table>
 
@@ -231,18 +231,32 @@ function showdiv() {
 
 
             <!-- RECOMMENDATION for test statistics -->
-            <b id=teststat_heading>{{ teststat_heading }}</b><br><br>
+            <b>Data Shape</b> <br><br>
+            
             {% if mean_or_median %}
-            <b>Normality:</b>The data distribution {% if is_normal %} passes {% else %} does not pass {% endif %} the normality test.
-            <p></p>
-            <b>Skewness:</b> The data distribution {% if mean_or_median == 'median' %} exceeds {% else %} does not exceed {% endif %} the skew threshold.
-            <p></p>
-            <b>Test statistic:</b> Based on the skewness, the recommended test statistic to use is:
-            <b>{{ mean_or_median }}</b> {% endif %} <br><br>
+            <table border=1>
+            
+            <tr>
+            <th>Normality</th>
+            <th>The data distribution {% if is_normal %} passes {% else %} does not pass {% endif %} the normality test.</th>
+            </tr>
+                
+            <tr>
+            <th>Skewness</th>
+            <th>The data distribution {% if mean_or_median == 'median' %} exceeds {% else %} does not exceed {% endif %} the skew threshold.</th>
+            </tr>
+                
+            <tr>
+            <th>Test Statistic</th>
+            <th>Based on the skewness, the recommended test statistic to use is:
+            {{ mean_or_median }}.</th>
+            </tr>
+                
+            </table>
+            {% endif %} <br>
 
             <!-- RECOMMENDATION for significance tests with REASONS -->
-            <b id=sigtest_heading>
-                {{ sigtest_heading }}</b><br><br>
+            <b>Recommended Significance Tests</b><br><br>
             {% if recommended_tests_reasons|length %}
             <table border=1>
 
@@ -281,7 +295,7 @@ function showdiv() {
 
             <form action="/sig_test" class="form-horizontal" enctype="multipart/form-data" method="post">
                 <!-- SIGNIFICANCE TEST RECOMMENDATION for test statistics -->
-                <b>Choose one of the following recommended tests.</b><br><br>
+                <b>Recommended Tests</b><br><br>
                 {% if recommended_tests_reasons|length %}
 
                 <table border=1>
@@ -363,7 +377,7 @@ function showdiv() {
 
         <div class="roundgreen" class="hiddendiv" id="hidden">
             {% if sig_test_stat_val %}
-            <b>Results:</b><br><br>
+    
             <table border="1">
                 <tr>
                     <th>test statistic/CI</th>
@@ -495,8 +509,9 @@ function showdiv() {
                 <div class="form-group">
 
     
+    <b>Select the parameters for power analysis.</b><br><br>
 
-                <b>Choose power analysis method:</b><br>
+                Choose a method of power analysis:
                     <!-- TODO: Display advice that takes into account the
                      actual size of evaluation unit and the limits on min and max -->
 
@@ -505,7 +520,7 @@ function showdiv() {
                          checked="checked"
                        {% endif %}
                        value={{ 'montecarlo' }}>
-                        Montecarlo (normal distribution required)
+                        Montecarlo (Normal)
                     <div class="tooltip">? <!-- todo: use helper function for tooltip text -->
                         <span class="tooltiptext">Conduct retrospective power analysis using Montecarlo simulation.</span>
                     </div>
@@ -519,31 +534,30 @@ function showdiv() {
                 <div class="tooltip">?  <!-- todo: use helper function for tooltip text -->
                     <span class="tooltiptext">Conduct retrospective power analysis using bootstrap simulation.</span>
                 </div>
-                    <br>
-                    <br>
+                
                 <p>The evaluation unit size is {{ eval_unit_size }}, and the number of evaluation units is {{ num_eval_units }}.</p>
-                    <b>Minimum sample size:</b> <!--This is a value between 1 and the number of evaluation units-->
+                    Minimum sample size: <!--This is a value between 1 and the number of evaluation units-->
                     <input id="min_sample_size" name="min_sample_size" type="number"
                        placeholder="min" class="form-control input-md" value="1">
                                     <div class="tooltip">?<span class="tooltiptext">"lower bound on number of samples (minimum number of evaluation units)"</span> </div>
                 <br/><br>
-                    <b>Maximum sample size:</b> <!--The number of evaluation units is the upper bound.-->
+                    Maximum sample size: <!--The number of evaluation units is the upper bound.-->
                     <input id="max_sample_size" name="max_sample_size" type="number"
                        placeholder="max" class="form-control input-md" value="{{ num_eval_units }}">
                                     <div class="tooltip">?<span class="tooltiptext">
                                         "upper bound on number of samples (max number of evaluation units)"</span> </div>
                 <br/><br>
-                    <b>Number of intervals:</b> <!-- max 20 -->
+                    Number of subsamples: <!-- max 20 -->
                 <input id="num_intervals" name="num_intervals" type="number" placeholder="Number of intervals"
                        class="form-control input-md"
                        {% if power_num_intervals %} value="{{ power_num_intervals }}" {% else %} value="20" {% endif %}
                        min=1 max="50">
                                     <div class="tooltip">?<span class="tooltiptext">
-                                      Specify the number of sample size intervals between the minimum and maximum at which to calculate power.</span> </div>
+                                      Specify the number of subsamples between the minimum and maximum at which to calculate power.</span> </div>
 
                     <br> <br>
-                    <b>Iterations at each sample size:</b><!-- TODO: add required range like '1 to 200'-->
-                    <div class="tooltip">?<span class="tooltiptext">The number of bootstrap iterations at each sample size.</span></div>
+                    Iterations at each sample size:<!-- TODO: add required range like '1 to 200'-->
+                    <div class="tooltip">?<span class="tooltiptext">The number of bootstrap iterations at each subsample.</span></div>
                     <input id="iterations" name="power_iterations" type="number" placeholder="default"
                            {% if power_iterations %}value="{{ power_iterations }}" {% else %}value="200"{% endif %}
                            min="10" max="200"
