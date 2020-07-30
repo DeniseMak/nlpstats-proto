@@ -40,8 +40,8 @@ teststat_heading = "Test statistic recommendation"
 sig_test_heading = 'You can choose from the following significance tests'
 estimators = {"cohend": "This function calculates the Cohen's d effect size estimator.",
               "hedgesg": "This function takes the Cohen's d estimate as an input and calculates the Hedges's g.",
-              "wilcoxon_r": "This function calculates the standardized z-score (r) for the Wilcoxon signed-rank test.",
-              "hodgeslehmann": "This function estimates the Hodges-Lehmann estimator for the input score."}
+              "wilcoxonr": "This function calculates the standardized z-score (r) for the Wilcoxon signed-rank test.",
+              "hl": "This function estimates the Hodges-Lehmann estimator for the input score."}
 
 def calc_score_diff(score1,score2):
 	"""
