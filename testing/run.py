@@ -559,10 +559,7 @@ def power(debug=True):
 # https://www.roytuts.com/how-to-download-file-using-python-flask/
 @app.route('/download')
 def download_file():
-        selections = {
-          "x": 1,
-          "y": 2,
-        }
+        selections = {}
         rand = np.random.randint(10000)
         gen_report(selections, str(rand))
         return send_file("user/r" + str(rand) + ".zip", as_attachment=True)
