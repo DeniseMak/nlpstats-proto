@@ -342,8 +342,6 @@ def sigtest(debug=True):
                                effect_size_estimators=estimators,
                                eff_estimator=request.cookies.get('eff_estimator'),
                                eff_size_val=request.cookies.get('eff_size_val'),
-                               help1 = helper("function 1"),
-                               help2 = helper("function 2"),
                                #file_uploaded = "File uploaded!!: {}".format(fileName),
                                last_tab_name_clicked= last_tab_name_clicked,
                            # get from cookies
@@ -420,8 +418,6 @@ def effectsize():
                                    eff_size_val = eff_size_val,
                                    #effect_size_estimates = estimates,
                                    #effect_estimator_dict = est_dict,
-                                   help1=helper("function 1"),
-                                   help2=helper("function 2"),
                                    # file_uploaded = "File uploaded!!: {}".format(fileName),
                                    last_tab_name_clicked=last_tab_name_clicked,
                                    # get from cookies
@@ -487,8 +483,6 @@ def power():
                                eff_size_val=request.cookies.get('eff_size_val'),
                                # effect_size_estimates = estimates,
                                # effect_estimator_dict = est_dict,
-                               help1=helper("function 1"),
-                               help2=helper("function 2"),
                                # file_uploaded = "File uploaded!!: {}".format(fileName),
                                last_tab_name_clicked=last_tab_name_clicked,
                                # get from cookies
