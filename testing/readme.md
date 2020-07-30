@@ -1,7 +1,7 @@
 ## Errors:
-* Why do images not display in User folder. <-- **Should be fixed**
+* Why do images not display in User folder. <-- **Should work now**
 * Hardcoded folder in Haotian's data analysis code
-* File upload crashes if empty  <-- **Denise working on exception handling
+* File upload crashes if empty  <-- **Should work now**
 * SVG Size
 * Config upload and download, readable
 
@@ -14,8 +14,12 @@
 ### Denise's
 * Debug issue with effect size output.
 * Fix missing input field for bootstrap B in significance test.
-* Automatically generate intelligent defaults and explain why for Power Analysis
-* Empty upload crash -- check if already uploaded the score file -is there a way to avoid having to re-post in Data Analysis. If we can't find a way, then we need to make file input required)
+* Power Analysis: Automatically generate intelligent defaults and explain why 
+* **done. Now we show error message if they haven't uploaded a file and make the submission required.** Empty upload crash
+* **done. We check the cookie** check if already uploaded the score file. 
+* throw format exception for bad system file
+* **done** Persist the file uploaded notification after submit by using class="button" and hiding <input>
+### Up for grabs
 * Merge Denise and Jesse versions
 * Client side file validation
 * Yellow tab if things change
@@ -26,6 +30,9 @@
 * Set fixed x dimension
 * Patas running
 * Code cleanup and review
+* Make file upload required if we can see that the fileName cookie doesn't exist.
+* can .button go back into CSS file? Couldn't get it to work when it was in `other.css`, so for now it's in `<style>` in `tab_interface.html`.
+* clear old cookies (maybe this is done automatically)
 
 ## Questions:
 * Huge headlines?
