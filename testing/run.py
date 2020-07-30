@@ -8,7 +8,7 @@ import numpy as np
 
 # Business Logic
 from logic.test_case import testCase
-from logic.help import helper
+from logic.helper import helper
 from logic.effectSize import calc_eff_size
 from logic.data_analysis import read_score_file, plot_hist, calc_score_diff, plot_hist_diff, partition_score,\
 skew_test, normality_test, recommend_test
@@ -511,8 +511,8 @@ def power():
 @app.route('/download')
 def download_file():
         selections = {
-          "": ,
-          "": ,
+          "x": 1,
+          "y": 2,
         }
         gen_report(selections)
         os.system("zip -r user/r.zip user/*")
