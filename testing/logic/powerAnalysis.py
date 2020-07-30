@@ -4,7 +4,7 @@ import os
 import sys
 import random
 from scipy import stats
-import logic.sigTesting
+import sigTesting
 from statsmodels.stats.descriptivestats import sign_test
 import matplotlib
 matplotlib.use('Svg')
@@ -12,10 +12,10 @@ from matplotlib import pyplot as plt
 plt.rcParams['svg.fonttype'] = 'none'
 
 
-def post_power_analysis(sig_test_name, method, score, num_of_sim, dist_name, B, alpha, mu, output_dir, boot_B = None):
+def post_power_analysis(sig_test_name, method, score, num_of_subsample, dist_name, B, alpha, mu, output_dir, boot_B = None):
 
-	def get_sim_sample_sizes(z, num_of_sim):
-		partitions = np.array_split(range(len(z)), num_of_sim)
+	def get_sim_sample_sizes(z, num_of_subsample):
+		partitions = np.array_split(range(len(z)), num_of_subsample)
 		sample_sizes = []
 		for i in partitions:
 			sample_sizes.append(i[-1])
@@ -24,7 +24,7 @@ def post_power_analysis(sig_test_name, method, score, num_of_sim, dist_name, B, 
 
 	z = np.array(list(score.values()))
 
-	sample_sizes = get_sim_sample_sizes(z, num_of_sim)
+	sample_sizes = get_sim_sample_sizes(z, num_of_subsample)
 
 	power_sampsizes = {}
 
@@ -50,7 +50,7 @@ def post_power_analysis(sig_test_name, method, score, num_of_sim, dist_name, B, 
 			count = 0
 			for b in range(0,B):
 				z_b = np.random.choice(a = z, size = int(i), replace=True)
-				(test_stats, pval, rejection) = logic.sigTesting.run_sig_test(sig_test_name, z_b, alpha, boot_B, mu)
+				(test_stats, pval, rejection) = sigTesting.run_sig_test(sig_test_name, z_b, alpha, boot_B, mu)
 				if rejection:
 					count+=1
 			power_sampsizes[i] = float(count)/B
