@@ -31,4 +31,4 @@ Data Analysis
   os.system("echo % > user/report.tex")
   for line in ascii(report_string).split("\n"):
     os.system("echo " + line + " >> user/report.tex")
-  os.system("cd user && /Library/TeX/texbin/pdflatex report.tex report.pdf && && cd .. && zip -r user/r" + string +".zip user/*")
+  os.system("cd user && /Library/TeX/texbin/pdflatex report.tex report.pdf && cd .. && zip -r user/r" + string +".zip user/*")
