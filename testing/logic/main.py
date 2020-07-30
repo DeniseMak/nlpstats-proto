@@ -45,7 +45,7 @@ if __name__ == '__main__':
 	testCase_new.power.alpha = float(config['power_alpha'])
 	testCase_new.power.method = str(config['power_method'])
 	testCase_new.power.dist_name = str(config['power_dist_name'])
-	testCase_new.power.num_of_sim = int(config['power_num_of_sim'])
+	testCase_new.power.num_of_subsample = int(config['power_num_of_subsample'])
 	testCase_new.power.B = int(config['power_B'])
 
 
@@ -87,7 +87,7 @@ if __name__ == '__main__':
 	# check for minimum sample size requirement for power analysis
 	# this check is here because wilcoxon test needs more than 10 data points
 	MIN_power_samplesize = sysconfig['MIN_power_samplesize']
-	if MIN_power_samplesize>float(testCase_new.sample_size)/testCase_new.power.num_of_sim:
+	if MIN_power_samplesize>float(testCase_new.sample_size)/testCase_new.power.num_of_subsample:
 		print("Sample size too small for power analysis simulation for certain significance tests. Decrease the number of simulations.")
 		sys.exit()
 
@@ -158,7 +158,7 @@ if __name__ == '__main__':
 		sig_test_name = testCase_new.sigTest.testName,
 		method = testCase_new.power.method,
 		score = testCase_new.score_diff_par, 
-		num_of_sim= testCase_new.power.num_of_sim, 
+		num_of_sim= testCase_new.power.num_of_subsample, 
 		dist_name = testCase_new.power.dist_name, 
 		B = testCase_new.power.B,
 		alpha = testCase_new.power.alpha,

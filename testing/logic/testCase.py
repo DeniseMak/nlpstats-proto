@@ -61,12 +61,12 @@ class testCase:
             self.estimator = estimator
 
     class power:
-        def __init__(self, powerCurve, method, dist_name, alpha, num_of_sim, pow_lev, B):
+        def __init__(self, powerCurve, method, dist_name, alpha, num_of_subsample, pow_lev, B):
             self.powerCurve = powerCurve
             self.method = method
             self.dist_name = dist_name
             self.alpha = alpha
-            self.num_of_sim = num_of_sim
+            self.num_of_subsample = num_of_subsample
             self.pow_lev = pow_lev
             self.B = B
 
