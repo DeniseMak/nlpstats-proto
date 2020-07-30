@@ -3,31 +3,31 @@ This is a script containing the object testCase class.
 """
 import numpy as np
 class testCase:    
-    def __init__(self, score1, score2, score_diff, score_diff_par, sample_size, output_dir=''):
+    def __init__(self, score1, score2, score_diff, score_diff_par, sample_size):
         # attributes
         self.score1 = score1
         self.score2 = score2
         self.score_diff = score_diff
         self.score_diff_par = score_diff_par
         self.sample_size = sample_size
-        self.output_dir = output_dir
 
-        self.eda = self.eda(0, False, '', 1, False, '', None)
+        self.eda = self.eda(0, False, '', 0, 0.0, False, '', None)
 
-        self.sigTest = self.sigTest('', 0.05, 0, 0, 0, False)
+        self.sigTest = self.sigTest('', 0.0, 0, 0, 0, 0, False)
 
         self.es = self.es([],[])
 
-        self.power = self.power({},'',0.05, 5, 0.8)
+        self.power = self.power({}, '', '', 0.0, 0, 0.0, 0)
 
 
 
     class eda:
-        def __init__(self, m, isShuffled, calc_method, randomSeed, normal, testParam, testName):
+        def __init__(self, m, isShuffled, calc_method, randomSeed, normal_alpha, normal, testParam, testName):
             self.m = m
             self.isShuffled = isShuffled
             self.calc_method = calc_method
             self.randomSeed = randomSeed
+            self.normal_alpha = normal_alpha
             self.normal = normal
             self.testParam = testParam
             self.testName = testName
@@ -46,9 +46,10 @@ class testCase:
                 self.max = max_val
 
     class sigTest:
-        def __init__(self, testName, alpha, mu, test_stat, pval, rejection):
+        def __init__(self, testName, alpha, B, mu, test_stat, pval, rejection):
             self.testName = testName
             self.alpha = alpha
+            self.B = B
             self.mu = mu
             self.test_stat = test_stat
             self.pval = pval
@@ -60,11 +61,14 @@ class testCase:
             self.estimator = estimator
 
     class power:
-        def __init__(self, powerCurve, method, alpha, step_size, pow_lev):
+        def __init__(self, powerCurve, method, dist_name, alpha, num_of_sim, pow_lev, B):
             self.powerCurve = powerCurve
             self.method = method
-            self.step_size = step_size
+            self.dist_name = dist_name
+            self.alpha = alpha
+            self.num_of_sim = num_of_sim
             self.pow_lev = pow_lev
+            self.B = B
 
 
 

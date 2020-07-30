@@ -97,12 +97,12 @@ def partition_score(score1, score2, score_diff, eval_unit_size, shuffled, random
 
 	plt.savefig(output_dir+'/hist_score_diff_partitioned.svg')
 
-	return([score1_new, score2_new, score_diff_new])
+	return([score1_new, score2_new, score_diff_new, ind_shuffled])
 
 
-def normality_test(score, alpha=0.05):
+def normality_test(score, alpha):
 	"""
-	This function invokves the Shapiro-Wilks normality test to test whether
+	This function invokes the Shapiro-Wilks normality test to test whether
 	the input score is normally distributed.
 
 	@param score: input score, a dictionary

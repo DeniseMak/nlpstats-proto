@@ -6,7 +6,7 @@ from statsmodels.stats.descriptivestats import sign_test
 
 
 
-def run_sig_test(recommended_test, score, alpha=0.05, mu=0, B=2000):
+def run_sig_test(recommended_test, score, alpha, B, mu):
 	if isinstance(score,dict):
 		x = np.array(list(score.values()))
 	else:

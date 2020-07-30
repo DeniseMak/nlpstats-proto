@@ -85,7 +85,7 @@ def wilcoxon_r(score):
     sigma_w = np.sqrt(len(z)*(len(z)+1)*(2*len(z)+1)/24-sum((np.array(ties)**3-np.array(ties))/48))
     z_score = (np.min([w_p,w_m])-mu_w)/sigma_w
 
-    return(z_score/np.sqrt(len(z)))
+    return(abs(z_score/np.sqrt(len(z))))
 
 
 

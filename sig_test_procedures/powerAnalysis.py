@@ -12,12 +12,23 @@ from matplotlib import pyplot as plt
 plt.rcParams['svg.fonttype'] = 'none'
 
 
-def post_power_analysis(sig_test_name, sim_method, score, step_size, dist_name = 'normal', starting_size=30, output_dir='', mu=0, B=200, alpha=0.05):
+def post_power_analysis(sig_test_name, method, score, num_of_sim, dist_name, B, alpha, mu, output_dir, boot_B = None):
+
+	def get_sim_sample_sizes(z, num_of_sim):
+		partitions = np.array_split(range(len(z)), num_of_sim)
+		sample_sizes = []
+		for i in partitions:
+			sample_sizes.append(i[-1])
+		return(sample_sizes)
+
+
 	z = np.array(list(score.values()))
-	sample_sizes = np.arange(starting_size, len(z), step_size)
+
+	sample_sizes = get_sim_sample_sizes(z, num_of_sim)
+
 	power_sampsizes = {}
 
-	if sim_method == "montecarlo": 
+	if method == "montecarlo": 
 		if dist_name == 'normal': # currently only implement for normal dist.
 			mu_hat = np.mean(z)
 			var_hat = np.var(z,ddof=1)
@@ -30,14 +41,16 @@ def post_power_analysis(sig_test_name, sim_method, score, step_size, dist_name =
 					if(pval<alpha):
 						count+=1
 				power_sampsizes[i] = float(count)/B
+		else:
+			power_sample_sizes = {}
 
 
-	if sim_method == "bootstrap":
+	if method == "bootstrap":
 		for i in sample_sizes:
 			count = 0
 			for b in range(0,B):
 				z_b = np.random.choice(a = z, size = int(i), replace=True)
-				(test_stats, pval, rejection) = sigTesting.run_sig_test(sig_test_name, z_b, alpha, mu, B)
+				(test_stats, pval, rejection) = sigTesting.run_sig_test(sig_test_name, z_b, alpha, boot_B, mu)
 				if rejection:
 					count+=1
 			power_sampsizes[i] = float(count)/B
