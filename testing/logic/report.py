@@ -34,4 +34,4 @@ Requiring a significance level $\\alpha = """ + options["significance_alpha"] + 
   os.system("echo % > user/report.tex")
   for line in report_string.split("\n"):
     print(line, file=open('user/report.tex', 'a'))
-  os.system("cd user && /Library/TeX/texbin/pdflatex report.tex report.pdf && echo y | rm report.aux && echo y | rm report.log && cd .. && zip -r user/r" + string +".zip user/*")
+  os.system("cd user && /Library/TeX/texbin/pdflatex report.tex report.pdf && echo y | rm report.aux && echo y | rm report.log && cd .. && zip -r user/r" + string + ".zip user/*")
