@@ -8,7 +8,7 @@ from scipy import stats
 from statsmodels.stats.descriptivestats import sign_test
 import matplotlib
 
-from testing.logic import sigTesting
+import logic.sigTesting
 
 matplotlib.use('Svg')
 from matplotlib import pyplot as plt

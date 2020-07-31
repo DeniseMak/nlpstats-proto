@@ -21,7 +21,7 @@ from logic.report import gen_report
 
 FOLDER = os.path.join('user')
 from logic.powerAnalysis import post_power_analysis
-from testing.logic import powerAnalysis
+import logic.powerAnalysis
 app = Flask(__name__)
 app.config['FOLDER'] = FOLDER
 
