@@ -466,7 +466,7 @@ margin: 0 auto;>
                     {% for key, value in effect_size_estimators.items() %}
                     <tr>
                         <td>
-                            <input type="radio" name="target_eff_test" id="target_eff_test-{{ key }}"
+                            <input type="checkbox" name="target_eff_test" id="target_eff_test-{{ key }}"
                                     {% if eff_estimator %} {% if key==eff_estimator %} checked="checked"
                                     {% else %}
                                     {% endif %}
@@ -503,24 +503,7 @@ margin: 0 auto;>
                 </div>
 
                 {% endfor %} --> {% endif %}
-                <!-- Effect Size Multiple Radios (inline)  -->
-                <!--
-                <br><br> Target Statistic:
 
-                <label class="radio-inline" for="target_statistic-0">
-                    <input type="radio" name="effect_size_target_statistic" id="target_statistic-0" value="mean"
-                           {%  if mean_or_median == 'mean' %}
-                             checked="checked"
-                           {% endif %}
-                    >Mean
-                 
-                 
-                    <input type="radio" name="effect_size_target_statistic" id="target_statistic-1" value="median"
-                          {% if mean_or_median == 'median' %}
-                            checked="checked"
-                          {% endif %}
-                    >Median
-                    -->
 
               <br>    <br>
               <!-- effect size Submit Button -->
@@ -542,6 +525,7 @@ margin: 0 auto;>
         <div class="roundgreen" class="hiddendiv" id="hidden">
             <p></p>
                 {% if eff_size_val %}
+                    <b>Results</b><br><br>
                 <table border="1">
                  <tr><th>Estimator</th><th>Effect Size</th></tr>
                         <tr><td>
