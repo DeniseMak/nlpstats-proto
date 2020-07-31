@@ -36,7 +36,7 @@ template_filename = "tab_interface.html"
 # strings to use in UI
 summary_str = "Summary of statistics"
 teststat_heading = "Test statistic recommendation"
-sig_test_heading = 'You can choose from the following significance tests'
+sig_test_heading = 'Recommeded significance tests'
 estimators = {"cohend": "This function calculates the Cohen's d effect size estimator.",
               "hedgesg": "This function takes the Cohen's d estimate as an input and calculates the Hedges's g.",
               "wilcoxonr": "This function calculates the standardized z-score (r) for the Wilcoxon signed-rank test.",
@@ -474,9 +474,22 @@ def power(debug=True):
         power_iterations = int(request.form.get('power_iterations'))
 
         sig_test_name = request.cookies.get('sig_test_name')
-        alpha = float(request.cookies.get('sig_test_alpha'))
-        mu = float(request.cookies.get('mu'))
-        boot_B = int(request.cookies.get('sig_boot_iterations'))
+        if request.cookies.get('sig_test_alpha'):
+            # actually, sigtest should be populating PA form alpha in template.
+            # can do that instead of cookie.
+            alpha = float(request.cookies.get('sig_test_alpha'))
+        elif request.form.get('alpha'):
+            alpha = float(request.form.get('alpha'))
+        else:
+            alpha = 0.05
+        if request.form.get('mu'):
+            mu = float(request.cookies.get('mu'))
+        else:
+            mu = 0
+        if request.cookies.get('sig_boot_iterations'):
+            boot_B = int(request.cookies.get('sig_boot_iterations'))
+        else:
+            boot_B = 500
         print('In PowerAnalysis: sig_test_name={} alpha={} mu={} bootB={} pow_iter={}'.format(
             sig_test_name, alpha, mu, boot_B, power_iterations))
         pow_sampsizes = post_power_analysis(sig_test_name, power_test, score_dif, power_num_intervals,
@@ -541,7 +554,6 @@ def power(debug=True):
         # -------- WRITE TO COOKIES ----------
         # resp.set_cookie('pow_sampsizes', json.dumps(pow_sampsizes))
         resp.set_cookie('power_test', power_test)
-        resp.set_cookie('power_path', power_path)
         resp.set_cookie('power_num_intervals', str(power_num_intervals))
         return resp
     return render_template(template_filename)
