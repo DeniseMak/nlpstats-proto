@@ -25,7 +25,6 @@ ul.breadcrumb li a {
   text-decoration: none;
 }
 
-/* Add a color on mouse-over */
 ul.breadcrumb li a:hover {
     color: Black;
     text-decoration: none;

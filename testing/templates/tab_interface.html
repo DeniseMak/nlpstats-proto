@@ -47,12 +47,12 @@
     var a = document.getElementById('system_file');
     if(a.value == "")
     {
-        fileLabel.innerHTML = "Upload a file";
+        fileLabel.innerHTML = "<i>Upload a file.</i>";
     }
     else
     {
         var theSplit = a.value.split('\\');
-        fileLabel.innerHTML = "File selected: " + theSplit[theSplit.length-1];
+        fileLabel.innerHTML = "<i>File selected:</i> " + theSplit[theSplit.length-1] + ".";
     }
 };
 </script>
@@ -71,7 +71,8 @@ function showdiv() {
 </script>
 
 <body>
-
+<div style="width: 640px;"
+margin: 0 auto;>
     <div class="header">
         <h1>NlpStatTest</h1>
     </div>
@@ -109,7 +110,7 @@ function showdiv() {
                     <input type="file" id="system_file" onchange="pressed()"
                            name="system_file" style="display:none;" {% if error_str %}required{% endif %}/>
                             <!-- todo: make a {file_error} variable if no file found -->
-                    <a href="#" class="button1"><label for="system_file">Upload file</label></a>
+                    <a href="#" class="button1"><label for="system_file">Upload</label></a><br>
                            <label id="fileLabel" >{{file_uploaded}}{% if error_str %}<b>{{ error_str }}</b>{% endif %}</label>
                 <br><br>
 
@@ -657,6 +658,7 @@ function showdiv() {
               window.onload = showLastTab('{{ last_tab_name_clicked }}')
             {% endif %}
     </script>
+    </div>
 </body>
 
 </html>
