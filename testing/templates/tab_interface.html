@@ -413,7 +413,7 @@ margin: 0 auto;>
                 <input type="hidden" id="sa_hidden" value="hidden101">
                 <!-- Is type=submit implied by class="btn btn-success" ? -->
                 <input type="hidden" id="sig_tab_name" name="sig_tab_name" value="SignificanceTabHidden-2" />
-                <br>
+             
                 <button id="submit" name="submit" class="button1">Run</button>
                 <!-- Button for JS script-->
                 <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
@@ -452,14 +452,14 @@ margin: 0 auto;>
 
         <div class="roundpurplebottom" style="position:relative; top: -18px;">
             <form action="/effectsize" class="form-horizontal" enctype="multipart/form-data" method="post">
-                <b>Choose an effect size estimator.</b><br><br>
+                <b>Effect Size Estimator Options</b><br><br>
                 <!-- Effect Size list of tests -->
                 {% if effect_size_estimators|length %}
 
                 <table border=1>
 
                     <tr>
-                        <th>Effect size estimator</th>
+                        <th>Effect Size Estimator</th>
                         <th>Description</th>
                     </tr>
 
@@ -548,7 +548,7 @@ margin: 0 auto;>
 
             <form action="/power" class="form-horizontal" enctype="multipart/form-data" method="post">
                 <div class="form-group">
-    <b>Post-test power analysis:</b> This test involves plotting a power curve that shows how the statistical power
+    <b>Post-test power analysis:</b> this test involves plotting a power curve that shows how the statistical power
                 increases as sample size increases. <!-- This test performs an analysis to measure
                 the power at evenly spaced increasing sample sizes. -->
                 <ul><li>For example, if you have 100 evaluation units, and want to take 5 power measurements, this test calculates
@@ -617,18 +617,20 @@ margin: 0 auto;>
                 {% endif %}
                  <input type="hidden" name="target_pow_test_bootstrap" id="target_pow_test-bootstrap"
                         value="bootstrap">
+                        
+                        <hr>
+                        
                 <div class="hiddendiv" id="power_boot_fields"
                      {% if is_normal %}style="display:none"{% else %}style="display:block"{% endif %} >
 
-                        <br>
-                        Bootstrap parameters: <br><br>
-                        <i>Significance test:</i>
+                        <b>Bootstrap Parameters</b><br><br>
+                        significance test:
                         {% for sigtest in recommended_tests %}
                         <input type="radio" name="power_boot_sig_test" value="{{ sigtest[0] }}"
                             {% if sigtest == sig_test_name %}checked="checked"{% endif %}>{{ sigtest[0] }}
                         {% endfor %}
                         <br><br>
-                        <i>&alpha;:</i><input type="number" name="power_alpha"
+                        &alpha;: <input type="number" name="power_alpha"
                              {% if sig_test_alpha %}
                                               value="{{ sig_test_alpha }}"
                              {% else %}
@@ -637,7 +639,7 @@ margin: 0 auto;>
                         <div class="tooltip">?
                             <span class="tooltiptext">&alpha; value for significance test.</span></div>
                         <br><br>
-                        <i>bootstrap iterations:</i>
+                        Bootstrap Iterations:
                         <input type="number" name="power_boot_B"
                                {% if sig_boot_iteration %}
                                    value="{{ sig_boot_iteration }}"
@@ -645,12 +647,14 @@ margin: 0 auto;>
                                    value="200"
                                {% endif %}>  <div class="tooltip">?
                             <span class="tooltiptext">Iterations for bootstrap significance test.</span></div>
+ 
 
                 </div>
+                                              <br>
                 <div class="hiddendiv" id="power_montecarlo_fields" style="display:none" >
                         <br>
-                        Monte Carlo parameters: <br><br>
-                        <i>&alpha;:</i><input type="number" name="power_alpha"
+                        <b>Monte Carlo Parameters:</b><br><br>
+                        &alpha;: <input type="number" name="power_alpha"
                              {% if sig_test_alpha %}
                                               value="{{ sig_test_alpha }}"
                              {% else %}
@@ -677,7 +681,7 @@ margin: 0 auto;>
 
             <!-- Images -->
             {% if power_file %}
-                <b>Results:</b><br><br>
+                <b>Results</b><br><br>
                 <img id=power_file src="../{{ url_for('send_img_file_dir', image_name=power_file) }}?{{ rand }}"> {% endif %}
     </div>
     </div>

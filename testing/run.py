@@ -34,9 +34,9 @@ DEFAULT_EVAL_SIZE = 1
 template_filename = "tab_interface.html"
 
 # strings to use in UI
-summary_str = "Summary of statistics"
-teststat_heading = "Test statistic recommendation"
-sig_test_heading = 'Recommeded significance tests'
+summary_str = "Summary of Statistics"
+teststat_heading = "Test Statistic Recommendation"
+sig_test_heading = 'Recommended Significance Tests'
 estimators = {"cohend": "This function calculates the Cohen's d effect size estimator.",
               "hedgesg": "This function takes the Cohen's d estimate as an input and calculates the Hedges's g.",
               "wilcoxonr": "This function calculates the standardized z-score (r) for the Wilcoxon signed-rank test.",
