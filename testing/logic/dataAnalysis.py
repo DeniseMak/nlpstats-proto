@@ -64,7 +64,7 @@ def partition_score(score1, score2, score_diff, eval_unit_size, shuffled, random
 	plt.legend(loc='upper right')
 	plt.xlabel("Score")
 	plt.ylabel("Frequency")
-	plt.title("Histogram of score1 (partitioned)")
+	plt.title("Histogram of score1 (Partitioned)")
 
 	if not os.path.exists(output_dir):
 		os.makedirs(output_dir)
@@ -80,7 +80,7 @@ def partition_score(score1, score2, score_diff, eval_unit_size, shuffled, random
 	plt.legend(loc='upper right')
 	plt.xlabel("Score")
 	plt.ylabel("Frequency")
-	plt.title("Histogram of score2 (partitioned)")
+	plt.title("Histogram of score2 (Partitioned)")
 
 	plt.savefig(output_dir+'/hist_score2_partitioned.svg')
 
@@ -93,7 +93,7 @@ def partition_score(score1, score2, score_diff, eval_unit_size, shuffled, random
 	plt.legend(loc='upper right')
 	plt.xlabel("Score")
 	plt.ylabel("Frequency")
-	plt.title("Histogram of Score Difference (partitioned)")
+	plt.title("Histogram of Score Difference (Partitioned)")
 
 	plt.savefig(output_dir+'/hist_score_diff_partitioned.svg')
 
