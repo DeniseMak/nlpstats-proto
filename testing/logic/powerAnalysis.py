@@ -66,7 +66,7 @@ def post_power_analysis(sig_test_name, method, score, num_of_subsample, dist_nam
 	plt.plot(x,y)
 	plt.xlabel("Sample Size")
 	plt.ylabel("Power")
-	plt.title("Power against Different Sample Sizes")
+	plt.title("Power against Different Sample Sizes for "+str(sig_test_name))
 
 	if not os.path.exists(output_dir):
 		os.makedirs(output_dir)
