@@ -479,6 +479,7 @@ def power(debug=True):
         score_dif = calc_score_diff(scores1, scores2)
         is_normal = json.loads(request.cookies.get('is_normal'))
         print("POWER: (from cookie): is_normal={}".format(is_normal))
+
         if is_normal:
             power_test = request.form.get('target_pow_test')
         else:
@@ -523,6 +524,7 @@ def power(debug=True):
         recommended_test_reasons = json.loads(request.cookies.get('recommended_test_reasons'))
         recommended_tests = json.loads(request.cookies.get('recommended_tests'))
         summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
+
         rendered = render_template(template_filename,
                                    # power
                                    power_file=power_file,
@@ -561,14 +563,14 @@ def power(debug=True):
                                    pval=request.cookies.get('pval'),
                                    rejectH0=request.cookies.get('rejectH0'),
                                    sig_alpha=request.cookies.get('sig_test_alpha'),
-                                   sig_test_name=request.cookies.get('sig_test_name')
-
+                                   sig_test_name=sig_test_name #request.cookies.get('sig_test_name')
                                    )
 
         resp = make_response(rendered)
         # -------- WRITE TO COOKIES ----------
         # resp.set_cookie('pow_sampsizes', json.dumps(pow_sampsizes))
         resp.set_cookie('power_test', power_test)
+        resp.set_cookie('sig_test_name', sig_test_name)
         resp.set_cookie('power_num_intervals', str(power_num_intervals))
         return resp
     return render_template(template_filename)

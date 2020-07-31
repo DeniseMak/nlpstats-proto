@@ -604,13 +604,13 @@ margin: 0 auto;>
                 {% if is_normal %}
                 Method of power analysis:
                 <input type="radio" name="target_pow_test" id="target_pow_test-1"
-                       value='montecarlo' onclick="show_montecarlo_div()">
+                       value='montecarlo' onclick="show_montecarlo_div()" checked="checked" required>
                         Monte Carlo
                     <div class="tooltip">?
                         <span class="tooltiptext">Conduct retrospective power analysis using Monte Carlo simulation.</span></div>
 
                 <input type="radio" name="target_pow_test" id="target_pow_test-2"
-                       value='bootstrap' onclick="show_bootstrap_div()">
+                       value='bootstrap' onclick="show_bootstrap_div()" {% if power_test == 'bootstrap' %}checked{% endif %}>
                     Bootstrap
                     <div class="tooltip">?  <!-- todo: get significance tests -->
                     <span class="tooltiptext">Conduct retrospective power analysis using bootstrap simulation.</span></div>
@@ -627,7 +627,7 @@ margin: 0 auto;>
                         significance test:
                         {% for sigtest in recommended_tests %}
                         <input type="radio" name="power_boot_sig_test" value="{{ sigtest[0] }}"
-                            {% if sigtest == sig_test_name %}checked="checked"{% endif %}>{{ sigtest[0] }}
+                            {% if sigtest[0] == sig_test_name %}checked="checked"{% endif %}>{{ sigtest[0] }}
                         {% endfor %}
                         <br><br>
                         &alpha;: <input type="number" name="power_alpha"
