@@ -333,7 +333,7 @@ margin: 0 auto;>
                     {% for key, value in recommended_tests_reasons.items() %}
                     <tr>
                         <td>
-                            <input type="radio" name="target_sig_test" id="target_sig_test-1"
+                            <input type="radio" name="target_sig_test" id="target_sig_test-1" required
                                     {% if sig_test_name %} {% if key==sig_test_name %} checked="checked" {% endif %}
                                     {% endif %} value={{ key }}> {% if key=='t' %}t-test{% else %}{{ key }}{% endif %}
                         </td>
@@ -585,12 +585,12 @@ margin: 0 auto;>
 
                     <!-- TODO: Display advice that takes into account the
                      actual size of evaluation unit and the limits on min and max -->
-                Method of power analysis:
-                {% if is_normal %}
 
+                {% if is_normal %}
+                Method of power analysis:
                 <input type="radio" name="target_pow_test" id="target_pow_test-1"
                        value='montecarlo' onclick="show_montecarlo_div()">
-                        Monte Carlo (normal distribution required)
+                        Monte Carlo
                     <div class="tooltip">?
                         <span class="tooltiptext">Conduct retrospective power analysis using Monte Carlo simulation.</span></div>
 
@@ -600,10 +600,12 @@ margin: 0 auto;>
                     <div class="tooltip">?  <!-- todo: get significance tests -->
                     <span class="tooltiptext">Conduct retrospective power analysis using bootstrap simulation.</span></div>
                 {% endif %}
-                                    <input type="hidden" name="target_pow_test_bootstrap" id="target_pow_test-bootstrap">
-                <div class="hiddendiv" id="power_boot_fields" style="display:none" >
+                 <input type="hidden" name="target_pow_test_bootstrap" id="target_pow_test-bootstrap"
+                        value="bootstrap">
+                <div class="hiddendiv" id="power_boot_fields"
+                     {% if is_normal %}style="display:none"{% else %}style="display:block"{% endif %} >
 
-                    <fieldset >
+                        <br>
                         Bootstrap parameters: <br><br>
                         <i>Significance test:</i>
                         {% for sigtest in recommended_tests %}
@@ -611,21 +613,37 @@ margin: 0 auto;>
                             {% if sigtest == sig_test_name %}checked="checked"{% endif %}>{{ sigtest[0] }}
                         {% endfor %}
                         <br><br>
-                        <i>&alpha;:</i><input type="number" name="power_alpha" value="{{ sig_test_alpha }}"><div class="tooltip">?
-                            <span class="tooltiptext">&alpha value for significance test.</span></div>
+                        <i>&alpha;:</i><input type="number" name="power_alpha"
+                             {% if sig_test_alpha %}
+                                              value="{{ sig_test_alpha }}"
+                             {% else %}
+                                              value="0.05"
+                             {% endif %} step="0.01">
+                        <div class="tooltip">?
+                            <span class="tooltiptext">&alpha; value for significance test.</span></div>
                         <br><br>
                         <i>bootstrap iterations:</i>
-                        <input type="number" name="power_boot_B" value="{{ sig_boot_iteration }}">  <div class="tooltip">?
+                        <input type="number" name="power_boot_B"
+                               {% if sig_boot_iteration %}
+                                   value="{{ sig_boot_iteration }}"
+                               {% else %}
+                                   value="200"
+                               {% endif %}>  <div class="tooltip">?
                             <span class="tooltiptext">Iterations for bootstrap significance test.</span></div>
-                    </fieldset>
+
                 </div>
                 <div class="hiddendiv" id="power_montecarlo_fields" style="display:none" >
-                    <fieldset >
+                        <br>
                         Monte Carlo parameters: <br><br>
-                        <i>&alpha;:</i><input type="number" name="power_alpha" value="{{ sig_test_alpha }}"><div class="tooltip">?
+                        <i>&alpha;:</i><input type="number" name="power_alpha"
+                             {% if sig_test_alpha %}
+                                              value="{{ sig_test_alpha }}"
+                             {% else %}
+                                              value="0.05"
+                             {% endif %} step="0.01"><div class="tooltip">?
                             <span class="tooltiptext">&alpha value for significance test.</span></div>
                         <br><br>
-                    </fieldset>
+
                 </div>
 
 
@@ -715,7 +733,7 @@ margin: 0 auto;>
     <script>
         {% if last_tab_name_clicked %}
               window.onload = showLastTab('{{ last_tab_name_clicked }}')
-            {% endif %}
+        {% endif %}
     </script>
     </div>
 </body>
