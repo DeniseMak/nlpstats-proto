@@ -587,6 +587,10 @@ def download_file():
         rand = np.random.randint(10000)
         gen_report(options, str(rand))
         return send_file("user/report.zip", as_attachment=True)
+        
+@app.route('/download2')
+def download_config():
+    return send_file("user/config.yml", as_attachment=True)
 
 
 @app.route('/img_url/<image_path>')
