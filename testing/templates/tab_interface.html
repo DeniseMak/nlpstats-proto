@@ -85,10 +85,10 @@ margin: 0 auto;>
 
     <div class="roundpurple">
         <ul class="breadcrumb">
-            <li><button onclick="openTab(event, 'Data Analysis')">Data Analysis</button></li>
-            <li><button onclick="openTab(event, 'Significance Test')">Significance</button></li>
-            <li><button onclick="openTab(event, 'Effect Size')">Effect Size</button></li>
-            <li><button onclick="openTab(event, 'Post-test Power Analysis')">Power Analysis</button></li>
+            <li><button class="button1" onclick="openTab(event, 'Data Analysis')">Data Analysis</button></li>
+            <li><button class="button1" onclick="openTab(event, 'Significance Test')">Significance</button></li>
+            <li><button class="button1" onclick="openTab(event, 'Effect Size')">Effect Size</button></li>
+            <li><button class="button1" onclick="openTab(event, 'Post-test Power Analysis')">Power Analysis</button></li>
         </ul>
     </div>
 
@@ -110,7 +110,7 @@ margin: 0 auto;>
                     <input type="file" id="system_file" onchange="pressed()"
                            name="system_file" style="display:none;" {% if error_str %}required{% endif %}/>
                             <!-- todo: make a {file_error} variable if no file found -->
-                    <a href="#" class="button1"><label for="system_file">Upload</label></a><br>
+                    <a href="#" class="button1"><label for="system_file">Upload</label></a>
                            <label id="fileLabel" >{{file_uploaded}}{% if error_str %}<b>{{ error_str }}</b>{% endif %}</label>
                 <br><br>
 
@@ -173,7 +173,7 @@ margin: 0 auto;>
                 <div class="col-md-4">
                     <input type="hidden" id="da_hidden" value="hidden101">
                     <!-- Is type=submit implied by class="btn btn-success" -->
-                    <button id="submit" name="submit" type=submit class="btn btn-success" onsubmit="document.getElementById('hidden1').style.borderColor = 'DarkSeaGreen'">Run</button>
+                    <button id="submit" name="submit" type=submit class="button1" onclick="document.getElementById('hidden').style.display = 'block'">Run</button>
                     <!-- Button for JS script-->
                     <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
                 </div>
@@ -183,7 +183,7 @@ margin: 0 auto;>
         </form>
         <!-- End data analysis form -->
         <!-- begin green results area -->
-        <div class="roundgreen" class="hiddendiv" id="hidden1">
+        <div class="roundgreen" class="hiddendiv" id="hidden">
 
             <!-- SUMMARY STATISTICS -->
             <b>Summary Statistics</b><br><br>

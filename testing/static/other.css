@@ -24,16 +24,18 @@
 
 .button1 {
   text-decoration: none;
+  border: 1px solid black;
   background-color: #eee;
-  border-radius: 15px;
+  border-radius: 8px;
   padding: 4px;
   color: #4b2e83; /* Color Scheme (School Color) */
 
 }
 .hiddendiv{
-display:none;
+  display:none;
+  
 }
 
 .clicker:focus + .hiddendiv{
-display:block;
+  display:block;
 }
