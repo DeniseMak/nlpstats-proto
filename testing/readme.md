@@ -3,8 +3,8 @@
 
 ?????
 
-Data shape as table (why is it bold)
 testing.logic import why?
+some tooltips before, some after
 
 Jesse:
 
@@ -12,7 +12,6 @@ By 630PM
 * Yellow results if things change above. Grey tabs if impossible, highlight current tab
 * Set fixed x dimension and  SVG Size
 * NBSP in table
-
 
 
 * Make first column of tables wider in css

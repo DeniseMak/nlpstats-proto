@@ -237,19 +237,24 @@ function showdiv() {
             <table border=1>
             
             <tr>
-            <th>Normality</th>
-            <th>The data distribution {% if is_normal %} passes {% else %} does not pass {% endif %} the normality test.</th>
+            <th>Property</th>
+            <th>Conclusion</th>
+            </tr>
+            
+            <tr>
+            <td>Normality</td>
+            <td>The data distribution {% if is_normal %} passes {% else %} does not pass {% endif %} the normality test.</td>
             </tr>
                 
             <tr>
-            <th>Skewness</th>
-            <th>The data distribution {% if mean_or_median == 'median' %} exceeds {% else %} does not exceed {% endif %} the skew threshold.</th>
+            <td>Skewness</td>
+            <td>The data distribution {% if mean_or_median == 'median' %} exceeds {% else %} does not exceed {% endif %} the skew threshold.</td>
             </tr>
                 
             <tr>
-            <th>Test Statistic</th>
-            <th>Based on the skewness, the recommended test statistic to use is:
-            {{ mean_or_median }}.</th>
+            <td>Test Statistic</td>
+            <td>Based on the skewness, the recommended test statistic to use is:
+            {{ mean_or_median }}.</td>
             </tr>
                 
             </table>
@@ -299,7 +304,8 @@ function showdiv() {
                 {% if recommended_tests_reasons|length %}
 
                 <table border=1>
-
+                      <col style="width:120px">
+                          
                     <tr>
                         <th>Test</th>
                         <th>Reason</th>
@@ -310,7 +316,7 @@ function showdiv() {
                         <td>
                             <input type="radio" name="target_sig_test" id="target_sig_test-1"
                                     {% if sig_test_name %} {% if key==sig_test_name %} checked="checked" {% endif %}
-                                    {% endif %} value={{ key }}>&nbsp;{% if key=='t' %}t-test{% else %}{{ key }}{% endif %}
+                                    {% endif %} value={{ key }}> {% if key=='t' %}t-test{% else %}{{ key }}{% endif %}
                         </td>
                         <td>{{ value }}</td>
                     </tr>
