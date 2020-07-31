@@ -413,7 +413,7 @@ margin: 0 auto;>
                 <input type="hidden" id="sa_hidden" value="hidden101">
                 <!-- Is type=submit implied by class="btn btn-success" ? -->
                 <input type="hidden" id="sig_tab_name" name="sig_tab_name" value="SignificanceTabHidden-2" />
-                <br><br>
+                <br>
                 <button id="submit" name="submit" class="button1">Run</button>
                 <!-- Button for JS script-->
                 <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
@@ -746,6 +746,8 @@ margin: 0 auto;>
     <script>
         {% if last_tab_name_clicked %}
               window.onload = showLastTab('{{ last_tab_name_clicked }}')
+            {% else %}
+
         {% endif %}
 
         window.addEventListener('load', function () {
