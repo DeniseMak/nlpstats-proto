@@ -26,7 +26,7 @@
 
 <script>
     // BREADCRUMBS!
-        function openTab(evt, tabName) {
+        function openTab(evt, tabName, cur) {
               var i, tabcontent, tablinks;
               tabcontent = document.getElementsByClassName("tabcontent");
               for (i = 0; i < tabcontent.length; i++) {
@@ -38,7 +38,16 @@
               }
               document.getElementById(tabName).style.display = "block";
               evt.currentTarget.className += " active";
+              greyOut(cur)
             }
+
+function greyOut(itemName) {
+  //  document.getElementById("BtnTab1").style.backgroundColor = #eee;
+    //document.getElementById("BtnTab2").style.backgroundColor = #eee;
+  //  document.getElementById("BtnTab3").style.backgroundColor = #eee;
+    //document.getElementById("BtnTab4").style.backgroundColor = #eee;
+    document.getElementById(itemName).style.backgroundColor = 'Gainsboro';
+}
 </script>
 
 <script>
@@ -60,11 +69,11 @@
 <script>
     // toggle the histogram div
 function showdiv() {
-    if (document.getElementById("hidden").style.display=="block"){
-        document.getElementById("hidden").style.display="none"
+    if (document.getElementById("hidden_graph").style.display=="block"){
+        document.getElementById("hidden_graph").style.display="none"
         hist_button.innerHTML = "View Histograms"
     } else {
-        document.getElementById("hidden").style.display="block"
+        document.getElementById("hidden_graph").style.display="block"
         hist_button.innerHTML = "Hide Histograms"
     }
 }
@@ -96,10 +105,10 @@ margin: 0 auto;>
 
     <div class="roundpurple">
         <ul class="breadcrumb">
-            <li><button class="button1" onclick="openTab(event, 'Data Analysis')">Data Analysis</button></li>
-            <li><button class="button1" onclick="openTab(event, 'Significance Test')">Significance</button></li>
-            <li><button class="button1" onclick="openTab(event, 'Effect Size')">Effect Size</button></li>
-            <li><button class="button1" onclick="openTab(event, 'Post-test Power Analysis')">Power Analysis</button></li>
+            <li><button class="button1" id ='BtnTab1' onclick="openTab(event, 'Data Analysis', 'BtnTab1')">Data Analysis </button></li>
+            <li><button class="button1" id ='BtnTab2' onclick="openTab(event, 'Significance Test', 'BtnTab2')">Significance</button></li>
+            <li><button class="button1" id ='BtnTab3' onclick="openTab(event, 'Effect Size', 'BtnTab3')">Effect Size</button></li>
+            <li><button class="button1"  id ='BtnTab4'onclick="openTab(event, 'Post-test Power Analysis', 'BtnTab4')">Power Analysis</button></li>
         </ul>
     </div>
 
@@ -232,7 +241,7 @@ margin: 0 auto;>
             {% if hist_score1_file %}
             <button id="hist_button" class="button1" onclick = "showdiv()">View Histograms</button>
             {% endif %} <br><br>
-            <div class="hiddendiv" id = "hidden">
+            <div class="hiddendiv" id = "hidden_graph">
 
             <!-- new way -->
             {% if hist_score1_file %}

@@ -39,15 +39,7 @@
     text-decoration: none;
 }
 
-
-.button1:focus {
-    color: Black;
-    background-color: Gainsboro;
-    text-decoration: none;
-}
-
 .hiddendiv{
   display:none;
-  
 }
 
