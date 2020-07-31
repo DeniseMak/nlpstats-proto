@@ -331,7 +331,8 @@ def sigtest(debug=True):
 
         recommended_tests = json.loads(request.cookies.get('recommended_tests'))
         summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
-        print("SIG (from cookie): is_normal={}".format(json.loads(request.cookies.get('is_normal'))))
+
+        sig_test_sign_permutation=request.cookies.get('sig_test_sign_permutation')
         rendered = render_template(template_filename,
                                    # specific to effect size test
                                    effect_size_estimators=estimators,
@@ -363,7 +364,8 @@ def sigtest(debug=True):
                                    pval=pval,
                                    rejectH0=rejection,
                                    sig_alpha=sig_alpha,
-                                   sig_test_name=sig_test_name
+                                   sig_test_name=sig_test_name,
+                                   sig_test_sign_permutation=sig_test_sign_permutation,
                                    )
         resp = make_response(rendered)
         # -------- WRITE TO COOKIES ----------

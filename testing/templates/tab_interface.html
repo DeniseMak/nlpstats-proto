@@ -124,7 +124,7 @@ margin: 0 auto;>
             <!-- Begin Data Analysis div -->
             <div class="roundpurplebottom" style="position:relative; top: -18px;">
 
-                <h3>Data and Parameters</h3>
+                <b>Data and Parameters</b><br><br>
 
 
                 System File:
@@ -213,7 +213,7 @@ margin: 0 auto;>
         <div class="roundgreen" class="hiddendiv" id="hidden">
 
             <!-- SUMMARY STATISTICS -->
-            <h3>{{ summary_str }}</h3><br><br>
+            <b>{{ summary_str }}</b><br><br>
 
             {% if summary_stats_dict|length %}
             <table>
@@ -261,7 +261,7 @@ margin: 0 auto;>
 
             <!-- RECOMMENDATION for test statistics -->
 
-            <h3 id=teststat_heading align='left'>{{ teststat_heading }}</h3>
+            <b id=teststat_heading align='left'>{{ teststat_heading }}</b><br><br>
 
 
             {% if mean_or_median %}
@@ -292,8 +292,8 @@ margin: 0 auto;>
             {% endif %} <br>
 
             <!-- RECOMMENDATION for significance tests with REASONS -->
-            <h3 id=sigtest_heading align='left'>
-                {{ sigtest_heading }}</h3>
+            <b id=sigtest_heading align='left'>
+                {{ sigtest_heading }}</b><br><br>
 
             {% if recommended_tests_reasons|length %}
             <table border=1>
@@ -347,8 +347,10 @@ margin: 0 auto;>
                     {% for tuple in recommended_tests %}
                     <tr>
                         <td>
-                            <input type="radio" name="target_sig_test" id="target_sig_test-1" required
-                                   onclick="show_sig_boot_div('{{ tuple[0] }}')"
+                            <input type="radio"
+                                   name="target_sig_test"
+                                       id="target_sig_test-{{ sig_test_name }}" required
+                                       onclick="show_sig_boot_div('{{ tuple[0] }}')"
                                     {% if sig_test_name %} {% if tuple[0]==sig_test_name %} checked="checked" {% endif %}
                                     {% endif %} value="{{ tuple[0] }}"> {% if tuple[0]=='t' %}t-test{% else %}{{ tuple[0] }}{% endif %}
                         </td>
@@ -393,7 +395,7 @@ margin: 0 auto;>
                 <br><br>
                 <!-- Bootstrap (for bootstrap and permutation tests) -->
                 <div id="sig_boot_div" style="display: none">
-                Number of iterations for bootstrap significance tests:
+                Number of iterations for bootstrap or permutation significance tests:
                 <div class="tooltip">?<span class="tooltiptext">The number of iterations.</span></div>:
                 <input id="sig_boot_iterations" name="sig_boot_iterations" type="number" value="200">  <!-- todo: disable if not bootstrap -->
                 <br><br>
@@ -422,11 +424,12 @@ margin: 0 auto;>
 
         <div class="roundgreen" class="hiddendiv" id="hidden">
             {% if sig_test_stat_val %}
-            <h3>Results</h3>
+            <b>Results</b><br><br>
 
             <table border="1">
-                <tr>
-                    <th>test statistic/CI</th>
+                <tr><!-- todo: permutation result? -->
+                    <th> {% if sig_test_name == 'bootstrap' %}confidence interval{% else %}test statistic{% endif %}
+                    </th>
                     <td>{{ sig_test_stat_val }}</td>
                 </tr>
                 <tr>
@@ -435,7 +438,7 @@ margin: 0 auto;>
                     </td>
                 </tr>
                 <tr>
-                    <th>Reject H0</th>
+                    <th>reject H0</th>
                     <td>{% if rejectH0 %}Yes{% else %}No{% endif %}</td>
                 </tr>
             </table>
@@ -468,14 +471,17 @@ margin: 0 auto;>
                                     {% else %}
                                     {% endif %}
                                     {% endif %} value={{ key }}>
-                                        {% if key=='hl' %}Hodges-Lehmann{% else %}{{ key }}{% endif %}
+                                        {% if key=='hl' %}Hodges-Lehmann
+                                            {% elif key=='wilcoxonr' %}Wilcoxon's r
+                                            {% elif key=='hedgesg' %}Hedges' g
+                                            {% elif key=='cohend' %}Cohen's d
+                                        {% else %}{{ key }}{% endif %}
                         </td>
                         <td>{{ value }}</td>
                     </tr>
                     {% endfor %}
                 </table>
                 <!--<ul>
-
                                  {% for key, value in effect_size_estimators.items() %}
                             <li>{{ key }}
                                 <div class="tooltip">?
@@ -485,7 +491,6 @@ margin: 0 auto;>
                                  {% endfor %}
 
                         </ul> -->
-
                 <!-- <b>Choose the significance test to run</b> -->
                 <!-- radio button to choose test
                 <br> {% for key, value in effect_size_estimators.items() %}
@@ -539,7 +544,13 @@ margin: 0 auto;>
                 {% if eff_size_val %}
                 <table border="1">
                  <tr><th>Estimator</th><th>Effect Size</th></tr>
-                        <tr><td>{{ eff_estimator }}</td><td>{{ eff_size_val }}</td></tr>
+                        <tr><td>
+                                        {% if eff_estimator=='hl' %}Hodges-Lehmann
+                                            {% elif eff_estimator=='wilcoxonr' %}Wilcoxon's r
+                                            {% elif eff_estimator=='hedgesg' %}Hedges' g
+                                            {% elif eff_estimator=='cohend' %}Cohen's d
+                                        {% else %}{{ eff_estimator }}{% endif %}
+                        </td><td>{{ eff_size_val }}</td></tr>
                 </table>
                 {% endif %}
 
@@ -682,8 +693,7 @@ margin: 0 auto;>
 
             <!-- Images -->
             {% if power_file %}
-                <h3>Results:</h3>
-
+                <b>Results:</b><br><br>
                 <img id=power_file src="../{{ url_for('send_img_file_dir', image_name=power_file) }}?{{ rand }}"> {% endif %}
     </div>
     </div>
@@ -758,6 +768,8 @@ margin: 0 auto;>
         window.addEventListener('load', function () {
             {% if last_tab_name_clicked %}
                 console.log('In load event listener: {{ last_tab_name_clicked }}.')
+                var sig_test_button_id = "target_sig_test-{{ sig_test_name }}"
+                document.getElementById(sig_test_button_id).clicked = "clicked"
                 // sig_test_name radio button
             {% endif %}
 
