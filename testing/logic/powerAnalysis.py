@@ -53,7 +53,7 @@ def post_power_analysis(sig_test_name, method, score, num_of_subsample, dist_nam
 			count = 0
 			for b in range(0,B):
 				z_b = np.random.choice(a = z, size = int(i), replace=True)
-				(test_stats, pval, rejection) = sigTesting.run_sig_test(sig_test_name, z_b, alpha, boot_B, mu)
+				(test_stats, pval, rejection) = logic.sigTesting.run_sig_test(sig_test_name, z_b, alpha, boot_B, mu)
 				if rejection:
 					count+=1
 			power_sampsizes[i] = float(count)/B
