@@ -210,7 +210,7 @@ margin: 0 auto;>
         </form>
         <!-- End data analysis form -->
         <!-- begin green results area -->
-        <div class="roundgreen" class="hiddendiv" id="hidden">
+        <div class="roundgreen" class="hiddendiv" id="hiddenDataAnalysis">
 
             <!-- SUMMARY STATISTICS -->
             <b>{{ summary_str }}</b><br><br>
@@ -422,7 +422,7 @@ margin: 0 auto;>
             <!-- End Significance Test form -->
         </div>
 
-        <div class="roundgreen" class="hiddendiv" id="hidden">
+        <div class="roundgreen" class="hiddendiv" id="hiddenSignificanceTest">
             {% if sig_test_stat_val %}
             <b>Results</b><br><br>
 
@@ -522,7 +522,7 @@ margin: 0 auto;>
         </div>
         <!-- end Effect Size purple input -->
 
-        <div class="roundgreen" class="hiddendiv" id="hidden">
+        <div class="roundgreen" class="hiddendiv" id="hiddenEffectSize">
             <p></p>
                 {% if eff_size_val %}
                     <b>Results</b><br><br>
@@ -677,14 +677,14 @@ margin: 0 auto;>
             </form>
     </div>
 
-    <div class="roundgreen" class="hiddendiv" id="hidden">
+        <div class="roundgreen" class="hiddendiv" id="hiddenPowerTest">
 
-            <!-- Images -->
-            {% if power_file %}
-                <b>Results</b><br><br>
-                <img id=power_file src="../{{ url_for('send_img_file_dir', image_name=power_file) }}?{{ rand }}"> {% endif %}
-    </div>
-    </div>
+                <!-- Images -->
+                {% if power_file %}
+                    <b>Results</b><br><br>
+                    <img id=power_file src="../{{ url_for('send_img_file_dir', image_name=power_file) }}?{{ rand }}"> {% endif %}
+        </div>
+        </div>
 
     <div id="about" class="modal">
         <div class="modal-content">
@@ -745,14 +745,48 @@ margin: 0 auto;>
             console.log('In showLastTab(), tabToShow=' + tabToShow);
             document.getElementById(tabToShow).style.display="block"
         }
-        function hideGreenDivs(){
+        function hideGreenDivs(lastTabClicked){
               console.log('in hideGreenDivs')
               greenDivs = document.getElementsByClassName("roundgreen");
-              for (i = 0; i < greenDivs.length; i++) {
-                  console.log(greenDivs[i].className)
-                  greenDivs[i].style.display = "none"
-                //greenDivs[i].display = "none"
-                //greenDivs[i].className = greenDivs[i].className.replace(" active", "");
+              if (lastTabClicked) {
+                  console.log(lastTabClicked + 'was POSTED')
+                  for (i = 0; i < greenDivs.length; i++) {
+                      switch (lastTabClicked) {
+                        case 'Data Analysis':
+                            // todo: if the green div is not matching lastNameClicked
+                            if (greenDivs[i].id != 'hiddenDataAnalysis') {
+                                  console.log(lastTabClicked + ': hiding other tabs')
+                                  greenDivs[i].style.display = "none"
+                            }
+                            break;
+                        case 'Significance Test':
+                            if (greenDivs[i].id != 'hiddenSignificanceTest'
+                                && greenDivs[i].id !== 'hiddenDataAnalysis'
+                            ) {
+                                  console.log(lastTabClicked + ': hiding other tabs')
+                                  greenDivs[i].style.display = "none"
+                            }
+                            break;
+                        case 'Effect Size':
+                            if (greenDivs[i].id != 'hiddenEffectSize'
+                                && greenDivs[i].id !== 'hiddenDataAnalysis'
+                                && greenDivs[i].id != 'hiddenSignificanceTest'
+                            ) {
+                                  console.log(lastTabClicked + ': hiding other tabs')
+                                  greenDivs[i].style.display = "none"
+                            }
+                            break;
+                        case 'Post-test Power Analysis':
+                            console.log('Power: do not need to hide anything')
+                            break;
+                        default:
+                            console.log('Got an unexpected lastTabClicked name: '+ lastTabClicked)
+                      }
+                  }
+              } else {
+                  for (i = 0; i < greenDivs.length; i++) {
+                      greenDivs[i].style.display = "none"
+                  }
               }
         }
 
@@ -764,15 +798,16 @@ margin: 0 auto;>
               // todo: hide the greendivs in other tabs
             {% else %}
               console.log('about to call hideGreenDivs')
-              window.onload = hideGreenDivs()
+              window.onload = hideGreenDivs('{{ last_tab_name_clicked }}')
         {% endif %}
 
         window.addEventListener('load', function () {
             {% if last_tab_name_clicked %}
                 console.log('In load event listener: {{ last_tab_name_clicked }}.')
+                // sig_test_name radio button
                 var sig_test_button_id = "target_sig_test-{{ sig_test_name }}"
                 document.getElementById(sig_test_button_id).clicked = "clicked"
-                // sig_test_name radio button
+                hideGreenDivs('{{ last_tab_name_clicked }}')
             {% endif %}
 
         }, false);
