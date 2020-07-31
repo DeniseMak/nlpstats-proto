@@ -172,8 +172,8 @@ def homepage(debug=False):
 
             # --------------Summary Stats -------------
             ### initialize a new testCase object to use for summary statistics
-            tc = testCase(scores1,
-                          scores2,
+            tc = testCase(score_diff_par[0],
+                          score_diff_par[1],
                           score_dif,
                           score_diff_par[2],  # score_diff_par,
                           num_eval_units)
