@@ -1,8 +1,9 @@
 .header { text-align: center;
           font-variant: small-caps;}
    
-.top_bar { text-align: center; text-decoration: none;}
+.top_bar { text-align: center;}
    
+html * { font-family: Arial }
    
 .roundpurplebottom {
    
@@ -19,7 +20,6 @@
 }
    
    
-
 .footer { text-align: center; }
 
 .button1 {

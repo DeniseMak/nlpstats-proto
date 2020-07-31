@@ -27,11 +27,15 @@
 <script>
     // BREADCRUMBS!
         function openTab(evt, tabName, cur) {
-              var i, tabcontent, tablinks;
+              var i, tabcontent, tablinks,;
+              
               tabcontent = document.getElementsByClassName("tabcontent");
               for (i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].style.display = "none";
               }
+              buttoncontent = document.getElementsByClassName("tabbutton1");
+          
+             }
               tablinks = document.getElementsByClassName("tablinks");
               for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
@@ -48,6 +52,13 @@ function greyOut(itemName) {
     //document.getElementById("BtnTab4").style.backgroundColor = #eee;
     document.getElementById(itemName).style.backgroundColor = 'Gainsboro';
 }
+
+
+function showDivBtn2() {
+   document.getElementById('BtnTab2').style.display = "block";
+}
+
+
 </script>
 
 <script>
@@ -79,6 +90,8 @@ function showdiv() {
 }
 
 
+
+
 </script>
 <script>
 // toggle the bootstrap div
@@ -107,10 +120,10 @@ margin: 0 auto;>
 
     <div class="roundpurple">
         <ul class="breadcrumb">
-            <li><button class="button1" id ='BtnTab1' onclick="openTab(event, 'Data Analysis', 'BtnTab1')">Data Analysis →</button></li>
-            <li><button class="button1" style ="display:none;" id ='BtnTab2' onclick="openTab(event, 'Significance Test', 'BtnTab2')">Significance → </button></li>
-            <li><button class="button1" style ="display:none;" id ='BtnTab3' onclick="openTab(event, 'Effect Size', 'BtnTab3')">Effect Size →</button></li>
-            <li><button class="button1" style ="display:none;" id ='BtnTab4'onclick="openTab(event, 'Post-test Power Analysis', 'BtnTab4')">Power Analysis</button></li>
+            <li><button class="button1" class="tabbutton1" id ='BtnTab1' onclick="openTab(event, 'Data Analysis', 'BtnTab1')">Data Analysis →</button></li>
+            <li><button class="button1" class="tabbutton1" style ="display:none;" id ='BtnTab2' onclick="openTab(event, 'Significance Test', 'BtnTab2')">Significance → </button></li>
+            <li><button class="button1" class="tabbutton1"  style ="display:none;" id ='BtnTab3' onclick="openTab(event, 'Effect Size', 'BtnTab3')">Effect Size →</button></li>
+            <li><button class="button1" class="tabbutton1"  style ="display:none;" id ='BtnTab4'onclick="openTab(event, 'Post-test Power Analysis', 'BtnTab4')">Power Analysis</button></li>
         </ul>
     </div>
 
@@ -196,7 +209,7 @@ margin: 0 auto;>
         
                     <input type="hidden" id="da_hidden" value="hidden101">
                     <!-- Is type=submit implied by class="btn btn-success" -->
-                    <button id="submit" name="submit" type=submit class="button1" onclick="document.getElementById('hidden').style.display = 'block'">Run</button>
+                    <button id="submit" name="submit" type=submit class="button1" onclick="document.getElementById('hidden').style.display = 'block'; showDivBtn2();">Run</button>
                     <!-- Button for JS script-->
                     <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
                 
