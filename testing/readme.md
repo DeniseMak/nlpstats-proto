@@ -4,13 +4,15 @@
 ?????
 
 Data shape as table (why is it bold)
+testing.logic import why?
 
 Jesse:
 
 By 630PM
 * Yellow results if things change above. Grey tabs if impossible, highlight current tab
 * Set fixed x dimension and  SVG Size
-
+* NBSP in table
+* Separate test statistic and confidence interval
 
 * Tooltips wider than tall.
 * Make first column of tables wider in css
@@ -19,6 +21,7 @@ By 630PM
 * Upload and download config file, config file in user dir
 * Copy editing
 * Finish plumbing report. (make partial report work)
+* 0.05 default alpha
 
 Low Priority:
 * Two column
