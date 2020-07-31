@@ -745,13 +745,20 @@ margin: 0 auto;>
             console.log('In showLastTab(), tabToShow=' + tabToShow);
             document.getElementById(tabToShow).style.display="block"
         }
+        function hideGreenDivs(){
+              greenDivs = document.getElementsByClassName("roundgreen");
+              for (i = 0; i < greenDivs.length; i++) {
+                greenDivs[i].className = greenDivs[i].className.replace(" active", "");
+              }
+        }
+
     </script>
 
     <script>
         {% if last_tab_name_clicked %}
               window.onload = showLastTab('{{ last_tab_name_clicked }}')
             {% else %}
-
+              window.onload = hideGreenDivs()
         {% endif %}
 
         window.addEventListener('load', function () {

@@ -332,6 +332,7 @@ def sigtest(debug=True):
         recommended_tests = json.loads(request.cookies.get('recommended_tests'))
         summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
 
+        # TODO: Don't need this anymore
         sig_test_sign_permutation=request.cookies.get('sig_test_sign_permutation')
         rendered = render_template(template_filename,
                                    # specific to effect size test
