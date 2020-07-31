@@ -746,9 +746,13 @@ margin: 0 auto;>
             document.getElementById(tabToShow).style.display="block"
         }
         function hideGreenDivs(){
+              console.log('in hideGreenDivs')
               greenDivs = document.getElementsByClassName("roundgreen");
               for (i = 0; i < greenDivs.length; i++) {
-                greenDivs[i].className = greenDivs[i].className.replace(" active", "");
+                  console.log(greenDivs[i].className)
+                  greenDivs[i].style.display = "none"
+                //greenDivs[i].display = "none"
+                //greenDivs[i].className = greenDivs[i].className.replace(" active", "");
               }
         }
 
@@ -757,7 +761,9 @@ margin: 0 auto;>
     <script>
         {% if last_tab_name_clicked %}
               window.onload = showLastTab('{{ last_tab_name_clicked }}')
+              // todo: hide the greendivs in other tabs
             {% else %}
+              console.log('about to call hideGreenDivs')
               window.onload = hideGreenDivs()
         {% endif %}
 

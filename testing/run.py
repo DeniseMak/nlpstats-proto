@@ -90,12 +90,14 @@ def create_summary_stats_dict(tc, debug=False):
                               'std.dev.': format_digits(tc.eda.summaryStat_score2.sd),
                               'min': format_digits(tc.eda.summaryStat_score2.min_val),
                               'max': format_digits(tc.eda.summaryStat_score2.max_val)}
+    '''
     summary_dict['difference'] = {'mean': format_digits(tc.eda.summaryStat_score_diff.mu),
                                   'median': format_digits(tc.eda.summaryStat_score_diff.med),
                                   'std.dev.': format_digits(tc.eda.summaryStat_score_diff.sd),
                                   'min': format_digits(tc.eda.summaryStat_score_diff.min_val),
                                   'max': format_digits(tc.eda.summaryStat_score_diff.max_val)}
-    summary_dict['difference (partitioned)'] = {'mean': format_digits(tc.eda.summaryStat_score_diff_par.mu),
+                                  '''
+    summary_dict['difference'] = {'mean': format_digits(tc.eda.summaryStat_score_diff_par.mu),
                                                 'median': format_digits(tc.eda.summaryStat_score_diff_par.med),
                                                 'std.dev.': format_digits(tc.eda.summaryStat_score_diff_par.sd),
                                                 'min': format_digits(tc.eda.summaryStat_score_diff_par.min_val),
