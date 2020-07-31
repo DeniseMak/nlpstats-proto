@@ -21,7 +21,7 @@ from logic.report import gen_report
 
 FOLDER = os.path.join('user')
 from logic.powerAnalysis import post_power_analysis
-
+from testing.logic import powerAnalysis
 app = Flask(__name__)
 app.config['FOLDER'] = FOLDER
 
@@ -186,6 +186,7 @@ def homepage(debug=False):
             # ---------------normality test
             # todo: add alpha parameter
             is_normal = normality_test(score_diff_par[2], alpha=0.05)
+            print('DA: is_normal={}'.format(is_normal))
             # --------------Recommended Significance Tests -------------------------
             recommended_tests = recommend_test(mean_or_median, is_normal)
 
@@ -249,6 +250,7 @@ def homepage(debug=False):
 
                 resp.set_cookie('teststat_heading', teststat_heading)
                 resp.set_cookie('mean_or_median', mean_or_median)
+                print('DA Set cookie: is_normal dumped={}'.format(json.dumps(is_normal)))
                 resp.set_cookie('is_normal', json.dumps(is_normal))
 
                 resp.set_cookie('sig_test_heading', sig_test_heading)
@@ -329,6 +331,7 @@ def sigtest(debug=True):
 
         recommended_tests = json.loads(request.cookies.get('recommended_tests'))
         summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
+        print("SIG (from cookie): is_normal={}".format(json.loads(request.cookies.get('is_normal'))))
         rendered = render_template(template_filename,
                                    # specific to effect size test
                                    effect_size_estimators=estimators,
@@ -345,7 +348,7 @@ def sigtest(debug=True):
                                    # todo: add teststat_heading
                                    summary_str=request.cookies.get('summary_str'),
                                    mean_or_median=request.cookies.get('mean_or_median'),
-                                   is_normal=request.cookies.get('is_normal'),
+                                   is_normal=json.loads(request.cookies.get('is_normal')),
                                    recommended_tests=recommended_tests,
                                    recommended_tests_reasons=recommended_test_reasons,
                                    summary_stats_dict=summary_stats_dict,
@@ -411,6 +414,7 @@ def effectsize():
         recommended_test_reasons = json.loads(request.cookies.get('recommended_test_reasons'))
         recommended_tests = json.loads(request.cookies.get('recommended_tests'))
         summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
+        print("EFFECT SIZE (from cookie): is_normal={}".format(json.loads(request.cookies.get('is_normal'))))
         rendered = render_template(template_filename,
                                    # specific to effect size test
                                    effect_size_estimators=estimators,
@@ -429,7 +433,7 @@ def effectsize():
                                    # todo: add teststat_heading
                                    summary_str=request.cookies.get('summary_str'),
                                    mean_or_median=request.cookies.get('mean_or_median'),
-                                   is_normal=request.cookies.get('is_normal'),
+                                   is_normal=json.loads(request.cookies.get('is_normal')),
                                    recommended_tests=recommended_tests,
                                    recommended_tests_reasons=recommended_test_reasons,
                                    summary_stats_dict=summary_stats_dict,
@@ -468,10 +472,16 @@ def power(debug=True):
         fileName = request.cookies.get('fileName')
         scores1, scores2 = read_score_file(FOLDER + "/" + fileName)  # todo: different FOLDER for session/user
         score_dif = calc_score_diff(scores1, scores2)
-        power_test = request.form.get('target_pow_test')
+        is_normal = json.loads(request.cookies.get('is_normal'))
+        print("POWER: (from cookie): is_normal={}".format(is_normal))
+        if is_normal:
+            power_test = request.form.get('target_pow_test')
+        else:
+            power_test = request.form.get('target_pow_test_bootstrap')
         power_num_intervals = int(request.form.get('num_intervals'))  # todo: get from form
         # if request.cookies.get('power_iterations'):
         power_iterations = int(request.form.get('power_iterations'))
+
 
         sig_test_name = request.cookies.get('sig_test_name')
         if request.cookies.get('sig_test_alpha'):
@@ -533,7 +543,7 @@ def power(debug=True):
                                    # todo: add teststat_heading
                                    summary_str=request.cookies.get('summary_str'),
                                    mean_or_median=request.cookies.get('mean_or_median'),
-                                   is_normal=request.cookies.get('is_normal'),
+                                   is_normal=json.loads(request.cookies.get('is_normal')),
                                    recommended_tests=recommended_tests,
                                    recommended_tests_reasons=recommended_test_reasons,
                                    summary_stats_dict=summary_stats_dict,
