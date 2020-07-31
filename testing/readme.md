@@ -1,25 +1,24 @@
 # Todo
 
+
+?????
+
+Data shape as table (why is it bold)
+
 Jesse:
 
-By 330
-* Change name.
-* Huge headlines?
-* Copy editing
-* Subsamples and inline box on last page.
 
-By 5PM
+By 630PM
 * Yellow results if things change above. Grey tabs if impossible, highlight current tab
 * Set fixed x dimension and  SVG Size
 
 
-* can .button go back into CSS file? Couldn't get it to work when it was in `other.css`, so for now it's in `<style>` in `tab_interface.html`.
 * Tooltips wider than tall.
 * Make first column of tables wider in css
 
 * Take good screenshots in SVG.
 * Upload and download config file, config file in user dir
-
+* Copy editing
 * Finish plumbing report. (make partial report work)
 
 Low Priority:

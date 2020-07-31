@@ -69,7 +69,18 @@ function showdiv() {
     }
 }
 </script>
-
+<script>
+// toggle the bootstrap div
+function show_bootstrap_div() {
+        document.getElementById("power_boot_fields").style.display="block"
+        document.getElementById("power_montecarlo_fields").style.display="none"
+}
+// toggle the Monte Carlo div
+function show_montecarlo_div() {
+    document.getElementById("power_montecarlo_fields").style.display="block"
+    document.getElementById("power_boot_fields").style.display="none"
+}
+</script>
 <body>
 
     <div class="header">
@@ -187,7 +198,7 @@ function showdiv() {
         <div class="roundgreen" class="hiddendiv" id="hidden1">
 
             <!-- SUMMARY STATISTICS -->
-            <b>{{ summary_str }}</b><br><br>
+            <h3>{{ summary_str }}</h3><br><br>
 
             {% if summary_stats_dict|length %}
             <table>
@@ -237,19 +248,32 @@ function showdiv() {
 
             <h3 id=teststat_heading align='left'>{{ teststat_heading }}</h3>
 
+
             {% if mean_or_median %}
-            <b>Normality:</b>The data distribution {% if is_normal %} passes {% else %} does not pass {% endif %} the normality test.
-            <p></p>
-            <b>Skewness:</b> The data distribution {% if mean_or_median == 'median' %} exceeds {% else %} does not exceed {% endif %} the skew threshold.
-            <p></p>
-            <b>Test statistic:</b> Based on the skewness, the recommended test statistic to use is:
-            <b>{{ mean_or_median }}</b> {% endif %} <br><br>
+            <table border=1>
+            
+            <tr>
+            <th>Normality</th>
+            <th>The data distribution {% if is_normal %} passes {% else %} does not pass {% endif %} the normality test.</th>
+            </tr>
+                
+            <tr>
+            <th>Skewness</th>
+            <th>The data distribution {% if mean_or_median == 'median' %} exceeds {% else %} does not exceed {% endif %} the skew threshold.</th>
+            </tr>
+                
+            <tr>
+            <th>Test Statistic</th>
+            <th>Based on the skewness, the recommended test statistic to use is:
+            {{ mean_or_median }}.</th>
+            </tr>
+                
+            </table>
+            {% endif %} <br>
 
             <!-- RECOMMENDATION for significance tests with REASONS -->
-
             <h3 id=sigtest_heading align='left'>
                 {{ sigtest_heading }}</h3>
-
 
             {% if recommended_tests_reasons|length %}
             <table border=1>
@@ -289,7 +313,7 @@ function showdiv() {
 
             <form action="/sig_test" class="form-horizontal" enctype="multipart/form-data" method="post">
                 <!-- SIGNIFICANCE TEST RECOMMENDATION for test statistics -->
-                <b>Choose one of the following recommended tests.</b><br><br>
+                <b>Recommended Tests</b><br><br>
                 {% if recommended_tests_reasons|length %}
 
                 <table border=1>
@@ -372,6 +396,7 @@ function showdiv() {
         <div class="roundgreen" class="hiddendiv" id="hidden">
             {% if sig_test_stat_val %}
             <h3>Results</h3>
+
             <table border="1">
                 <tr>
                     <th>test statistic/CI</th>
@@ -501,68 +526,105 @@ function showdiv() {
 
             <form action="/power" class="form-horizontal" enctype="multipart/form-data" method="post">
                 <div class="form-group">
-
-            <p><b>Post-test power analysis:</b> This test involves plotting a power curve that shows how the statistical power
-                increases as the number of samples increase. This test performs a bootstrap or Monte Carlo analysis to measure
-                the power at evenly spaced increasing sample sizes. </p>
-                <p>For example, if you have 100 evaluation units, and want to take 5 power measurements, this test calculates
+    <b>Post-test power analysis:</b> This test involves plotting a power curve that shows how the statistical power
+                increases as sample size increases. <!-- This test performs an analysis to measure
+                the power at evenly spaced increasing sample sizes. -->
+                <ul><li>For example, if you have 100 evaluation units, and want to take 5 power measurements, this test calculates
                 the power for partitions of your data into 20, 40, 60, 80 and 100 evaluation units. At each of these sample sizes
-                the test uses either the Monte Carlo or bootstrap method to run the specified number of iterations.</p>
+                the test uses either the Monte Carlo or bootstrap method to run the specified number of iterations.</li>
+                    <li>The power analysis is done using either a bootstrap simulation or a Monte Carlo simulation.
+                        The Monte Carlo simulation is only available if your data has a normal distribution.</li></ul>
 
-               <p> <b>Choose power analysis method:</b></p>
-                    <!-- TODO: Display advice that takes into account the
-                     actual size of evaluation unit and the limits on min and max -->
 
-                <input type="radio" name="target_pow_test" id="target_sig_test-1"
-                       {% if power_test != 'bootstrap'%}
-                         checked="checked"
-                       {% endif %}
-                       value={{ 'montecarlo' }}>
-                        Monte Carlo (normal distribution required) <!-- todo: get normality -->
-                    <div class="tooltip">?
-                        <span class="tooltiptext">Conduct retrospective power analysis using Montecarlo simulation.</span>
-                    </div>
 
-                <input type="radio" name="target_pow_test" id="target_sig_test-1"
-                       {% if power_test == 'bootstrap' %}
-                         checked="checked"
-                       {% endif %}
-                       value={{ 'bootstrap' }}>
-                    Bootstrap
-                <div class="tooltip">?  <!-- todo: get significance tests -->
-                    <span class="tooltiptext">Conduct retrospective power analysis using bootstrap simulation.</span>
-                </div>
-                    <br>
-
+            <p><!--The evaluation unit size is {{ eval_unit_size }}, and the number of evaluation units is {{ num_eval_units }}.-->
+            The largest number of power measurements you can make is the number of evaluation units in your data.</p>
                 <!--
-                    <b>Minimum sample size:</b>
+                    Minimum sample size:
+
                     <input id="min_sample_size" name="min_sample_size" type="number"
                        placeholder="min" class="form-control input-md" value="1">
                                     <div class="tooltip">?<span class="tooltiptext">"lower bound on number of samples (minimum number of evaluation units)"</span> </div>
                 <br/><br>
+
                     <b>Maximum sample size:</b>
+
                     <input id="max_sample_size" name="max_sample_size" type="number"
                        placeholder="max" class="form-control input-md" value="{{ num_eval_units }}">
                                     <div class="tooltip">?<span class="tooltiptext">
                                         "upper bound on number of samples (max number of evaluation units)"</span> </div>
-                -->
-                <br/><br>
-                    <b>Number of power measurements:</b> <!-- was number of intervals, 20-ish -->
+                <br/><br> -->
+
+                    Number of power measurements: <!-- was number of intervals, # of subsamples, 20-ish -->
                 <input id="num_intervals" name="num_intervals" type="number" placeholder="Number of intervals"
                        class="form-control input-md"
                        {% if power_num_intervals %} value="{{ power_num_intervals }}" {% else %} value="20" {% endif %}
                        min=1 max="50">
                                     <div class="tooltip">?<span class="tooltiptext">
-                                      Specify the number of sample size intervals between the minimum and maximum at which to calculate power.</span> </div>
+                                      Specify the number of subsamples between the minimum and maximum number of evaluation units,
+                                        at which to calculate power.</span> </div>
 
                     <br> <br>
-                    <b>Iterations at each sample size:</b><!-- TODO: add required range like '1 to 200'-->
+
+                    Iterations at each sample size:<!-- TODO: add required range like '1 to 200'-->
+
                     <input id="iterations" name="power_iterations" type="number" placeholder="default"
                            {% if power_iterations %}value="{{ power_iterations }}" {% else %}value="200"{% endif %}
                            min="10" max="200"
                        class="form-control input-md">
                     <div class="tooltip">?<span class="tooltiptext">The number of bootstrap iterations at each sample size.</span></div>
                 <br><br>
+
+
+                    <!-- TODO: Display advice that takes into account the
+                     actual size of evaluation unit and the limits on min and max -->
+                Method of power analysis:
+                {% if is_normal %}
+
+                <input type="radio" name="target_pow_test" id="target_pow_test-1"
+                       value='montecarlo' onclick="show_montecarlo_div()">
+                        Monte Carlo (normal distribution required)
+                    <div class="tooltip">?
+                        <span class="tooltiptext">Conduct retrospective power analysis using Monte Carlo simulation.</span></div>
+
+                <input type="radio" name="target_pow_test" id="target_pow_test-2"
+                       value='bootstrap' onclick="show_bootstrap_div()">
+                    Bootstrap
+                    <div class="tooltip">?  <!-- todo: get significance tests -->
+                    <span class="tooltiptext">Conduct retrospective power analysis using bootstrap simulation.</span></div>
+                {% endif %}
+                 <!-- BEGIN not is_normal --> <br><br>
+                                    <input type="hidden" name="target_pow_test_bootstrap" id="target_pow_test-bootstrap">
+                <div class="hiddendiv" id="power_boot_fields" style="display:none" >
+
+                    <fieldset >
+                        Bootstrap parameters: <br><br>
+                        <i>Significance test:</i>
+                        {% for sigtest in recommended_tests %}
+                        <input type="radio" name="power_boot_sig_test" value="{{ sigtest[0] }}"
+                            {% if sigtest == sig_test_name %}checked="checked"{% endif %}>{{ sigtest[0] }}
+                        {% endfor %}
+                        <br><br>
+                        <i>&alpha;:</i><input type="number" name="power_alpha" value="{{ sig_test_alpha }}"><div class="tooltip">?
+                            <span class="tooltiptext">&alpha value for significance test.</span></div>
+                        <br><br>
+                        <i>bootstrap iterations:</i>
+                        <input type="number" name="power_boot_B" value="{{ sig_boot_iteration }}">  <div class="tooltip">?
+                            <span class="tooltiptext">Iterations for bootstrap significance test.</span></div>
+                    </fieldset>
+                </div>
+                <div class="hiddendiv" id="power_montecarlo_fields" style="display:none" >
+                    <fieldset >
+                        Monte Carlo parameters: <br><br>
+                        <i>&alpha;:</i><input type="number" name="power_alpha" value="{{ sig_test_alpha }}"><div class="tooltip">?
+                            <span class="tooltiptext">&alpha value for significance test.</span></div>
+                        <br><br>
+                    </fieldset>
+                </div>
+
+
+                
+
                 <!-- Power Submit Button -->
 
              
