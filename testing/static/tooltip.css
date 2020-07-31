@@ -3,6 +3,8 @@
    position: relative;
    display: inline-block;
    border-bottom: 1px dotted black;
+ 
+   
  }
  .tooltip .tooltiptext {
    visibility: hidden;
@@ -11,8 +13,7 @@
    text-align: center;
    border-radius: 5px;
    padding: 5px 10px;
-   
- 
+   width: 250px;
    position: absolute;
    z-index: 1;
    top: -5px;
