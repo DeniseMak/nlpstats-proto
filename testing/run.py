@@ -189,7 +189,7 @@ def homepage(debug=False):
             print('DA: is_normal={}'.format(is_normal))
             # --------------Recommended Significance Tests -------------------------
             recommended_tests = recommend_test(mean_or_median, is_normal)
-
+            print(recommended_tests)
             # recommended tests reasons (temp function)
             recommended_tests_reasons = create_test_reasons(recommended_tests)
 
@@ -307,7 +307,7 @@ def sigtest(debug=True):
         # ------- Get form data
         sig_test_name = request.form.get('target_sig_test')
         sig_alpha = request.form.get('significance_level')
-        mu = float(request.form.get('mu'))
+        mu = 0  # float(request.form.get('mu'))
         sig_boot_iterations = int(request.form.get('sig_boot_iterations'))
 
         if debug:

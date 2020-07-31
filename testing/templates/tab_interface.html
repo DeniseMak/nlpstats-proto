@@ -78,9 +78,13 @@ function showdiv() {
     }
 }
 
-
-</script>
-<script>
+function show_sig_boot_div(test_name){
+    if (test_name && test_name.includes('boot') || test_name.startsWith('permutation')) {
+        document.getElementById("sig_boot_div").style.display = "block"
+    } else {
+        document.getElementById("sig_boot_div").style.display = "none"
+    }
+}
 // toggle the bootstrap div
 function show_bootstrap_div() {
         document.getElementById("power_boot_fields").style.display="block"
@@ -340,19 +344,20 @@ margin: 0 auto;>
                         <th>Reason</th>
                     </tr>
 
-                    {% for key, value in recommended_tests_reasons.items() %}
+                    {% for tuple in recommended_tests %}
                     <tr>
                         <td>
                             <input type="radio" name="target_sig_test" id="target_sig_test-1" required
-                                    {% if sig_test_name %} {% if key==sig_test_name %} checked="checked" {% endif %}
-                                    {% endif %} value={{ key }}> {% if key=='t' %}t-test{% else %}{{ key }}{% endif %}
+                                   onclick="show_sig_boot_div('{{ tuple[0] }}')"
+                                    {% if sig_test_name %} {% if tuple[0]==sig_test_name %} checked="checked" {% endif %}
+                                    {% endif %} value="{{ tuple[0] }}"> {% if tuple[0]=='t' %}t-test{% else %}{{ tuple[0] }}{% endif %}
                         </td>
-                        <td>{{ value }}</td>
+                        <td>{{ tuple[1] }}</td>
                     </tr>
                     {% endfor %}
                 </table>
-                <!--<ul>
 
+<!--
                                  {% for key, value in recommended_tests_reasons.items() %}
                             <li>{{ key }}
                                 <div class="tooltip">?
@@ -360,8 +365,8 @@ margin: 0 auto;>
                                 </div>
                             </li>
                                  {% endfor %}
+-->
 
-                        </ul> -->
 
                 <!-- <b>Choose the significance test to run</b> -->
                 <!-- radio button to choose test -->
@@ -387,14 +392,19 @@ margin: 0 auto;>
 
                 <br><br>
                 <!-- Bootstrap (for bootstrap and permutation tests) -->
+                <div id="sig_boot_div" style="display: none">
                 Number of iterations for bootstrap significance tests:
                 <div class="tooltip">?<span class="tooltiptext">The number of iterations.</span></div>:
                 <input id="sig_boot_iterations" name="sig_boot_iterations" type="number" value="200">  <!-- todo: disable if not bootstrap -->
                 <br><br>
+                    </div>
                 <!-- mu (for t-test and bootstrap) -->
+            <!-- disable if not t or bootstrap (or disable altogether) -->
+            <!--
                 Expected mean difference for null hypothesis &mu;:
                 <div class="tooltip">?<span class="tooltiptext">The expected value of the mean for the null hypothesis.</span></div>:
-                <input id="mu" name="mu" type="number" value="0">  <!-- todo: disable if not t or bootstrap -->
+                <input id="mu" name="mu" type="number" value="0">   -->
+
 
                 <!-- Significance: Submit Button -->
 
@@ -743,6 +753,14 @@ margin: 0 auto;>
         {% if last_tab_name_clicked %}
               window.onload = showLastTab('{{ last_tab_name_clicked }}')
         {% endif %}
+
+        window.addEventListener('load', function () {
+            {% if last_tab_name_clicked %}
+                console.log('In load event listener: {{ last_tab_name_clicked }}.')
+                // sig_test_name radio button
+            {% endif %}
+
+        }, false);
     </script>
     </div>
 </body>
