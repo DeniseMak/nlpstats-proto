@@ -31,11 +31,23 @@
   color: #4b2e83; /* Color Scheme (School Color) */
 
 }
+
+
+.button1:hover {
+    color: Black;
+    background-color: Gainsboro;
+    text-decoration: none;
+}
+
+
+.button1:focus {
+    color: Black;
+    background-color: Gainsboro;
+    text-decoration: none;
+}
+
 .hiddendiv{
   display:none;
   
 }
 
-.clicker:focus + .hiddendiv{
-  display:block;
-}

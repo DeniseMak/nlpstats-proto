@@ -9,24 +9,12 @@ ul.breadcrumb {
   background-color: #eee;
 }
 
-/* Display list items side by side */
 ul.breadcrumb li { display: inline; }
 
-/* Add a slash symbol (/) before/behind each list item */
+
 ul.breadcrumb li+li:before {
   padding: 10px;
   color: black;
   content: "→";
-}
-
-/* Add a color to all links inside the list */
-ul.breadcrumb li a {
-  color: #4b2e83; /* Color Scheme (School Color) */
-  text-decoration: none;
-}
-
-ul.breadcrumb li a:hover {
-    color: Black;
-    text-decoration: none;
 }
 
