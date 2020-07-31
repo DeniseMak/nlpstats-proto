@@ -19,7 +19,6 @@ By 630PM
 * Upload and download config file, config file in user dir
 * Copy editing
 * Finish plumbing report. (make partial report work)
-* 0.05 default alpha
 * Separate test statistic and confidence interval in tab 2
 
 Low Priority:
