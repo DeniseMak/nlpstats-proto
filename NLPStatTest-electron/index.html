@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <link href="tooltip.css" rel="stylesheet" />
+    <link href="other.css" rel="stylesheet" />
+    <link href="tables.css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+    <form>
+
+                  <h1>Data Analysis</h1>
+
+                  <p>In this section, you will upload either a two-column file</p>
+                  
+
+<div>
+                  System File:
+                      <div class="tooltip">?<span class="tooltiptext">Upload a text file containing metrics comparing two systems. The file should have two colummns, one for each system.</span></div>
+                      <input type="file" id="system_file" onchange="pressed()" name="system_file" style="display:none;" {% if error_str %}required{% endif %}/>
+                      <a href="#" class="button1"><label for="system_file">Upload</label></a>
+                             <label id="fileLabel" >{{file_uploaded}}{% if error_str %}<b>{{ error_str }}</b>{% endif %}</label>
+</div>
+
+<div>
+                  Evaluation Unit Size:
+                  <div class="tooltip">? <span class="tooltiptext">This should be a whole number between one and the number of data points.</span></div>
+                  <input id="eval_unit_size" name="eval_unit_size"
+                         type="number"
+                         {% if eval_unit_size %}
+                              value="{{ eval_unit_size }}"
+                         {% else %}
+                              value="1"
+                         {% endif %}
+                         class="form-control input-md" required="">
+</div>
+
+ <div>
+ 
+                  Evaluation Unit Metric:
+                  <div class="tooltip">?
+                      <span class="tooltiptext"> The metric to use as the representative value for each evaluation unit.
+                            <!-- TODO: Use "{{help2}}" or another server side help string -->
+                        </span></div>
+
+
+ 
+ 
+                  <input type="radio" name="target_statistic" id="target_statistic-0" value="mean" checked="checked"
+                          {% if eval_unit_stat=="mean" %} checked="checked" {% else %} checked="checked"{% endif %}> Mean
+
+ 
+ 
+ 
+                  <input type="radio" name="target_statistic" id="target_statistic-1" value="median"
+                          {% if eval_unit_stat=="median" %} checked="checked" {% endif %}> Median
+
+ </div>
+              
+ <div>
+                  Random Seed:
+                  <div class="tooltip">?
+                      <span class="tooltiptext">If you would like to provide a (real number) seed for random shuffling, enter it here.
+                        Otherwise, we will not shuffle.</span>
+                  </div>
+
+                  <input id="seed" name="seed" type="number" placeholder="don't shuffle"
+                          {% if shuffle_seed %} value="{{ shuffle_seed }}" {% endif %} step="1" class="form-control input-md">
+
+ </div>
+
+                  Significance level &alpha; (for calculating normality):
+                  <div class="tooltip">?
+                      <span class="tooltiptext">A significance threshold value for the normality test. Default value is 0.5.</span>
+                  </div>
+
+                  <input id="normality_alpha" name="normality_alpha" type="number" value="0.05" step="0.001"
+                          {% if normality_alpha %} value="{{ normality_alpha }}" {% endif %}  class="form-control input-md">
+
+                      <button id="submit" name="submit" type=submit class="button1" onclick="document.getElementById('hidden').style.display = 'block'">Run</button>
+          </form>
+
+<hr>
+   <h1>Significance Testing</h1>
+<hr>
+  <h1>Effect Size Analysis</h1>
+<hr>
+  <h1>Power Analysis</h1>
+</body>
+
+</html>
