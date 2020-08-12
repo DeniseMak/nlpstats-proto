@@ -12,3 +12,9 @@ td, th {
 tr:nth-child(even) {
   background-color: #eee;
 }
+
+
+.table1 tr {
+  width: 100% ;
+  background-color: White ;
+}

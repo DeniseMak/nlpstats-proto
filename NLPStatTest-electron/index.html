@@ -11,24 +11,38 @@
 
 <body>
 
-    <form>
+
 
                   <h1>Data Analysis</h1>
 
-                  <p>In this section, you will upload either a two-column file</p>
+                  <p>In this section, you will upload either a two-column file if you would like to compare two systems, or a one column file if you would like to perform prospective power analysis.</p>
                   
-
-<div>
+    <form>
+<table class="table1">
+    <tr>
+        <td>
                   System File:
-                      <div class="tooltip">?<span class="tooltiptext">Upload a text file containing metrics comparing two systems. The file should have two colummns, one for each system.</span></div>
-                      <input type="file" id="system_file" onchange="pressed()" name="system_file" style="display:none;" {% if error_str %}required{% endif %}/>
+                 
+                      </td>
+        <td>
+                 <div class="tooltip">?  <span class="tooltiptext">Upload a text file containing metrics comparing two systems. The file should have two colummns, one for each system.</span></div>
+                 </td>
+                       <td>
+                      <input type="file" id="system_file" onchange="pressed()" name="system_file" style="display:none;" required/>
                       <a href="#" class="button1"><label for="system_file">Upload</label></a>
-                             <label id="fileLabel" >{{file_uploaded}}{% if error_str %}<b>{{ error_str }}</b>{% endif %}</label>
-</div>
-
-<div>
+                             <label id="fileLabel" ></label>
+                             </td>
+                             </tr>
+                                 
+ <tr>
+    <td>
                   Evaluation Unit Size:
-                  <div class="tooltip">? <span class="tooltiptext">This should be a whole number between one and the number of data points.</span></div>
+          
+                    </td>
+                  <td>
+                              <div class="tooltip">?  <span class="tooltiptext">This should be a whole number between one and the number of data points.</span></div>
+                              </td>
+                                    <td>
                   <input id="eval_unit_size" name="eval_unit_size"
                          type="number"
                          {% if eval_unit_size %}
@@ -37,19 +51,22 @@
                               value="1"
                          {% endif %}
                          class="form-control input-md" required="">
-</div>
-
- <div>
+                            </td>
+                            </tr>
+                                
+<tr>
+   <td>
  
                   Evaluation Unit Metric:
-                  <div class="tooltip">?
-                      <span class="tooltiptext"> The metric to use as the representative value for each evaluation unit.
-                            <!-- TODO: Use "{{help2}}" or another server side help string -->
-                        </span></div>
+           
 
-
- 
- 
+                                </td>
+                  <td>
+ <div class="tooltip">?
+                <span class="tooltiptext"> The metric to use as the representative value for each evaluation unit.
+                  </span></div>
+ </td>
+       <td>
                   <input type="radio" name="target_statistic" id="target_statistic-0" value="mean" checked="checked"
                           {% if eval_unit_stat=="mean" %} checked="checked" {% else %} checked="checked"{% endif %}> Mean
 
@@ -59,30 +76,45 @@
                   <input type="radio" name="target_statistic" id="target_statistic-1" value="median"
                           {% if eval_unit_stat=="median" %} checked="checked" {% endif %}> Median
 
- </div>
-              
- <div>
+                                                      </td>
+                                                      </tr>
+                                                          
+                          <tr>
+                             <td>
                   Random Seed:
-                  <div class="tooltip">?
-                      <span class="tooltiptext">If you would like to provide a (real number) seed for random shuffling, enter it here.
-                        Otherwise, we will not shuffle.</span>
-                  </div>
-
+       
+           
+                                </td>
+                  <td>
+                      <div class="tooltip">?  <span class="tooltiptext">If you would like to provide a (real number) seed for random shuffling, enter it here.
+                                   Otherwise, we will not shuffle.</span></div>
+                      </td>
+                            <td>
                   <input id="seed" name="seed" type="number" placeholder="don't shuffle"
                           {% if shuffle_seed %} value="{{ shuffle_seed }}" {% endif %} step="1" class="form-control input-md">
 
- </div>
+                             </td>
+                             </tr>
+                                 
+ <tr>
+    <td>
 
                   Significance level &alpha; (for calculating normality):
-                  <div class="tooltip">?
-                      <span class="tooltiptext">A significance threshold value for the normality test. Default value is 0.5.</span>
-                  </div>
-
+          
+                                   </td>
+                  <td>
+                      <div class="tooltip">?  <span class="tooltiptext">A significance threshold value for the normality test. Default value is 0.5.</span> </div>
+                      </td>
+                            <td>
                   <input id="normality_alpha" name="normality_alpha" type="number" value="0.05" step="0.001"
                           {% if normality_alpha %} value="{{ normality_alpha }}" {% endif %}  class="form-control input-md">
 
-                      <button id="submit" name="submit" type=submit class="button1" onclick="document.getElementById('hidden').style.display = 'block'">Run</button>
-          </form>
+          
+</table>
+<br>
+  <button id="submit" name="submit" type=submit class="button1" onclick="document.getElementById('hidden').style.display = 'block'">Run</button>
+</form>
+
 
 <hr>
    <h1>Significance Testing</h1>
