@@ -16,5 +16,12 @@ tr:nth-child(even) {
 
 .table1 tr {
   width: 100% ;
+  border: 1px solid  #eee;
+  background-color: White ;
+}
+
+.table1 td, th {
+  width: 100% ;
+  border: 1px solid  #eee;
   background-color: White ;
 }
