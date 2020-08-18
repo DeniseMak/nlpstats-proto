@@ -1,17 +1,14 @@
 {
-  "name": "NLPStatTest",
-  "version": "0.0.0",
+  "name": "electron-pdf",
+  "version": "1.0.0",
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron ."
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Sathish",
   "devDependencies": {
-    "electron": "^9.1.2"
+    "electron": "^1.8.8"
   },
   "dependencies": {
     "jquery": "^3.5.1"

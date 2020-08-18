@@ -90,7 +90,7 @@
                                    Otherwise, we will not shuffle.</span></div>
                       </td>
                             <td>
-                  <input id="seed" name="seed" type="number" placeholder="don't shuffle"
+                  <input id="seed" name="seed" type="number" placeholder="Do not shuffle."
                           {% if shuffle_seed %} value="{{ shuffle_seed }}" {% endif %} step="1" class="form-control input-md">
 
                              </td>
@@ -99,7 +99,7 @@
  <tr>
     <td>
 
-                  Significance level &alpha; (for calculating normality):
+                  Significance Level &alpha; (For Calculating Normality):
           
                                    </td>
                   <td>
@@ -112,7 +112,10 @@
           
 </table>
 <br>
-  <button id="submit" name="submit" type=submit class="button1" onclick="document.getElementById('hidden').style.display = 'block'">Run</button>
+<button onclick="$('#contentContainer').html('<div id=\'cover-spin\'></div>'); myAjaxSave();">Save</button>
+  <button id="submit" name="submit" type=submit class="button1">Run</button> <span class="spinner">⌛</span>
+  
+
 </form>
 
 
@@ -122,6 +125,24 @@
   <h1>Effect Size Analysis</h1>
 <hr>
   <h1>Power Analysis</h1>
+  
+  
+  
+  
+  <!-- The Button!!! -->
+  <label id='pdf-path'></label>
+  <button id='print-pdf'>Convert to PDF</button>
+  <button>Reset</button>
+  <!-- Don't go beyond this -->
+
+  <script>
+    require('./renderer.js')
+  </script>
+  
+  
+  
+  
+  
 </body>
 
 </html>
