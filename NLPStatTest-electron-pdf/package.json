@@ -8,7 +8,7 @@
   },
   "author": "Sathish",
   "devDependencies": {
-    "electron": "^1.8.8"
+    "electron": "^7.2.4"
   },
   "dependencies": {
     "jquery": "^3.5.1"
