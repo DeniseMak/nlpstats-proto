@@ -11,6 +11,7 @@ git clone https://github.com/techiediaries/python-electron-app
 cd python-electron-app
 npm install
 npm start
+sudo pip3 install pipenv
 ```
 Then, to setup Flask:
 ```
