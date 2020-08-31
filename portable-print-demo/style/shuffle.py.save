@@ -1,9 +1,0 @@
-
-<input type="radio"  name="IR" value="C" required onclick="show('cse-followup-none','cse-followup'); unrequire('clarification');">Someone saying the first sentence gives me the impression that the second sentence is false.</input><br>
-<input type="radio"  name="IR" value="N" onclick="show('cse-followup-none','cse-followup'); unrequire('clarification');">Someone saying the first sentence does not give me the impression that the second sentence is true; it also does not give me the impression that the second sentence is false.</input><br>
-<input type="radio"  id="CS-E" name="IR" value="CS-E" onclick=" show('cse-followup','cse-followup-none'); require('clarification');">Someone saying the first sentence gives me the impression that the second sentence is true.</input><br>
-<div id='cse-followup'>
-    <b>Please clarify:</b><br>
- <input id="clarification" type="radio"  name="CS-E-clarify" value="E">My impression that the second sentence is true cannot be wrong unless the first sentence is false. The other options do not apply.</input><br>
- <input type="radio"  name="CS-E-clarify" value="I">My impression that the second sentence is true could be wrong without the first sentence being false.</input><br>
- <input type="radio"  name="CS-E-clarify" value="P">My impression that the second sentence is true arises because the seocnd sentence is background knowledge assumed by the first sentence. The second sentence needs to be true for the first sentence to be either true or false.</inpu
