@@ -1,14 +1,9 @@
 
 
-#page1 {
+.print {
   display: block;
 }
-#page2 {
-  display: block;
-}
-#page3 {
-  display: block;
-}
-#page4 {
-  display: block;
+
+.interface {
+  display: none;
 }
