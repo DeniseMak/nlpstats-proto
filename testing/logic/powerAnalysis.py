@@ -8,14 +8,16 @@ from scipy import stats
 from statsmodels.stats.descriptivestats import sign_test
 import matplotlib
 
+#import sigTesting
 import logic.sigTesting
+
 
 matplotlib.use('Svg')
 from matplotlib import pyplot as plt
 plt.rcParams['svg.fonttype'] = 'none'
 
 
-def post_power_analysis(sig_test_name, method, score, num_of_subsample, dist_name, B, alpha, mu, output_dir, boot_B = None):
+def post_power_analysis(sig_test_name, method, score, num_of_subsample, dist_name, B, alpha, mu, output_dir, alternative="two-sided", boot_B = None):
 
 	def get_sim_sample_sizes(z, num_of_subsample):
 		partitions = np.array_split(range(len(z)), num_of_subsample)
@@ -40,8 +42,12 @@ def post_power_analysis(sig_test_name, method, score, num_of_subsample, dist_nam
 				count = 0
 				for b in range(0,B):
 					z_b = np.random.normal(loc=mu_hat,scale=np.sqrt(var_hat),size=int(i))
-					(test_stats, pval) = stats.ttest_1samp(z_b,mu)
-					if(pval<alpha):
+					z_b_dict = {}
+					for j in range(0,len(z_b)):
+						z_b_dict[j] = z_b[j]
+
+					(test_stats, pval, CI, rejection) = logic.sigTesting.run_sig_test("t", z_b_dict, alpha, boot_B, mu, alternative) # TO-FIX add CI
+					if rejection:
 						count+=1
 				power_sampsizes[i] = float(count)/B
 		else:
@@ -53,11 +59,31 @@ def post_power_analysis(sig_test_name, method, score, num_of_subsample, dist_nam
 			count = 0
 			for b in range(0,B):
 				z_b = np.random.choice(a = z, size = int(i), replace=True)
-				(test_stats, pval, rejection) = logic.sigTesting.run_sig_test(sig_test_name, z_b, alpha, boot_B, mu)
+				z_b_dict = {}
+				for j in range(0,len(z_b)):
+					z_b_dict[j] = z_b[j]
+				(test_stats, pval, CI, rejection) = logic.sigTesting.run_sig_test(sig_test_name, z_b_dict, alpha, boot_B, mu, alternative) # TO-FIX add CI
 				if rejection:
 					count+=1
 			power_sampsizes[i] = float(count)/B
-
+	
+	
+	# test name to display
+	test_name_to_display = ''
+	if sig_test_name == "t":
+		test_name_to_display = 'Student t test'
+	if sig_test_name == 'wilcoxon':
+		test_name_to_display = "Wilcoxon signed rank test"
+	if sig_test_name == "bootstrap":
+		test_name_to_display = "Bootstrap test (mean)"
+	if sig_test_name == "permutation":
+		test_name_to_display = "Permutation test (mean)"
+	if sig_test_name == "sign":
+		test_name_to_display = "Sign test"
+	if sig_test_name == "bootstrap_med":
+		test_name_to_display = "Bootstrap test (median)"
+	if sig_test_name == "permutation_med":
+		test_name_to_display = "Permutation test (median)"
 
 	x = list(power_sampsizes.keys())
 	y = list(power_sampsizes.values())
@@ -66,7 +92,7 @@ def post_power_analysis(sig_test_name, method, score, num_of_subsample, dist_nam
 	plt.plot(x,y)
 	plt.xlabel("Sample Size")
 	plt.ylabel("Power")
-	plt.title("Power Against Different Sample Sizes for '" + str(sig_test_name) + "'")
+	plt.title("Power Against Different Sample Sizes for '" + test_name_to_display + "'")
 
 	if not os.path.exists(output_dir):
 		os.makedirs(output_dir)

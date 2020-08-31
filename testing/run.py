@@ -22,6 +22,7 @@ from logic.report import gen_report
 FOLDER = os.path.join('user')
 from logic.powerAnalysis import post_power_analysis
 import logic.powerAnalysis
+
 app = Flask(__name__)
 app.config['FOLDER'] = FOLDER
 
@@ -56,16 +57,71 @@ def calc_score_diff(score1, score2):
     return (score_diff)
 
 
-def create_test_reasons(recommended_tests):
+def partition_score_no_hist(score1, score2, score_diff, eval_unit_size, shuffled,
+                            randomSeed, method):
+    """
+	This function partitions the score difference with respect to the given
+	evaluation unit size. Also, the user can choose to shuffle the score difference
+	before partitioning.
+
+	@param score1, score2: original scores
+	@param score_diff: score difference, a dictionary
+	@param eval_unit_size: evaluation unit size
+	@param shuffled: a boolean value indicating whether reshuffling is done
+	@param method: how to calculate score in an evaluation unit (mean or median)
+	@return: score1_new, score2_new, score_diff_new, the partitioned scores, dictionary
+	"""
+    ind = list(score_diff.keys())  # the keys should be the same for three scores
+
+    if shuffled:
+        ind_shuffled = np.random.Random(randomSeed).shuffle(ind)
+    print(eval_unit_size)
+    ind_shuffled = np.array_split(ind, np.floor(len(ind) / eval_unit_size))
+    ind_new = 0
+
+    score1_new = {}
+    score2_new = {}
+    score_diff_new = {}
+    for i in ind_shuffled:
+        if method == "mean":
+            score1_new[ind_new] = np.array([score1[x] for x in i]).mean()
+            score2_new[ind_new] = np.array([score2[x] for x in i]).mean()
+            score_diff_new[ind_new] = np.array([score_diff[x] for x in i]).mean()
+        if method == "median":
+            score1_new[ind_new] = np.median(np.array([score1[x] for x in i]))
+            score2_new[ind_new] = np.median(np.array([score2[x] for x in i]))
+            score_diff_new[ind_new] = np.median(np.array([score_diff[x] for x in i]))
+        ind_new += 1
+
+    return ([score1_new, score2_new, score_diff_new, ind_shuffled])
+
+
+def create_test_reasons(recommended_tests, test_statistic='mean'):
     '''
     This function creates a dictionary of test names with reasons, given the list of test names.
     @param recommended_tests: List of tuples [('t', "t because..."), ('bootstrap', 'bootstrap because...')]
     @return: Dictionary of test names with reasons as the values
     '''
-    test_reasons = {}
-    for test in recommended_tests:  # test is a tuple (name, reason)
-        test_reasons[test[0]] = test[1]
-    return test_reasons
+    #test_reasons = {}
+    #for test in recommended_tests:  # test is a tuple (name, reason)
+    #    test_reasons[test[0]] = test[1]
+    #return test_reasons
+
+    # sort based on reverse order
+    recommended_tests = {k: v for k, v in sorted(recommended_tests.items(),
+                                                 reverse=True,
+                                                 key=lambda item: item[1])}
+    recommended_list = []
+    not_preferred_list = []
+    not_recommended_list = []
+    for k, v in recommended_tests.items():
+            if v[0] > 0:
+                recommended_list.append((k, v[1]))
+            elif v[0] == 0:
+                not_preferred_list.append((k, v[1]))
+            else:
+                not_recommended_list.append((k, v[1]))
+    return recommended_list, not_preferred_list, not_recommended_list
 
 
 def format_digits(num, sig_digits=5):
@@ -75,10 +131,10 @@ def format_digits(num, sig_digits=5):
 
 def create_summary_stats_dict(tc, debug=False):
     if debug: print('Score 1: mean={}, med={}, sd={}, min={}, max={}'.format(tc.eda.summaryStat_score1.mu,
-                                                                   tc.eda.summaryStat_score1.med,
-                                                                   tc.eda.summaryStat_score1.sd,
-                                                                   tc.eda.summaryStat_score1.min_val,
-                                                                   tc.eda.summaryStat_score1.max_val))
+                                                                             tc.eda.summaryStat_score1.med,
+                                                                             tc.eda.summaryStat_score1.sd,
+                                                                             tc.eda.summaryStat_score1.min_val,
+                                                                             tc.eda.summaryStat_score1.max_val))
     summary_dict = {}
     summary_dict['score1'] = {'mean': format_digits(tc.eda.summaryStat_score1.mu),
                               'median': format_digits(tc.eda.summaryStat_score1.med),
@@ -98,15 +154,15 @@ def create_summary_stats_dict(tc, debug=False):
                                   'max': format_digits(tc.eda.summaryStat_score_diff.max_val)}
                                   '''
     summary_dict['difference'] = {'mean': format_digits(tc.eda.summaryStat_score_diff_par.mu),
-                                                'median': format_digits(tc.eda.summaryStat_score_diff_par.med),
-                                                'std.dev.': format_digits(tc.eda.summaryStat_score_diff_par.sd),
-                                                'min': format_digits(tc.eda.summaryStat_score_diff_par.min_val),
-                                                'max': format_digits(tc.eda.summaryStat_score_diff_par.max_val)}
+                                  'median': format_digits(tc.eda.summaryStat_score_diff_par.med),
+                                  'std.dev.': format_digits(tc.eda.summaryStat_score_diff_par.sd),
+                                  'min': format_digits(tc.eda.summaryStat_score_diff_par.min_val),
+                                  'max': format_digits(tc.eda.summaryStat_score_diff_par.max_val)}
     return summary_dict
 
 
 @app.route('/', methods=["GET", "POST"])
-def homepage(debug=False):
+def homepage(debug=True):
     if request.method == 'POST':
         # ------- Test if 'last_tab' was sent
         last_tab_clicked = request.form.get('last_tab')
@@ -126,7 +182,8 @@ def homepage(debug=False):
         print('eval_unit_stat={}'.format(eval_unit_stat))
 
         # normality
-        normality_alpha = request.form.get('normality_alpha')
+        normality_alpha = float(request.form.get('normality_alpha'))
+        print('NORMALITY_ALPHA (from form)={}'.format(normality_alpha))
         seed = request.form.get('seed')
         if not seed:
             shuffle = False
@@ -184,18 +241,23 @@ def homepage(debug=False):
             summary_stats_dict = create_summary_stats_dict(tc)
 
             # --------------Recommended Test Statistic (mean or median, by skewness test) ------------------
-            mean_or_median = skew_test(score_diff_par[2])
+            mean_or_median = skew_test(score_diff_par[2])[1]
+            skewness_gamma = skew_test(score_diff_par[2])[0]
+
             # ---------------normality test
             # todo: add alpha parameter
-            is_normal = normality_test(score_diff_par[2], alpha=0.05)
-            print('DA: is_normal={}'.format(is_normal))
+            is_normal = normality_test(score_diff_par[2], alpha=normality_alpha)
             # --------------Recommended Significance Tests -------------------------
             recommended_tests = recommend_test(mean_or_median, is_normal)
-            print(recommended_tests)
-            # recommended tests reasons (temp function)
-            recommended_tests_reasons = create_test_reasons(recommended_tests)
 
-            if debug: print(recommended_tests_reasons)
+            # create_test_reasons returns a list of 3
+            ( recommended_tests, not_preferred_tests, not_recommended_tests) = \
+                create_test_reasons(recommended_tests)
+
+            if debug:
+                print("Recommended: {}".format(recommended_tests))
+                print("Appropriate (not preferred): {}".format(not_preferred_tests))
+                print("Inappropriate: {}".format(not_recommended_tests))
 
             USE_JSON = False
             if USE_JSON:
@@ -208,6 +270,7 @@ def homepage(debug=False):
 
                 rendered = render_template(template_filename,
                                            normality_alpha=normality_alpha,
+                                           skewness_gamma=skewness_gamma,
                                            hist_score1_file='hist_score1_partitioned.svg',
                                            hist_score2_file='hist_score2_partitioned.svg',
                                            hist_diff_file='hist_score_diff.svg',
@@ -225,8 +288,9 @@ def homepage(debug=False):
                                            sigtest_heading=sig_test_heading,
                                            mean_or_median=mean_or_median,  # 'mean' if not skewed, 'median' if skewed.
                                            is_normal=is_normal,  # True if normal, False if not.
-                                           recommended_tests=recommended_tests,  # this is a list.
-                                           recommended_tests_reasons=recommended_tests_reasons,  # dict with reasons
+                                           recommended_tests=recommended_tests,  # list of tuples
+                                           not_recommended_tests=not_recommended_tests, # list of tuples
+                                           not_preferred_tests=not_preferred_tests,  # list of tuples
                                            rand=rand,  # rand is for image URL to force reload (avoid caching)
                                            # specific to effect size test
                                            effect_size_estimators=estimators,
@@ -240,7 +304,7 @@ def homepage(debug=False):
                 # -------------- Set all cookies -------------
                 if f.filename:
                     resp.set_cookie('fileName', f.filename)
-
+                resp.set_cookie('skewness_gamma', json.dumps(skewness_gamma))
                 resp.set_cookie('eval_unit_size', eval_unit_size)
                 resp.set_cookie('eval_unit_stat', eval_unit_stat)
                 resp.set_cookie('num_eval_units', str(num_eval_units))
@@ -256,10 +320,9 @@ def homepage(debug=False):
                 resp.set_cookie('is_normal', json.dumps(is_normal))
 
                 resp.set_cookie('sig_test_heading', sig_test_heading)
-                serialized_recommended_tests = json.dumps(recommended_tests)
-                serialized_recommended_tests_reasons = json.dumps(recommended_tests_reasons)
-                resp.set_cookie('recommended_tests', serialized_recommended_tests)
-                resp.set_cookie('recommended_test_reasons', serialized_recommended_tests_reasons)
+                resp.set_cookie('recommended_tests', json.dumps(recommended_tests))
+                resp.set_cookie('not_recommended_tests', json.dumps(not_recommended_tests))
+                resp.set_cookie('not_preferred_tests', json.dumps(not_preferred_tests))
 
                 resp.set_cookie('hist_score1_file', 'hist_score1_partitioned.svg')
                 resp.set_cookie('hist_score2_file', 'hist_score2_partitioned.svg')
@@ -307,9 +370,13 @@ def sigtest(debug=True):
         recommended_test_reasons = json.loads(request.cookies.get('recommended_test_reasons'))
         fileName = request.cookies.get('fileName')
         # ------- Get form data
+        show_non_recommended = request.form.get('checkbox_show_non_recommended')
         sig_test_name = request.form.get('target_sig_test')
         sig_alpha = request.form.get('significance_level')
-        mu = 0  # float(request.form.get('mu'))
+        mu = float(request.form.get('mu'))
+        if not mu:
+            mu = 0.0
+        alternative = request.form.get('alternative')
         sig_boot_iterations = int(request.form.get('sig_boot_iterations'))
 
         if debug:
@@ -322,21 +389,33 @@ def sigtest(debug=True):
         print("***** LAST TAB (from POST): {}".format(last_tab_name_clicked))
 
         scores1, scores2 = read_score_file(FOLDER + "/" + fileName)  # todo: different FOLDER for session/user
+        # get old dif
         score_dif = calc_score_diff(scores1, scores2)
-        if debug: print("THE SCORE_DIF:{}".format(score_dif))
-        test_stat_val, pval, rejection = run_sig_test(sig_test_name,  # 't'
+
+        # use Partition Score to get new dif
+        partitions = partition_score_no_hist(scores1, scores2, score_dif,
+                                json.loads(request.cookies.get('eval_unit_size')),
+                                shuffled=False,randomSeed=0,method=request.cookies.get('mean_or_median'))
+        score_dif = partitions[2]
+
+
+        test_stat_val, pval, CI, rejection = run_sig_test(sig_test_name,  # 't'
                                                       score_dif,
                                                       float(sig_alpha),  # 0.05,
-                                                      B=sig_boot_iterations,  # todo: B_boot default 2000
-                                                      mu=mu)  # todo: mu default 0
-        if debug: print("test_stat_val={}, pval={}, rejection={}".format(test_stat_val, pval, rejection))
+                                                      B=sig_boot_iterations,
+                                                      alternative=alternative,
+                                                      conf_int=True,
+                                                      mu=mu)
+        if debug: print("test_stat_val={}, pval={},"
+                        "alternative={}, mu={}, CI={}, rejection={}".format(
+            test_stat_val, pval, alternative, mu, CI, rejection))
 
         recommended_tests = json.loads(request.cookies.get('recommended_tests'))
         summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
 
-        # TODO: Don't need this anymore
-        sig_test_sign_permutation=request.cookies.get('sig_test_sign_permutation')
+        skewness_gamma = json.loads(request.cookies.get('skewness_gamma'))
         rendered = render_template(template_filename,
+                                   skewness_gamma=skewness_gamma,
                                    # specific to effect size test
                                    effect_size_estimators=estimators,
                                    eff_estimator=request.cookies.get('eff_estimator'),
@@ -354,7 +433,9 @@ def sigtest(debug=True):
                                    mean_or_median=request.cookies.get('mean_or_median'),
                                    is_normal=json.loads(request.cookies.get('is_normal')),
                                    recommended_tests=recommended_tests,
+                                   not_recommended_tests=json.loads(request.cookies.get('not_recommended_tests')),
                                    recommended_tests_reasons=recommended_test_reasons,
+                                   show_non_recommended=show_non_recommended,
                                    summary_stats_dict=summary_stats_dict,
                                    hist_score1_file=request.cookies.get('hist_score1_file'),
                                    hist_score2_file=request.cookies.get('hist_score2_file'),
@@ -363,19 +444,28 @@ def sigtest(debug=True):
                                    # specific to sig_test
                                    mu=mu,
                                    sig_boot_iterations=sig_boot_iterations,
+                                   alternative=alternative,
                                    sig_test_stat_val=test_stat_val,
+                                   CI=CI,
                                    pval=pval,
                                    rejectH0=rejection,
                                    sig_alpha=sig_alpha,
-                                   sig_test_name=sig_test_name,
-                                   sig_test_sign_permutation=sig_test_sign_permutation,
+                                   sig_test_name=sig_test_name
                                    )
         resp = make_response(rendered)
         # -------- WRITE TO COOKIES ----------
         resp.set_cookie('sig_test_name', sig_test_name)
         resp.set_cookie('sig_test_alpha', sig_alpha)
-        resp.set_cookie('sig_test_stat_val', json.dumps(test_stat_val))
-        print('test_stat_val={}, json_dumped={}'.format(test_stat_val, json.dumps(test_stat_val)))
+        resp.set_cookie('alternative', alternative)
+        if test_stat_val:
+            resp.set_cookie('sig_test_stat_val', json.dumps(float(test_stat_val)))
+            print('test_stat_val={}, json_dumped={}'.format(test_stat_val, json.dumps(float(test_stat_val))))
+        if CI:
+            resp.set_cookie('CI', json.dumps(CI))
+        if show_non_recommended:
+            resp.set_cookie('show_non_recommended', show_non_recommended)
+        else:
+            resp.set_cookie('show_non_recommended', '')
         resp.set_cookie('sig_boot_iterations', str(sig_boot_iterations))
         resp.set_cookie('mu', str(mu))
         resp.set_cookie('pval', str(pval))
@@ -386,33 +476,46 @@ def sigtest(debug=True):
 
 
 @app.route('/effectsize', methods=["GET", "POST"])
-def effectsize():
+def effectsize(debug=True):
     if request.method == 'POST':
         last_tab_name_clicked = 'Effect Size'
         fileName = request.cookies.get('fileName')
         scores1, scores2 = read_score_file(FOLDER + "/" + fileName)  # todo: different FOLDER for session/user
-        # get dif
+        # get old dif
         score_dif = calc_score_diff(scores1, scores2)
-
+        # use Partition Score to get new dif
+        partitions = partition_score_no_hist(scores1, scores2, score_dif,
+                                json.loads(request.cookies.get('eval_unit_size')),
+                                shuffled=False,randomSeed=0,method=request.cookies.get('mean_or_median'))
+        score_dif = partitions[2]
         previous_selected_est = request.cookies.get('eff_estimator')
 
-        # todo: check if different from previous
-        cur_selected_est = request.form.get('target_eff_test')
-
-        print('previous estimator={}, current estimator={}'.format(
-            previous_selected_est, cur_selected_est))
+        # todo: """                                        {% if key=='hl' %}Hodges-Lehmann Estimator
+        #                                             {% elif key=='wilcoxonr' %}Wilcoxon r
+        #                                             {% elif key=='hedgesg' %}Hedges' g
+        #                                             {% elif key=='cohend' %}Cohen's d"""
+        cur_selected_ests = []
+        cur_selected_est_hl = request.form.get('target_eff_test_hl')
+        if cur_selected_est_hl: cur_selected_ests.append(cur_selected_est_hl)
+        cur_selected_est_wilcoxonr = request.form.get('target_eff_test_wilcoxonr')
+        if cur_selected_est_wilcoxonr: cur_selected_ests.append(cur_selected_est_wilcoxonr)
+        cur_selected_est_hedgesg = request.form.get('target_eff_test_hedgesg')
+        if cur_selected_est_hedgesg: cur_selected_ests.append(cur_selected_est_hedgesg)
+        cur_selected_est_cohend = request.form.get('target_eff_test_cohend')
+        if cur_selected_est_cohend: cur_selected_ests.append(cur_selected_est_cohend)
+        print('currentEstimators={}:'.format(cur_selected_ests))
 
         # old:
         # (estimates, estimators) = calc_eff_size(cur_selected_test,
         #                                         effect_size_target_stat,
         #                                         score_dif)
-        # print('Estimates: {}\nEstimators: {}'.format(estimates, estimators))
-        # if len(estimators) != len(estimates):
-        #     print("Warning (effect size): {} estimators but {} estimates".format(
-        #         len(estimators), len(estimates)
-        #     ))
 
-        eff_size_val = calc_eff_size(cur_selected_est, score_dif)
+
+        # Build list of tuples for (estimator, value) pairs
+        estimator_value_list = []
+        for est in cur_selected_ests:
+            val = calc_eff_size(est, score_dif)
+            estimator_value_list.append((est, val))
 
         # For completing previous tabs: target_stat is 'mean' or 'median'
         previous_selected_test = request.cookies.get('sig_test_name')
@@ -420,13 +523,12 @@ def effectsize():
         recommended_tests = json.loads(request.cookies.get('recommended_tests'))
         summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
         print("EFFECT SIZE (from cookie): is_normal={}".format(json.loads(request.cookies.get('is_normal'))))
+        skewness_gamma = json.loads(request.cookies.get('skewness_gamma'))
         rendered = render_template(template_filename,
+                                   skewness_gamma=skewness_gamma,
                                    # specific to effect size test
-                                   effect_size_estimators=estimators,
-                                   eff_estimator=cur_selected_est,
-                                   eff_size_val=eff_size_val,
-                                   # effect_size_estimates = estimates,
-                                   # effect_estimator_dict = est_dict,
+                                   effect_size_estimators=estimators,  # just names
+                                   estimator_value_list=estimator_value_list,  # name, value pairs
                                    # file_uploaded = "File uploaded!!: {}".format(fileName),
                                    last_tab_name_clicked=last_tab_name_clicked,
                                    # get from cookies
@@ -440,6 +542,8 @@ def effectsize():
                                    mean_or_median=request.cookies.get('mean_or_median'),
                                    is_normal=json.loads(request.cookies.get('is_normal')),
                                    recommended_tests=recommended_tests,
+                                   not_recommended_tests=json.loads(request.cookies.get('not_recommended_tests')),
+                                   show_non_recommended=request.cookies.get('show_non_recommended'),
                                    recommended_tests_reasons=recommended_test_reasons,
                                    summary_stats_dict=summary_stats_dict,
                                    hist_score1_file=request.cookies.get('hist_score1_file'),
@@ -447,20 +551,20 @@ def effectsize():
                                    hist_diff_file=request.cookies.get('hist_diff_file'),
                                    hist_diff_par_file=request.cookies.get('hist_diff_par_file'),
                                    # specific to sig_test
-                                   sig_test_stat_val=request.cookies.get('sig_test_stat_val'),  # json.loads?
+                                   sig_test_stat_val=request.cookies.get('sig_test_stat_val'),
+                                   CI=request.cookies.get('CI'),
                                    pval=request.cookies.get('pval'),
                                    rejectH0=request.cookies.get('rejectH0'),
                                    sig_alpha=request.cookies.get('sig_test_alpha'),
-                                   sig_test_name=request.cookies.get('sig_test_name')
+                                   sig_test_name=request.cookies.get('sig_test_name'),
+                                   alternative=request.cookies.get('alternative'),
+                                   mu=request.cookies.get('mu')
                                    )
 
         resp = make_response(rendered)
         # -------- WRITE TO COOKIES ----------
         resp.set_cookie('effect_estimator_dict', json.dumps(estimators))
-        if cur_selected_est:
-            resp.set_cookie('eff_estimator', cur_selected_est)
-        if eff_size_val:
-            resp.set_cookie('eff_size_val', str(eff_size_val))
+        resp.set_cookie('estimator_value_list', json.dumps(estimator_value_list))
         return resp
 
     elif request.method == 'GET':
@@ -476,7 +580,13 @@ def power(debug=True):
         last_tab_name_clicked = 'Post-test Power Analysis'
         fileName = request.cookies.get('fileName')
         scores1, scores2 = read_score_file(FOLDER + "/" + fileName)  # todo: different FOLDER for session/user
+        # get old dif
         score_dif = calc_score_diff(scores1, scores2)
+        # use Partition Score to get new dif
+        partitions = partition_score_no_hist(scores1, scores2, score_dif,
+                                json.loads(request.cookies.get('eval_unit_size')),
+                                shuffled=False,randomSeed=0,method=request.cookies.get('mean_or_median'))
+        score_dif = partitions[2]
         is_normal = json.loads(request.cookies.get('is_normal'))
         print("POWER: (from cookie): is_normal={}".format(is_normal))
 
@@ -484,12 +594,13 @@ def power(debug=True):
             power_test = request.form.get('target_pow_test')
         else:
             power_test = request.form.get('target_pow_test_bootstrap')
+
         power_num_intervals = int(request.form.get('num_intervals'))  # todo: get from form
         # if request.cookies.get('power_iterations'):
         power_iterations = int(request.form.get('power_iterations'))
 
-
-        sig_test_name = request.cookies.get('sig_test_name')
+        old_sig_test_name = request.cookies.get('sig_test_name')
+        sig_test_name = request.form.get('power_boot_sig_test')
         if request.cookies.get('sig_test_alpha'):
             # actually, sigtest should be populating PA form alpha in template.
             # can do that instead of cookie.
@@ -508,6 +619,7 @@ def power(debug=True):
             boot_B = 500
         print('In PowerAnalysis: sig_test_name={} alpha={} mu={} bootB={} pow_iter={}'.format(
             sig_test_name, alpha, mu, boot_B, power_iterations))
+        print("score dif: {}".format(score_dif))
         pow_sampsizes = post_power_analysis(sig_test_name, power_test, score_dif, power_num_intervals,
                                             dist_name='normal',  # todo: handle not normal
                                             B=power_iterations,
@@ -519,14 +631,17 @@ def power(debug=True):
 
         power_file = 'power_samplesizes.svg'
         rand = np.random.randint(10000)
-        #power_path = os.path.join(app.config['FOLDER'], power_file)
+        # power_path = os.path.join(app.config['FOLDER'], power_file)
 
         recommended_test_reasons = json.loads(request.cookies.get('recommended_test_reasons'))
         recommended_tests = json.loads(request.cookies.get('recommended_tests'))
         summary_stats_dict = json.loads(request.cookies.get('summary_stats_dict'))
 
+        skewness_gamma = json.loads(request.cookies.get('skewness_gamma'))
         rendered = render_template(template_filename,
+                                   skewness_gamma=skewness_gamma,
                                    # power
+                                   # old_sig_test_name=old_sig_test_name,
                                    power_file=power_file,
                                    power_test=power_test,
                                    power_num_intervals=power_num_intervals,
@@ -536,9 +651,10 @@ def power(debug=True):
                                    # specific to effect size test
                                    effect_size_estimators=estimators,
                                    eff_estimator=request.cookies.get('eff_estimator'),
+                                   estimator_value_list=json.loads(request.cookies.get('estimator_value_list')),
                                    eff_size_val=request.cookies.get('eff_size_val'),
                                    # effect_size_estimates = estimates,
-                                   # effect_estimator_dict = est_dict,
+                                   effect_estimator_dict = json.loads(request.cookies.get('effect_estimator_dict')),
                                    # file_uploaded = "File uploaded!!: {}".format(fileName),
                                    last_tab_name_clicked=last_tab_name_clicked,
                                    # get from cookies
@@ -551,8 +667,10 @@ def power(debug=True):
                                    summary_str=request.cookies.get('summary_str'),
                                    mean_or_median=request.cookies.get('mean_or_median'),
                                    is_normal=json.loads(request.cookies.get('is_normal')),
+                                   not_recommended_tests=json.loads(request.cookies.get('not_recommended_tests')),
                                    recommended_tests=recommended_tests,
                                    recommended_tests_reasons=recommended_test_reasons,
+                                   show_non_recommended=request.cookies.get('show_non_recommended'),
                                    summary_stats_dict=summary_stats_dict,
                                    hist_score1_file=request.cookies.get('hist_score1_file'),
                                    hist_score2_file=request.cookies.get('hist_score2_file'),
@@ -561,9 +679,10 @@ def power(debug=True):
                                    # specific to sig_test
                                    sig_test_stat_val=request.cookies.get('sig_test_stat_val'),  # json.loads?
                                    pval=request.cookies.get('pval'),
+                                   CI=request.cookies.get('CI'),
                                    rejectH0=request.cookies.get('rejectH0'),
                                    sig_alpha=request.cookies.get('sig_test_alpha'),
-                                   sig_test_name=sig_test_name #request.cookies.get('sig_test_name')
+                                   sig_test_name=sig_test_name  # request.cookies.get('sig_test_name')
                                    )
 
         resp = make_response(rendered)
@@ -578,23 +697,34 @@ def power(debug=True):
 
 # https://www.roytuts.com/how-to-download-file-using-python-flask/
 @app.route('/download')
-def download_file():
-        options = {}
-        options["filename"] = request.cookies.get('fileName')
-        options["normality_message"] = request.cookies.get('is_normal')
-        options["skewness_message"] = "3"
-        options["test_statistic_message"] = "3"
-        options["significance_tests_table"] = "3"
-        options["significance_alpha"] = "3"
-        options["bootstrap iterations"] = "3"
-        options["expected_mean_diff"] = "3"
-        options["chosen_sig_test"] = "3"
-        options["should_reject?"] = "3"
-        options["statistic/CI"] = "3"
-        rand = np.random.randint(10000)
-        gen_report(options, str(rand))
+def download_file(markdown_only=True):
+    '''
+
+    @param markdown_only: Set this to true to debug the case in which you don't want
+    the whole zip file (like if zip isn't working)
+    @return:
+    '''
+    options = {}
+    options["filename"] = request.cookies.get('fileName')
+    options["normality_message"] = request.cookies.get('is_normal')
+    options["skewness_message"] = request.cookies.get('skewness_gamma')
+    options["test_statistic_message"] = \
+        request.cookies.get('mean_or_median') # or is this 'summary_stats_dict'
+    options["significance_tests_table"] = json.loads(request.cookies.get('recommended_test_reasons'))
+    options["significance_alpha"] = request.cookies.get('sig_test_alpha')
+    options["bootstrap iterations"] = "200"
+    # This was mu, which we're not letting the user define: options["expected_mean_diff"] = "0"
+    options["chosen_sig_test"] = request.cookies.get('sig_test_name')
+    options["should_reject?"] = request.cookies.get('rejectH0')
+    options["statistic/CI"] = request.cookies.get('sig_test_stat_val')  #
+    rand = np.random.randint(10000)
+    gen_report(options, str(rand))
+    if markdown_only:
+        return send_file("user/report.md", as_attachment=True)
+    else:
         return send_file("user/report.zip", as_attachment=True)
-        
+
+
 @app.route('/download2')
 def download_config():
     return send_file("user/config.yml", as_attachment=True)

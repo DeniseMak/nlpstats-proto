@@ -3,11 +3,12 @@
 
 <head>
 
-    <link href="{{ url_for('static', filename='modal.css')}}" rel="stylesheet" />
-    <link href="{{ url_for('static', filename='breadcrumbs.css')}}" rel="stylesheet" />
-    <link href="{{ url_for('static', filename='tooltip.css')}}" rel="stylesheet" />
-    <link href="{{ url_for('static', filename='other.css')}}" rel="stylesheet" />
-    <link href="{{ url_for('static', filename='tables.css')}}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='modal.css')}}" rel="stylesheet"media="screen" />
+    <link href="{{ url_for('static', filename='breadcrumbs.css')}}" rel="stylesheet" media="screen"/>
+    <link href="{{ url_for('static', filename='tooltip.css')}}" rel="stylesheet" media="screen" />
+    <link href="{{ url_for('static', filename='other.css')}}" rel="stylesheet" media="screen"/>
+    <link href="{{ url_for('static', filename='tables.css')}}" rel="stylesheet" media="screen"/>
+    <link href="{{ url_for('static', filename='print.css')}}" rel="stylesheet"   media="print"/>
 
 </head>
 
@@ -50,9 +51,11 @@ function greyOut(itemName) {
 }
 </script>
 
-<script>
+
+<script> //UPLOAD BUTTON CLICK HANDLER
     // change file upload message when upload button is clicked
     window.pressed = function(){
+        console.log('UPLOAD BUTTON click handler')
     var a = document.getElementById('system_file');
     if(a.value == "")
     {
@@ -75,6 +78,19 @@ function showdiv() {
     } else {
         document.getElementById("hidden_graph").style.display="block"
         hist_button.innerHTML = "Hide Histograms"
+    }
+}
+function toggle_non_recommended(div_id, checkbox_id) {
+    if (!div_id) {
+        div_id = "non_recommended_div"
+    }
+    if (!checkbox_id) {
+        checkbox_id = "checkbox_show_non_recommended"
+    }
+    if (document.getElementById(checkbox_id).checked == true) {
+        document.getElementById(div_id).style.display = "block"
+    } else {
+        document.getElementById(div_id).style.display = "none"
     }
 }
 
@@ -103,13 +119,13 @@ margin: 0 auto;>
         <h1>NlpStatTest</h1>
     </div>
 
-    <div class="top_bar">
+    <div class="top_bar" class="interface">
         <button class="button1" id="btn_about">About</button>
-        <button class="button1" id="btn_settings">Save/Restore Settings</button>
+        <!--<button class="button1" id="btn_settings">Save/Restore Settings</button>-->
         <button class="button1" id="btn_download">Download Report</button>
     </div>
 
-    <div class="roundpurple">
+    <div class="roundpurple" class="interface">
         <ul class="breadcrumb">
             <li><button class="button1" id ='BtnTab1' onclick="openTab(event, 'Data Analysis', 'BtnTab1')">Data Analysis →</button></li>
             <li><button class="button1" id ='BtnTab2' onclick="openTab(event, 'Significance Test', 'BtnTab2')">Significance → </button></li>
@@ -118,7 +134,7 @@ margin: 0 auto;>
         </ul>
     </div>
 
-    <div id='Data Analysis' class="tabcontent" style="display:block">
+    <div id='Data Analysis' class="tabcontent" style="display:block" class="printed">
         <!-- Data Analysis form -->
         <form action="/" class="form-horizontal" enctype="multipart/form-data" method="post">
             <!-- Begin Data Analysis div -->
@@ -186,13 +202,15 @@ margin: 0 auto;>
 
                 <br><br>
 
-                &alpha; (for calculating normality):
+                Significance level &alpha; (for calculating normality):
                 <div class="tooltip">?
-                    <span class="tooltiptext">A threshold value for the normality test. Default value is 0.5.</span>
+                    <span class="tooltiptext">A significance threshold value for the normality test. Default value is 0.05.</span>
                 </div>
 
-                <input id="normality_alpha" name="normality_alpha" type="number" value="0.05" step="0.001"
-                        {% if normality_alpha %} value="{{ normality_alpha }}" {% endif %}  class="form-control input-md">
+                <input id="normality_alpha" name="normality_alpha" type="number"
+                        step="0.001"
+                        {% if normality_alpha %} value="{{ normality_alpha }}"
+                        {% else %}value="0.05"{% endif %}  class="form-control input-md">
 
                 <br><br>
                 <!-- Data Analysis Submit Button -->
@@ -279,7 +297,12 @@ margin: 0 auto;>
                 
             <tr>
             <td>Skewness</td>
-            <td>The data distribution {% if mean_or_median == 'median' %} exceeds {% else %} does not exceed {% endif %} the skew threshold.</td>
+            <td>The skewness measure &gamma; is {{ skewness_gamma }}. <!-- {% if mean_or_median == 'median' %} {% endif %} -->
+                This means the data distribution is
+                {% if skewness_gamma > 1 %} highly skewed
+                {% elif skewness_gamma > 0.5 %} moderately skewed
+                {% else %} roughly symmetric{% endif %}.
+            </td>
             </tr>
                 
             <tr>
@@ -295,22 +318,119 @@ margin: 0 auto;>
             <b id=sigtest_heading align='left'>
                 {{ sigtest_heading }}</b><br><br>
 
-            {% if recommended_tests_reasons|length %}
-            <table border=1>
+                The folllowing tests are recommended:<br><br>
+                {% if recommended_tests|length %}
+                <table border=1>
+                      <col style="width:140px">
 
-                <tr>
-                    <th>Test</th>
-                    <th>Reason</th>
-                </tr>
+                    <tr>
+                        <th>Test</th>
+                        <th>Reason</th>
+                    </tr>
 
-                {% for key, value in recommended_tests_reasons.items() %}
-                <tr>
-                    <td> {{ key }} </td>
-                    <td>{{ value }}</td>
-                </tr>
-                {% endfor %}
-            </table>
-            {% endif %}
+                    {% for tuple in recommended_tests %}
+                    <tr>
+                        <td>
+                            {% if tuple[0]=='t' %}Student t test
+                            {% elif tuple[0]=='bootstrap' %}Bootstrap
+                            {% elif tuple[0]=='permutation' %}Permutation
+                            {% elif tuple[0]=='wilcoxon' %}Wilcoxson signed rank test
+                            {% elif tuple[0]=='sign' %}Sign test
+                            {% elif tuple[0]=='bootstrap_med' %}Bootstrap (median)
+                            {% elif tuple[0]=='permutation_med' %}Permutation (median)
+                            {% else %}{{ tuple[0] }}
+                            {% endif %}
+                        </td>
+                        <td>{{ tuple[1] }}</td>
+                    </tr>
+                    {% endfor %}
+                </table> <!-- End Recommended Tests Table -->
+                {% endif %}
+
+                <div id="non_preferred_div_da"
+                     {% if show_non_preferred %} style="display: block;"
+                        {% else %} style="display: none"
+                     {% endif %}  >
+                <br>
+
+                <b>Non-Preferred Tests</b><br><br>
+                    {% if not_preferred_tests|length %}
+
+                    <table border=1>
+                          <col style="width:140px">
+
+                        <tr>
+                            <th>Test</th>
+                            <th>Reason</th>
+                        </tr>
+
+                        {% for tuple in not_preferred_tests %}
+                        <tr>
+                            <td>
+                                {% if tuple[0]=='t' %}Student t test
+                                {% elif tuple[0]=='bootstrap' %}Bootstrap
+                                {% elif tuple[0]=='permutation' %}Permutation
+                                {% elif tuple[0]=='wilcoxon' %}Wilcoxson signed rank test
+                                {% elif tuple[0]=='sign' %}Sign test
+                                {% elif tuple[0]=='bootstrap_med' %}Bootstrap (median)
+                                {% elif tuple[0]=='permutation_med' %}Permutation (median)
+                                {% else %}{{ tuple[0] }}
+                                {% endif %}
+                            </td>
+                            <td>{{ tuple[1] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>  <!-- End Non-Preferred Tests Table -->
+                    {% endif %}
+                </div>
+                <div id="non_recommended_div_da"
+                     {% if show_non_recommended %} style="display: block;"
+                        {% else %} style="display: none"
+                     {% endif %}>
+                <br>
+
+                <b>Non-Recommended Tests</b><br><br>
+                    {% if not_recommended_tests|length %}
+
+                    <table border=1>
+                          <col style="width:140px">
+
+                        <tr>
+                            <th>Test</th>
+                            <th>Reason</th>
+                        </tr>
+
+                        {% for tuple in not_recommended_tests %}
+                        <tr>
+                            <td>
+                                {% if tuple[0]=='t' %}Student t test
+                                {% elif tuple[0]=='bootstrap' %}Bootstrap
+                                {% elif tuple[0]=='permutation' %}Permutation
+                                {% elif tuple[0]=='wilcoxon' %}Wilcoxson signed rank test
+                                {% elif tuple[0]=='sign' %}Sign test
+                                {% elif tuple[0]=='bootstrap_med' %}Bootstrap (median)
+                                {% elif tuple[0]=='permutation_med' %}Permutation (median)
+                                {% else %}{{ tuple[0] }}
+                                {% endif %}
+                            </td>
+                            <td>{{ tuple[1] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>  <!-- End Non-Recommended Tests Table -->
+                    {% endif %}
+                </div>
+                <input type="checkbox" name="checkbox_show_non_preferred"
+                       {% if show_non_preferred %} checked {% endif %}
+                       id="checkbox_show_non_preferred_da"
+                       onclick="toggle_non_recommended('non_preferred_div_da',
+                           'checkbox_show_non_preferred_da')">
+                       List less-preferred significance tests.
+                <input type="checkbox" name="checkbox_show_non_recommended"
+                       {% if show_non_recommended %} checked {% endif %}
+                       id="checkbox_show_non_recommended_da"
+                       onclick="toggle_non_recommended('non_recommended_div_da',
+                           'checkbox_show_non_recommended_da')">
+                       List inappropriate significance tests.
             <!-- (Bulleted list example) -->
             <!--
                        The following tests are recommended:
@@ -327,15 +447,35 @@ margin: 0 auto;>
     </div>
     <!-- End data analysis -->
 
-    <div id='Significance Test' class="tabcontent" style="display:none">
+    <div id='Significance Test' class="tabcontent" style="display:none" class="printed">
 
         <div class="roundpurplebottom" style="position:relative; top: -18px;">
 
             <form action="/sig_test" class="form-horizontal" enctype="multipart/form-data" method="post">
+                <!-- 3 alternatives, less, greater, two sided -->
+            <b>Choose the alternative hypothesis</b><br><br>
+                <input type="radio" name="alternative" id="alternative_less" value="less" required
+                        {% if alternative=='less' %}checked{% endif %}> &mu;2-&mu;1 > &mu; <br>
+                <input type="radio" name="alternative" id="alternative_greater" value="greater"
+                {% if alternative=='greater' %}checked {% endif %}> &mu;1-&mu;2 > &mu; <br>
+                <input type="radio" name="alternative" id="alternative_two_sided" value="two-sided"
+                       {% if alternative=='two-sided' %}checked{% endif %}> &mu;1-&mu;2 != &mu; <br><br>
+                                <!-- Mu -->
+
+                Threshold &mu;:
+                <div class="tooltip">?
+                    <span class="tooltiptext">The difference between the systems is
+                        less than this value in the case of the null hypothesis, and greater than this value
+                    in the case of the alternative hypothesis.</span>
+                </div>
+
+                <input id="mu" name="mu" type="number" {% if mu %} placeholder="{{ mu }}"
+                       value="{{ mu }}" {% else %} value=0.0 {% endif %}
+                       class="form-control input-md" step="0.01"  > <br><br>
+
                 <!-- SIGNIFICANCE TEST RECOMMENDATION for test statistics -->
                 <b>Recommended Tests</b><br><br>
-                {% if recommended_tests_reasons|length %}
-
+                {% if recommended_tests|length %}
                 <table border=1>
                       <col style="width:140px">
                           
@@ -351,36 +491,71 @@ margin: 0 auto;>
                                    name="target_sig_test"
                                        id="target_sig_test-{{ sig_test_name }}" required
                                        onclick="show_sig_boot_div('{{ tuple[0] }}')"
-                                    {% if sig_test_name %} {% if tuple[0]==sig_test_name %} checked="checked" {% endif %}
-                                    {% endif %} value="{{ tuple[0] }}"> {% if tuple[0]=='t' %}t-test{% else %}{{ tuple[0] }}{% endif %}
+                                    {% if sig_test_name %}
+                                        {% if tuple[0]==sig_test_name %} checked="checked" {% endif %}
+                                    {% endif %} value="{{ tuple[0] }}">
+                            {% if tuple[0]=='t' %}Student t test
+                            {% elif tuple[0]=='bootstrap' %}Bootstrap
+                            {% elif tuple[0]=='permutation' %}Permutation
+                            {% elif tuple[0]=='wilcoxon' %}Wilcoxson signed rank test
+                            {% elif tuple[0]=='sign' %}Sign test
+                            {% elif tuple[0]=='bootstrap_med' %}Bootstrap (median)
+                            {% elif tuple[0]=='permutation_med' %}Permutation (median)
+                            {% else %}{{ tuple[0] }}
+                            {% endif %}
                         </td>
                         <td>{{ tuple[1] }}</td>
                     </tr>
                     {% endfor %}
-                </table>
+                </table>  <!-- End Recommended Tests Table -->
+                {% endif %}
 
-<!--
-                                 {% for key, value in recommended_tests_reasons.items() %}
-                            <li>{{ key }}
-                                <div class="tooltip">?
-                                    <span class="tooltiptext">{{ value }}</span>
-                                </div>
-                            </li>
-                                 {% endfor %}
--->
+                <div id="non_recommended_div"
+                     {% if show_non_recommended %} style="display: block;"
+                        {% else %} style="display: none"
+                     {% endif %}>
+                <br>
+                <b>Non-Recommended Tests</b><br><br>
+                    {% if not_recommended_tests|length %}
+                    <table border=1>
+                          <col style="width:140px">
 
+                        <tr>
+                            <th>Test</th>
+                            <th>Reason</th>
+                        </tr>
 
-                <!-- <b>Choose the significance test to run</b> -->
-                <!-- radio button to choose test -->
-                    <!--
-                <br> {% for key, value in recommended_tests_reasons.items() %}
-
-                <input type="radio" name="target_sig_test" id="target_sig_test-1" {% if sig_test_name %} {% if key==sig_test_name %} checked="checked" {% endif %} {% endif %} value={{ key }}> {{ key }}
-                <div class="tooltip">?
-                    <span class="tooltiptext">{{ value }}</span>
+                        {% for tuple in not_recommended_tests %}
+                        <tr>
+                            <td>
+                                <input type="radio"
+                                       name="target_sig_test"
+                                           id="target_sig_test-{{ sig_test_name }}" required
+                                           onclick="show_sig_boot_div('{{ tuple[0] }}')"
+                                        {% if sig_test_name %}
+                                            {% if tuple[0]==sig_test_name %} checked="checked" {% endif %}
+                                        {% endif %} value="{{ tuple[0] }}">
+                                {% if tuple[0]=='t' %}Student t test
+                                {% elif tuple[0]=='bootstrap' %}Bootstrap
+                                {% elif tuple[0]=='permutation' %}Permutation
+                                {% elif tuple[0]=='wilcoxon' %}Wilcoxson signed rank test
+                                {% elif tuple[0]=='sign' %}Sign test
+                                {% elif tuple[0]=='bootstrap_med' %}Bootstrap (median)
+                                {% elif tuple[0]=='permutation_med' %}Permutation (median)
+                                {% else %}{{ tuple[0] }}
+                                {% endif %}
+                            </td>
+                            <td>{{ tuple[1] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>  <!-- End Non-Recommended Tests Table -->
+                    {% endif %}
                 </div>
 
-                {% endfor %} --> {% endif %}
+                <input type="checkbox" name="checkbox_show_non_recommended"
+                       {% if show_non_recommended %} checked {% endif %}
+                       id="checkbox_show_non_recommended" onclick="toggle_non_recommended()">
+                       Check here to show non-recommended significance tests.
       <br>
 
                 <!-- SIGNIFICANCE alpha -->
@@ -390,7 +565,9 @@ margin: 0 auto;>
                     <span class="tooltiptext">Reject the null hypothesis if the p-value is less than this value.</span>
                 </div>
 
-                <input id="significance_level" name="significance_level" type="number" {% if sig_alpha %} placeholder="{{ sig_alpha }}" value="{{ sig_alpha }}" {% else %} value=0.05 {% endif %} class="form-control input-md" required="" step="0.01" min="0" max="1">
+                <input id="significance_level" name="significance_level"
+                       type="number" {% if sig_alpha %} placeholder="{{ sig_alpha }}" value="{{ sig_alpha }}"
+                {% else %} value=0.05 {% endif %} class="form-control input-md" required="" step="0.01" min="0" max="1">
 
                 <br><br>
                 <!-- Bootstrap (for bootstrap and permutation tests) -->
@@ -423,14 +600,22 @@ margin: 0 auto;>
         </div>
 
         <div class="roundgreen" class="hiddendiv" id="hiddenSignificanceTest">
-            {% if sig_test_stat_val %}
+            {% if sig_test_stat_val or CI%}
             <b>Results</b><br><br>
 
             <table border="1">
-                <tr><!-- todo: permutation result? -->
-                    <th> {% if sig_test_name == 'bootstrap' %}confidence interval{% else %}test statistic{% endif %}
+
+                {% if sig_test_name != 'bootstrap' %}
+                 <tr>
+                    <th>
+                    test statistic
                     </th>
                     <td>{{ sig_test_stat_val }}</td>
+                </tr>{% endif %}
+                <tr>
+                    <th> confidence interval
+                    </th>
+                    <td>{{ CI }}</td>
                 </tr>
                 <tr>
                     <th>p-value</th>
@@ -448,15 +633,18 @@ margin: 0 auto;>
     </div>
     <!-- end Significance Results Tab -->
 
-    <div id='Effect Size' class="tabcontent" style="display:none">
+    <div id='Effect Size' class="tabcontent" style="display:none" class="printed">
 
         <div class="roundpurplebottom" style="position:relative; top: -18px;">
-            <form action="/effectsize" class="form-horizontal" enctype="multipart/form-data" method="post">
+            <form   id="frmEffectSize"
+                    action="/effectsize" class="form-horizontal"
+                  onsubmit="SubmitHandler('frmEffectSize')"
+                  enctype="multipart/form-data" method="post">
                 <b>Effect Size Estimator Options</b><br><br>
                 <!-- Effect Size list of tests -->
                 {% if effect_size_estimators|length %}
 
-                <table border=1>
+                <table border=1 id="tblEffectEstimator">
 
                     <tr>
                         <th>Effect Size Estimator</th>
@@ -466,13 +654,13 @@ margin: 0 auto;>
                     {% for key, value in effect_size_estimators.items() %}
                     <tr>
                         <td>
-                            <input type="checkbox" name="target_eff_test" id="target_eff_test-{{ key }}"
-                                    {% if eff_estimator %} {% if key==eff_estimator %} checked="checked"
-                                    {% else %}
-                                    {% endif %}
-                                    {% endif %} value={{ key }}>
-                                        {% if key=='hl' %}Hodges-Lehmann
-                                            {% elif key=='wilcoxonr' %}Wilcoxon's r
+                            <input type="checkbox" name="target_eff_test_{{ key }}" id="target_eff_test-{{ key }}"
+                                   {% for est in estimator_value_list %}
+                                        {% if est[0]==key%} checked="checked" {% endif %}
+                                    {% endfor %}
+                                   value={{ key }}>
+                                        {% if key=='hl' %}Hodges-Lehmann Estimator
+                                            {% elif key=='wilcoxonr' %}Wilcoxon r
                                             {% elif key=='hedgesg' %}Hedges' g
                                             {% elif key=='cohend' %}Cohen's d
                                         {% else %}{{ key }}{% endif %}
@@ -481,40 +669,20 @@ margin: 0 auto;>
                     </tr>
                     {% endfor %}
                 </table>
-                <!--<ul>
-                                 {% for key, value in effect_size_estimators.items() %}
-                            <li>{{ key }}
-                                <div class="tooltip">?
-                                    <span class="tooltiptext">{{ value }}</span>
-                                </div>
-                            </li>
-                                 {% endfor %}
 
-                        </ul> -->
-                <!-- <b>Choose the significance test to run</b> -->
-                <!-- radio button to choose test
-                <br> {% for key, value in effect_size_estimators.items() %}
+                {% endif %}
 
-                <input type="radio" name="target_eff_test" id="target_eff_test-1"
-                        {% if eff_estimator %} {% if key==eff_estimator %} checked="checked" {% endif %}
-                        {% endif %} value={{ key }}> {{ key }}
-                <div class="tooltip">?
-                    <span class="tooltiptext">{{ value }}</span>
-                </div>
+              <br><br>
 
-                {% endfor %} --> {% endif %}
-
-
-              <br>    <br>
               <!-- effect size Submit Button -->
-        
-                    <input type="hidden" id="da_hidden" value="hidden101">
+                    <input type="hidden" id="hiddenEffectEstimators" value="hiddenEffectEstimators">
                     <!-- Is type=submit implied by class="btn btn-success" -->
                   <button id="ef_submit"
                           name="ef_submit"
                           type=submit
                           class="button1"
-                          onsubmit="ef_submit_func()">Run</button>
+                          onclick="GetSelectedCheckboxes('tblEffectEstimator')"
+                          >Run</button>
                     <!-- Button for JS script-->
                     <!-- <a href=# id=process_input><button class='btn btn-default' >Submit via JS</button></a> -->
         
@@ -524,25 +692,34 @@ margin: 0 auto;>
 
         <div class="roundgreen" class="hiddendiv" id="hiddenEffectSize">
             <p></p>
-                {% if eff_size_val %}
-                    <b>Results</b><br><br>
-                <table border="1">
-                 <tr><th>Estimator</th><th>Effect Size</th></tr>
-                        <tr><td>
-                                        {% if eff_estimator=='hl' %}Hodges-Lehmann
-                                            {% elif eff_estimator=='wilcoxonr' %}Wilcoxon's r
-                                            {% elif eff_estimator=='hedgesg' %}Hedges' g
-                                            {% elif eff_estimator=='cohend' %}Cohen's d
-                                        {% else %}{{ eff_estimator }}{% endif %}
-                        </td><td>{{ eff_size_val }}</td></tr>
+            <!-- New table to make into estimator, value instead of est, desc: -->
+                {% if estimator_value_list|length %}
+                <b>Results</b><br><br>
+                <table border=1 id="tblEffectEstimator">
+
+                    <tr>
+                        <th>Effect Size Estimator</th>
+                        <th>Value</th>
+                    </tr>
+
+                    {% for key_value_tuple in estimator_value_list %}
+                    <tr>
+                        <td>
+                                        {% if key_value_tuple[0]=='hl' %}Hodges-Lehmann Estimator
+                                            {% elif key_value_tuple[0]=='wilcoxonr' %}Wilcoxon r
+                                            {% elif key_value_tuple[0]=='hedgesg' %}Hedges' g
+                                            {% elif key_value_tuple[0]=='cohend' %}Cohen's d
+                                        {% else %}{{ key_value_tuple[0] }}{% endif %}
+                        </td>
+                        <td>{{ key_value_tuple[1] }}</td>
+                    </tr>
+                    {% endfor %}
                 </table>
                 {% endif %}
-
-
         </div>
     </div>
 
-    <div id='Post-test Power Analysis' class="tabcontent" style="display:none">
+    <div id='Post-test Power Analysis' class="tabcontent" style="display:none" class="printed">
 
         <div class="roundpurplebottom" style="position:relative; top: -18px;">
 
@@ -619,18 +796,38 @@ margin: 0 auto;>
                         value="bootstrap">
                         
                         <hr>
-                        
+                        <!--
+                                            <td>
+                        {% if key=='t' %}Student t test
+                        {% elif key=='bootstrap' %}Bootstrap
+                            {% elif key=='permutation' %}Permutation
+                            {% elif key=='wilcoxon' %}Wilcoxson signed rank test
+                            {% elif key=='sign' %}Sign test
+                            {% elif key=='bootstrap_med' %}Bootstrap (median)
+                            {% elif key=='permutation_med' %}Permutation (median)
+                    {% endif %} </td>
+                        -->
                 <div class="hiddendiv" id="power_boot_fields"
                      {% if is_normal %}style="display:none"{% else %}style="display:block"{% endif %} >
 
                         <b>Bootstrap Parameters</b><br><br>
-                        significance test:
+                        Significance test:<br>
                         {% for sigtest in recommended_tests %}
                         <input type="radio" name="power_boot_sig_test" value="{{ sigtest[0] }}"
-                            {% if sigtest[0] == sig_test_name %}checked="checked"{% endif %}>{{ sigtest[0] }}
+                            {% if sigtest[0] == sig_test_name %}checked="checked"{% endif %} required>
+                            {% if sigtest[0] == 't' %}Student t-test<br>
+                            {% elif sigtest[0] == 'bootstrap' %}Bootstrap<br>
+                            {% elif sigtest[0] == 'wilcoxon' %}Wilcoxon signed rank test<br>
+                            {% elif sigtest[0]=='sign' %}Sign test<br>
+                            {% elif sigtest[0]=='permutation' %}Permutation<br>
+                            {% elif sigtest[0]=='bootstrap_med' %}Bootstrap (median)<br>
+                            {% elif sigtest[0]=='permutation_med' %}Permutation (median)<br>
+                                {% else %}{{ sigtest[0] }}
+                            {% endif %}
+
                         {% endfor %}
-                        <br><br>
-                        significance &alpha;: <input type="number" name="power_alpha"
+                        <br>
+                        Significance level &alpha;: <input type="number" name="power_alpha"
                              {% if sig_test_alpha %}
                                               value="{{ sig_test_alpha }}"
                              {% else %}
@@ -685,15 +882,15 @@ margin: 0 auto;>
         </div>
         </div>
 
-    <div id="about" class="modal">
+    <div id="about" class="modal" class="interface">
         <div class="modal-content">
             <button  class="button1" id="close_btn_about">&#x2715;</button>
-            <p>Copyright 2020 by AUTHORS. See our paper at LINK. This website is released under the LICENSE at LINK. LIST OF TECH USED AND THEIR LICENSES and CITATIONS.</p>
+            <p>This is a demonstration of NLPStatTest, a program for comparing NLP system performance. See our paper for details. </p>
 
         </div>
     </div>
 
-    <div id="settings" class="modal">
+    <div id="settings" class="modal" class="interface">
         <div class="modal-content">
             <button class="button1" id="close_btn_settings">&#x2715;</button>
             <p>You can download the configuration, edit it, and upload a new configuration file.</p> <br>
@@ -703,7 +900,7 @@ margin: 0 auto;>
         </div>
     </div>
 
-    <div id="download" class="modal">
+    <div id="download" class="modal" class="interface">
         <div class="modal-content">
             <button class="button1" id="close_btn_download">&#x2715;</button>
             <p>
@@ -727,9 +924,56 @@ margin: 0 auto;>
             modals.forEach(make_modal);
     </script>
 
+<!-- Checkboxes (effect sizes) click handler -->
+    <script type="text/javascript">
+    // get the checkbox values from effect Sizes into an array
+    // "tblEffectEstimator" is the effect size table ID
+    function GetSelectedCheckboxes(tableName) {
+            console.log("*** IN: GetSelectedCheckbox()");
+        //Create an Array.
+        var selected = new Array();
 
+        //Reference the Table.
+        var tblCheckboxes = document.getElementById(tableName);
 
+        //Reference all the CheckBoxes in Table.
+        var chks = tblCheckboxes.getElementsByTagName("INPUT");
+
+        // Loop and push the checked CheckBox value in Array.
+        for (var i = 0; i < chks.length; i++) {
+            if (chks[i].checked) {
+                selected.push(chks[i].value);
+            }
+        }
+        // "hiddenEffectEstimators" update INPUT value
+        var hiddenInputCheckArrayID = "hiddenEffectEstimators"
+        var hiddenInputCheckArray = document.getElementById(hiddenInputCheckArrayID)
+        hiddenInputCheckArray.value = selected
+        //Display the selected CheckBox values.
+        if (selected.length > 0) {
+            console.log("Checkbox selected values: " + selected.join(","));
+            //alert("Selected values: " + selected.join(",") + " HIDDEN INPUT VALUE=" + hiddenInputCheckArray.value);
+        }
+
+        return selected
+        // what can we do with selected? we need to get it into POST on submit of the form,
+        // Can we set a hidden input value in an onSubmit handler and get that inside the python?
+        // if not, then we need to get the checkbox elements one by one.
+    };
+</script>
+
+    <!-- hide and show functions: GreenDivs, PA_parameters, SigTest_radios -->
     <script>
+        // debugging a forms submit event
+        function SubmitHandler(genericMessage) {
+            formID = "frmEffectSize"
+            var form = document.getElementById(formID);
+            var hiddenArray = form.getElementById('hiddenCheckboxArray')
+            var hiddenValue = form.getElementById('hiddenEffectsEstimators').value
+            var msg = "****OnSubmit: " + genericMessage + "value of hidden=" + hiddenValue
+            console.log(msg);
+            //alert("****OnSubmit: " + genericMessage + "value of hidden=" + hiddenValue);
+        }
         function showLastTab(tabToShow) {
           // document.getElementById("hidden").style.display="block"
           var i, tabcontent, tablinks;
@@ -791,6 +1035,7 @@ margin: 0 auto;>
 
     </script>
 
+    <!-- Handlers for hide and show functions: GreenDivs, PA_parameters, SigTest_radios -->
     <script>
         {% if last_tab_name_clicked %}
               window.onload = showLastTab('{{ last_tab_name_clicked }}')
@@ -803,10 +1048,31 @@ margin: 0 auto;>
         window.addEventListener('load', function () {
             {% if last_tab_name_clicked %}
                 console.log('In load event listener: {{ last_tab_name_clicked }}.')
+
                 // sig_test_name radio button
                 var sig_test_button_id = "target_sig_test-{{ sig_test_name }}"
                 document.getElementById(sig_test_button_id).clicked = "clicked"
+
+                // hide green divs that aren't the current or previous divs
                 hideGreenDivs('{{ last_tab_name_clicked }}')
+
+                // power test, normal case, don't hide the parameters
+                var lastTab= '{{ last_tab_name_clicked }}'
+                if (lastTab) { //(lastTab === 'Post-test Power Analysis' || lastTab === 'Effect Size')
+                    {% if is_normal %}
+                        // TODO: preserve last clicked
+                        {% if power_test == 'montecarlo' %}
+                            show_montecarlo_div()
+                         {% elif power_test == 'bootstrap' %}
+                            show_bootstrap_div()
+                         {% else %}
+                            // default to montecarlo if not defined
+                            show_montecarlo_div()
+                          {% endif %}
+                    {% else %}  // not normal case
+                            show_bootstrap_div()
+                    {% endif %}
+                }
             {% endif %}
 
         }, false);

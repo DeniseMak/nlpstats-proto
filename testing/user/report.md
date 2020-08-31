@@ -4,8 +4,8 @@
 
 ## Data Analysis
 
-Tests indicate the following about the data in the file `score`:
-  * 3
+Tests indicate the following about the data in the file `data-file.txt`:
+  * true
   * 3
   * 3
 

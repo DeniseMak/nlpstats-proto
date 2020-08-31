@@ -1,9 +1,9 @@
-import fileReader
-import dataAnalysis
-import sigTesting
-import testCase
-import effectSize
-import powerAnalysis
+import logic.fileReader
+import logic.dataAnalysis
+import logic.sigTesting
+import logic.testCase
+import logic.effectSize
+import logic.powerAnalysis
 
 import sys
 import time
@@ -20,12 +20,12 @@ if __name__ == '__main__':
 	with open(config_file, 'r') as ymlfile:
 		config = yaml.load(ymlfile)
 
-	with open('sysconfig.yml', 'r') as ymlfile:
+	with open('logic/sysconfig.yml', 'r') as ymlfile:
 		sysconfig = yaml.load(ymlfile)
 
 
 	### initialize a new testCase object
-	testCase_new = testCase.testCase(None, None, None, None, None)
+	testCase_new = logic.testCase.testCase(None, None, None, None, None)
 
 	# eda
 	testCase_new.eda.m = int(config['eval_unit_size'])
@@ -40,6 +40,8 @@ if __name__ == '__main__':
 
 	# effect size
 	testCase_new.es.estimator = str(config['eff_size_ind'])
+	es_alpha = float(config['eff_size_alpha'])
+	es_B = int(sysconfig['NUM_of_iter_boot'])
 
 	# power analysis
 	testCase_new.power.alpha = float(config['power_alpha'])
@@ -61,14 +63,13 @@ if __name__ == '__main__':
 
 
 	### read score file
-	[testCase_new.score1,testCase_new.score2] = fileReader.read_score_file(score_file)
+	[testCase_new.score1,testCase_new.score2] = logic.fileReader.read_score_file(score_file)
 
 
 
 	## data analysis
 	# plot histograms
 	print("------ EDA ------")
-	#dataAnalysis.plot_hist(testCase_new.score1, testCase_new.score2, 'figures')
 
 	# calculate score difference
 	testCase_new.calc_score_diff()
@@ -76,7 +77,7 @@ if __name__ == '__main__':
 	testCase_new.sample_size = np.floor(len(list(testCase_new.score1.values()))/float(testCase_new.eda.m))
 
 	# partition score difference and plot hists
-	testCase_new.score1, testCase_new.score2, testCase_new.score_diff_par, ind_shuffled = dataAnalysis.partition_score(\
+	testCase_new.score1, testCase_new.score2, testCase_new.score_diff_par, ind_shuffled = logic.dataAnalysis.partition_score(\
 		score1 = testCase_new.score1, 
 		score2 = testCase_new.score2, 
 		score_diff = testCase_new.score_diff, 
@@ -89,10 +90,10 @@ if __name__ == '__main__':
 
 	# check for minimum sample size requirement for power analysis
 	# this check is here because wilcoxon test needs more than 10 data points
-	MIN_power_samplesize = sysconfig['MIN_power_samplesize']
-	if MIN_power_samplesize>float(testCase_new.sample_size)/testCase_new.power.num_of_subsample:
-		print("Sample size too small for power analysis simulation for certain significance tests. Decrease the number of simulations.")
-		sys.exit()
+	#MIN_power_samplesize = sysconfig['MIN_power_samplesize']
+	#if MIN_power_samplesize>float(testCase_new.sample_size)/testCase_new.power.num_of_subsample:
+		#print("Sample size too small for power analysis simulation for certain significance tests. Decrease the number of simulations.")
+		#sys.exit()
 
 
 
@@ -102,42 +103,66 @@ if __name__ == '__main__':
 	testCase_new.get_summary_stats()
 
 	# skewness test
-	testCase_new.eda.testParam = dataAnalysis.skew_test(testCase_new.score_diff_par)[1]
+	testCase_new.eda.testParam = logic.dataAnalysis.skew_test(testCase_new.score_diff_par)[1]
 
 
 	# normality test
-	testCase_new.eda.normal = dataAnalysis.normality_test(\
+	testCase_new.eda.normal = logic.dataAnalysis.normality_test(\
 		score = testCase_new.score_diff_par, 
 		alpha = testCase_new.eda.normal_alpha)
 
 
 	# recommend tests
-	list_of_tests = dataAnalysis.recommend_test(testCase_new.eda.testParam,testCase_new.eda.normal)
+	list_of_tests = logic.dataAnalysis.recommend_test(testCase_new.eda.testParam,testCase_new.eda.normal)
 
 	recommended_test_list = []
-	for i,j in list_of_tests.items():
-		if j>0:
-			recommended_test_list.append(i)
+	not_preferred_test_list = []
+	inappro_test_list = []
 
+	for i,j in list_of_tests.items():
+		if j[0] == 1:
+			recommended_test_list.append((i,j[1]))
+		if j[0] == 0:
+			not_preferred_test_list.append((i,j[1]))
+		if j[0] == -1:
+			inappro_test_list.append((i,j[1]))
+
+
+	print('Appropriate and recommended tests are:')
+	for i in recommended_test_list:
+		print(str(i[0])+': '+str(i[1]))
+	print('--------------------')
+
+	print('Appropriate but not preferred tests are:')
+	for i in not_preferred_test_list:
+		print(str(i[0])+': '+str(i[1]))
+	print("====================")
+
+	print("Inappropriate tests are:")
+	for i in inappro_test_list:
+		print(str(i[0])+': '+str(i[1]))
+	print("====================")
+
+
+	chosen_test = input("Please choose a test:\n")
+
+	for i in inappro_test_list:
+		if i[0] == chosen_test:
+			chosen_test = input("Please choose from the list of recommended tests:\n")
+
+	testCase_new.sigTest.testName = chosen_test
+
+
+	print("====================")
 
 	print('Sample size after partitioning is: '+str(testCase_new.sample_size))
-	print('the test used: '+testCase_new.sigTest.testName)
-	print('normality: '+str(testCase_new.eda.normal))
-	print('testing parameter: '+testCase_new.eda.testParam)
-
-	print('Recommended tests are:')
-	for i in recommended_test_list:
-		print("test name: "+str(i))
-		print("=============")
-
-	testCase_new.sigTest.testName= input("Please choose a test:\n")
- 
-	testCase_new.eda.testName = testCase_new.sigTest.testName
-
+	print('Significance test chosen: '+testCase_new.sigTest.testName)
+	print('Normality: '+str(testCase_new.eda.normal))
+	print('Testing parameter: '+testCase_new.eda.testParam)
 
 	# run sig test
 	print("------ Testing ------")
-	test_stat, pval, CI, rejection = sigTesting.run_sig_test(\
+	test_stat, pval, CI, rejection = logic.sigTesting.run_sig_test(\
 		recommended_test = testCase_new.sigTest.testName, 
 		score = testCase_new.score_diff_par, 
 		alpha = testCase_new.sigTest.alpha, 
@@ -154,7 +179,7 @@ if __name__ == '__main__':
 
 	print("------ Effect Size ------")
 
-	eff_size_est = effectSize.calc_eff_size(testCase_new.es.estimator, testCase_new.score_diff_par)
+	eff_size_est, es_CI = logic.effectSize.calc_eff_size(testCase_new.es.estimator, testCase_new.score_diff_par, es_alpha, es_B)
 
 	testCase_new.es.estimate = eff_size_est
 
@@ -163,7 +188,7 @@ if __name__ == '__main__':
 	print("------ Power Analysis ------")
 	start_time = time.time()
 
-	power_sampsize = powerAnalysis.post_power_analysis(\
+	power_sampsize = logic.powerAnalysis.post_power_analysis(\
 		sig_test_name = testCase_new.sigTest.testName,
 		method = testCase_new.power.method,
 		score = testCase_new.score_diff_par, 
@@ -183,17 +208,17 @@ if __name__ == '__main__':
 
 	print('------ Report ------')
 
-	print('test name: '+testCase_new.sigTest.testName)
-	print('test statistic/CI: '+str(testCase_new.sigTest.test_stat))
-	print('p-value: '+str(testCase_new.sigTest.pval))
-	print('rejection of H0: '+str(testCase_new.sigTest.rejection))
-	print('CI: '+str(CI))
+	print('Test name: '+testCase_new.sigTest.testName)
+	print('Confidence interval: '+str(CI))
+	print('P-value: '+str(testCase_new.sigTest.pval))
+	print('Rejection of H0: '+str(testCase_new.sigTest.rejection))
 
 
 	print('-----------')
 
 	print('effect size estimates: '+str(testCase_new.es.estimate))
 	print('effect size estimator: '+str(testCase_new.es.estimator))
+	print('Confidence interval for effect size: '+str(es_CI))
 
 	print('-----------')
 

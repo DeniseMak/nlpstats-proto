@@ -1,4 +1,5 @@
 
+
 """
 This is a script for pre-testing exploratory data analysis. Main functionality inclues:
 1. read the score file (assumes a file with two columns of numbers, each row separated by whitespace)
@@ -140,49 +141,72 @@ def skew_test(score):
 	skewness = stats.skew(x)
 
 	if abs(skewness)>1:
-		return("median")
+		return([round(skewness,4),"median"])
 	elif abs(skewness)<1 and abs(skewness)>0.5:
-		return("median")
+		return([round(skewness,4),"median"])
 	elif abs(skewness)<0.5:
-		return("mean")
+		return([round(skewness,4),"mean"])
 
 
-def recommend_test(test_param,is_norm):
-	"""
-	This function recommends a list of significance tests based on previous results.
-		if normal, then use t test (other tests are also applicable)
-		if not normal but mean is a good measure of central tendancy, use:
-			- bootstrap test based on mean (t ratios) or medians
-			- sign test
-			- sign test calibrated by permutation (based on mean or median)
-			- Wilcoxon signed rank test
-			- t test (may be okay given large samples)
-		if not normal and highly skewd, use:
-			- bootstrap test for median
-			- sign test
-			- sign test calibrated by permutation (based on median)
-			- wilcoxon signed rank test
+def recommend_test(test_param, is_norm):
 
-	@param test_param: "mean" or "median"
-	@param is_norm: True or False
-	@return: a list of recommended test
-	"""
-	if is_norm==True:
-		return([('t','The student t test is most appropriate for normal sample and has the highest statistical power.'), 
-			('bootstrap','The bootstrap test based on t ratios can be applied to normal sample.'),
-			('permutation','The sign test calibrated by permutation based on mean difference is also appropriate for normal sample, but its statistical power is relatively low due to loss of information.'),
-			('wilcoxon','The Wilcoxon signed-rank test can be used for normal sample, but since it is a nonparametric test, it has relatively low statistical power. Also the null hypothesis is that the the pairwise difference has location 0.'),
-			('sign','The (exact) sign test can be used for normal sample, but it has relatively low statistical power due to loss of information.')])
+	list_of_tests =\
+	{ 
+		't' : (-1,''),
+		'wilcoxon': (-1,''),
+		'sign' : (-1,''),
+		'bootstrap' : (-1,''),
+		'permutation' : (-1,''),
+		'bootstrap_med' : (-1,''),
+		'permutation_med' : (-1,'')
+
+	}
+
+	if test_param == 'median':
+		# appropriate and preferred
+		list_of_tests['sign'] = (1, 'The data distribution is skewed,\
+		 so median is a better measure for central tendency. Sign test is appropriate for testing for median.')
+		
+		# not preferred
+		list_of_tests['bootstrap_med'] = (0, 'The bootstrap test based on median is appropriate for this case where the distribution is skewed, but it is computationally expensive if the sample size is large.')
+		list_of_tests['permutation_med'] = (0, 'The permutation test based on median is appropriate for this case where the distribution is skewed, but it is computationally expensive if the sample size is large.')
+
+		# not appropriate
+		list_of_tests['t'][1] = 'The student t test is not appropriate for this case since the data distribution is skewed and thus not normal.'
+		list_of_tests['wilcoxon'][1] = 'The Wilcoxon signed rank test is not appropriate for this case since it assumes symmetric distribution around the median.'
+		list_of_tests['bootstrap'][1] = 'The bootstrap test based on mean is not appropriate for skewed distribution because the distribution is skewed.'
+		list_of_tests['permutation'][1] = 'The permutation test based on mean is not appropriate for skewed distribution because the distribution is skewed.'
+
 	else:
-		if test_param=="mean":
-			return([('bootstrap','The bootstrap test based on t ratios does not assume normality, and thus is appropriate for testing for mean difference.'),
-				('permutation','The sign test calibrated by permutation based on mean difference is nonparametric and does not assume normality.'),
-				('wilcoxon','The Wilcoxon signed-rank test can be used for this case, but since it is a nonparametric test, it has relatively low statistical power. Also the null hypothesis is that the the pairwise difference has location 0.'),
-				('sign','The (exact) sign test can be used for this case, but it has relatively low statistical power due to loss of information. Also, the null hypothesis is that the median is 0.'),
-				('t','The student t test may be appropriate for non-normal data if the sample size is large enough, but the iid assumption must hold.')])
-		else:
-			return([('bootstrap_med','The bootstrap test based on median is appropriate for testing for median.'),
-				('wilcoxon','The Wilcoxon signed-rank test is appropriate for comparing medians.'),
-				('permutation_med','The sign test calibrated by permutation based on median difference is appropriate for testing for median.'),
-				('sign','The sign test is appropriate for testing for median, but it has relatively low statistical power due to loss of information.')])
+		if is_norm:
+			# appropriate and preferred
+			list_of_tests['t'] = (1, 'The student t test is most appropriate for normally distributed data.')
 
+			# not preferred
+			list_of_tests['wilcoxon'] = (0, 'The Wilcoxon signed rank test is appropriate for conitnuous symmetric distributions, but t test is more powerful.')
+			list_of_tests['sign'] = (0, 'The sign test is appropriate for this case, but it tests for median equality and has low statistical power.')
+			list_of_tests['bootstrap'] = (0, 'The bootstrap test based on mean is appropriate for normal distribution, but it is computationally expensive and t test has higher statistical power.')
+			list_of_tests['permutation'] = (0, 'The permutation test based on mean is appropriate for normal distribution, but it is computationally expensive and t test has higher statistical power.')
+			list_of_tests['bootstrap_med'] = (0, 'The bootstrap test based on median is appropriate for this case, but it is computationally expensive and t test has higher statistical power.')
+			list_of_tests['permutation_med'] = (0, 'The permutation test based on median is appropriate for this case, but it is computationally expensive and t test has higher statistical power.')
+
+			# not appropriate
+			# None
+
+		else:
+			# appropriate and preferred
+			list_of_tests['wilcoxon'] = (1,'The Wilcoxon signed rank test is appropriate since it does not assume any specific distribution but only requires symmetry.')
+			
+			# not preferred
+			list_of_tests['sign'] = (0, 'The sign test is appropriate for non-normal data but it has lower statistical power due to loss of information.')
+			list_of_tests['bootstrap'] = (0, 'The bootstrap test based on mean is appropriate for non-normal data, but it is computationally expensive.')
+			list_of_tests['permutation'] = (0, 'The permutation test based on mean is appropriate for non-normal data, but it is computationally expensive.')
+			list_of_tests['bootstrap_med'] = (0, 'The bootstrap test based on median is appropriate for this case, but it is computationally expensive and Wilcoxon test has higher statistical power.')
+			list_of_tests['permutation_med'] = (0, 'The permutation test based on median is appropriate for this case, but it is computationally expensive and Wilcoxon test has higher statistical power.')
+
+
+			# not appropriate
+			list_of_tests['t']= (-1, 'The student t test is not appropriate for this case since the data distribution is not normal.')
+
+			
+	return(list_of_tests)
