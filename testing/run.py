@@ -19,7 +19,7 @@ from logic.dataAnalysis import partition_score, \
 from logic.sigTesting import run_sig_test
 
 # filenames
-from logic.filenames import get_path
+
 
 # Report Function
 from logic.report import gen_report
