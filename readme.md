@@ -20,3 +20,5 @@ Other Todos:
 Progress indicator
 Only valid path through tabs
 Electron package
+tabs on the bottom
+
