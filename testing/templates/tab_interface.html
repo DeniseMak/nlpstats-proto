@@ -1,10 +1,14 @@
 <!DOCTYPE html>
+<html lang="en">
+
+
 <html>
 
 <head>
-
+    <meta charset="UTF-8">
+    <title>NLPStatTest</title>
+    
     <link href="{{ url_for('static', filename='modal.css')}}" rel="stylesheet" />
-    <link href="{{ url_for('static', filename='breadcrumbs.css')}}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='tooltip.css')}}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='tables.css')}}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='other.css')}}" rel="stylesheet"/>
@@ -116,28 +120,32 @@ function show_montecarlo_div() {
     <div margin: 100 auto;>
         <div class="header">
             <h1>NlpStatTest</h1>
-        </div>
-
-        <div class="top_bar interface">
+            
+             <div class="top_bar interface">
             <button class='interface button1' id="btn_about" >About</button>
             <button class='interface button1' id="btn_settings" >Save/Restore Settings</button>
             <button class='interface button1' id="btn_download" >Download Report</button>
+             </div>
+           <br>
         </div>
 
-        <div class='roundpurple interface'>
-            <ul class="breadcrumb">
-                <li><button class="button1" id='BtnTab0' onclick="openTab(event, 'Prospective Power', 'BtnTab0')">Prospective Power</button></li>
-                <br><br>
-                <li><button class="button1" id='BtnTab1' onclick="openTab(event, 'Data Analysis', 'BtnTab1')">Data Analysis →</button></li>
-                <li><button class="button1" id='BtnTab2' onclick="openTab(event, 'Significance Test', 'BtnTab2')">Significance → </button></li>
-                <li><button class="button1" id='BtnTab3' onclick="openTab(event, 'Effect Size', 'BtnTab3')">Effect Size →</button></li>
-                <li><button class="button1" id='BtnTab4' onclick="openTab(event, 'Post-test Power Analysis', 'BtnTab4')">Power Analysis</button></li>
+       
+        <div class="roundpurplebottom interface" 
+        style="background-color: #eee; padding: 16;   top: 0;
+               position: -webkit-sticky;
+               position: sticky;    z-index: 2;">
+       
+                <span><button class="button1" id='BtnTab0' onclick="openTab(event, 'Prospective Power', 'BtnTab0')">Prospective Power</button> | </span>
+                <span><button class="button1" id='BtnTab1' onclick="openTab(event, 'Data Analysis', 'BtnTab1')">Data Analysis </button> → </span>
+                <span><button class="button1" id='BtnTab2' onclick="openTab(event, 'Significance Test', 'BtnTab2')">Significance </button> → </span>
+                <span><button class="button1" id='BtnTab3' onclick="openTab(event, 'Effect Size', 'BtnTab3')">Effect Size </button> → </span>
+                <span><button class="button1" id='BtnTab4' onclick="openTab(event, 'Post-test Power Analysis', 'BtnTab4')">Power Analysis</button></span>
 
-            </ul>
         </div>
+        
         <div id='Prospective Power' class="tabcontent" style="display:none">
 
-            <div class="roundpurplebottom" style="position:relative; top: -18px;">
+            <div class="roundpurplebottom" style="position:relative;">
         A prospective power test is a test that you use before analyzing data to
         determine whether the sample size is large enough so that the significance
         test will have enough power.
@@ -151,7 +159,6 @@ function show_montecarlo_div() {
                     <!-- 3 alternatives, less, greater, two sided -->
                     <br><b>Choose the alternative hypothesis </b><br><br>
 
-            <!-- u1 > u2 -->
             <input type="radio" name="prospective_alternative" id="alternative_greater" value="one-sided"
                    {% if prospective_alternative=='one-sided' %}checked {% endif %}>
                     <b>One-sided:</b> \( \mu_1 - \mu_2 > \delta \) <b>or</b> \( \mu_1 - \mu_2 < \delta \)
@@ -257,7 +264,7 @@ function show_montecarlo_div() {
             <!-- Data Analysis form -->
             <form action="/" class="form-horizontal" enctype="multipart/form-data" method="post">
                 <!-- Begin Data Analysis div -->
-                <div class="roundpurplebottom" style="position:relative; top: -18px;">
+                <div class="roundpurplebottom" style="position:relative;">
 
                     <b>Data and Parameters</b><br><br> System File:
                     <div class="tooltip interface">?
@@ -282,7 +289,9 @@ function show_montecarlo_div() {
                         <span class="tooltiptext">This should be a whole number between one and the number of data points.</span>
                     </div>
 
-                    <input id="eval_unit_size" name="eval_unit_size" type="number" {% if eval_unit_size %} value="{{ eval_unit_size }}" {% else %} value="1" {% endif %} class="form-control input-md" required="">
+                    <input id="eval_unit_size" name="eval_unit_size" type="number"
+                            {% if eval_unit_size %} value="{{ eval_unit_size }}" {% else %} value="1"
+                            {% endif %} class="form-control input-md" required="" >
 
                     <br><br>
                     <!-- Data Analysis: Radio Buttons (mean, median)  -->
@@ -493,7 +502,7 @@ function show_montecarlo_div() {
 
         <div id='Significance Test' class="tabcontent" style="display:none">
 
-            <div class="roundpurplebottom" style="position:relative; top: -18px;">
+            <div class="roundpurplebottom" style="position:relative;">
 
                 <form action="/sig_test" class="form-horizontal" enctype="multipart/form-data" method="post">
                     <!-- 3 alternatives, less, greater, two sided -->
@@ -691,7 +700,7 @@ function show_montecarlo_div() {
 
     <div id='Effect Size' class="tabcontent" style="display:none">
 
-        <div class="roundpurplebottom" style="position:relative; top: -18px;">
+        <div class="roundpurplebottom" style="position:relative;">
             <form id="frmEffectSize" action="/effectsize" class="form-horizontal" onsubmit="SubmitHandler('frmEffectSize')" enctype="multipart/form-data" method="post">
                 <b>Effect Size Estimator Options</b><br><br> Required significance level &alpha;:
                 <div class="tooltip interface">?
@@ -763,7 +772,7 @@ function show_montecarlo_div() {
 
     <div id='Post-test Power Analysis' class="tabcontent" style="display:none">
 
-        <div class="roundpurplebottom" style="position:relative; top: -18px;">
+        <div class="roundpurplebottom" style="position:relative;">
 
             <form action="/power" class="form-horizontal" enctype="multipart/form-data" method="post">
                 <div class="form-group">
@@ -1091,7 +1100,8 @@ function show_montecarlo_div() {
                 document.getElementById("fileLabel").innerHTML = '<i>Upload a file.</i>'
             } else {
                 var strSplit = fileInput.value.split('\\');
-                document.getElementById("fileLabel").innerHTML = "<i>File selected:</i> " + strSplit[strSplit.length-1] + ".";
+                document.getElementById("fileLabel").innerHTML =
+                    "<i>File selected: " + strSplit[strSplit.length-1] + ".</i>";
             }
             console.log('*** checking file size***')
             // If there is at least one file selected
@@ -1107,10 +1117,58 @@ function show_montecarlo_div() {
                         document.getElementById("fileLabel").innerHTML + ' ' + WARN_MESSAGE
                     }
                     return;
+                } else {
+                        getAsText(files[0])
                 }
             }
             // No constraint violation
             fileInput.setCustomValidity("");
+        }
+
+        function getAsText(fileToRead) {
+            var reader = new FileReader();
+            // read file into memory as UTF-8
+            reader.readAsText(fileToRead);
+            reader.onload = loadHandler;
+            reader.onerror = errorHandler;
+        }
+        function loadHandler(event) {
+            var lines = event.target.result;
+            processData(lines);
+        }
+        function errorHandler(evt) {
+            if(evt.target.error.name == "NotReadableError") {
+              alert("Cannot read file !");
+            }
+        }
+
+        function processData(csv) {
+            var allTextLines = csv.split(/\r\n|\n/);
+            var lines = [];
+            for (var i=0; i<allTextLines.length; i++) {
+                var data = allTextLines[i].split(/\s+/).filter(Boolean);
+                    if (data.length != 2) {
+                        console.log('WARNING: num vals in line='+data.length)
+                        document.getElementById("fileLabel").innerHTML += '<i style=\'color:red\'>Warning: Line ' + (i+1) +
+                         ' should have 2 values but has ' + data.length + ' values.</i>'
+                    }
+                    var tarr = [];
+                    for (var j=0; j<data.length; j++) {
+                        tarr.push(data[j]);
+                        //console.log(data[j])
+                    }
+
+                    lines.push(tarr);
+            }
+            console.log(lines);
+            console.log('number of lines = ' + lines.length)
+            // if lines > MAX_NUM_SAMPLES, eval size min must be such that lines/eu_size < max_num_samples
+            // -> lines/max_num_samples < eu_size
+            min_eu_size = Math.ceil(lines.length/MAX_NUM_SAMPLES).toString()
+            console.log('min_eu_size='+ min_eu_size)
+            document.getElementById('eval_unit_size').setAttribute('min', min_eu_size)
+            document.getElementById('eval_unit_size').setAttribute('value', min_eu_size)
+            // todo: warning message if min_eu_size > 1
         }
     </script>
     <!-- Handlers for hide and show functions: GreenDivs, PA_parameters, SigTest_radios -->
