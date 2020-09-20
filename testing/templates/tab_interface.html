@@ -140,7 +140,7 @@ function show_montecarlo_div() {
                 <span><button class="button1" id='BtnTab2' onclick="openTab(event, 'Data Analysis', 'BtnTab2')">Data Analysis </button> → </span>
                 <span><button class="button1" id='BtnTab3' onclick="openTab(event, 'Significance Test', 'BtnTab3')">Significance Testing</button> → </span>
                 <span><button class="button1" id='BtnTab4' onclick="openTab(event, 'Effect Size', 'BtnTab4')">Effect Size Estimation</button> → </span>
-                <span><button class="button1" id='BtnTab5' onclick="openTab(event, 'Post-test Power Analysis', 'BtnTab5')">Retrospective Power Analysis</button> → </span>
+                <span><button class="button1" id='BtnTab5' onclick="openTab(event, 'Retrospective Power Analysis', 'BtnTab5')">Retrospective Power Analysis</button> → </span>
  <span><button class="button1" id='BtnTab6' onclick="openTab(event, 'Download Report', 'BtnTab6')">Download Report</button></span>
         </div>
         
@@ -261,13 +261,16 @@ function show_montecarlo_div() {
     </div>
     <!-- end Prospective Power Tab -->
 
-        <div id='Data Analysis' class="tabcontent" style="display:block">
-            <!-- Data Analysis form -->
-            <form action="/" class="form-horizontal" enctype="multipart/form-data" method="post">
-                <!-- Begin Data Analysis div -->
-                <div class="roundpurplebottom" style="position:relative;">
 
-                    <b>Data and Parameters</b><br><br> System File:
+
+
+
+
+
+ <div id="Upload Files" class="tabcontent interface" style="display:none">
+
+        <div class="roundpurplebottom" style="position:relative;">
+     System File:
                     <div class="tooltip interface">?
                         <span class="tooltiptext">Upload a text file containing metrics comparing two systems.
                         The file should have two colummns, one for each system.</span></div>
@@ -283,6 +286,29 @@ function show_montecarlo_div() {
                     <a href="#" class="button1 interface"><label for="data_file">Upload</label></a>
                     <label id="fileLabel">{{file_uploaded}}{% if error_str %}<b>{{ error_str }}</b>{% endif %}</label>
                     <br><br>
+                    
+                               
+        </div>
+     
+     </div>
+
+
+
+
+
+
+
+
+
+
+
+        <div id='Data Analysis' class="tabcontent" style="display:block">
+            <!-- Data Analysis form -->
+            <form action="/" class="form-horizontal" enctype="multipart/form-data" method="post">
+                <!-- Begin Data Analysis div -->
+                <div class="roundpurplebottom" style="position:relative;">
+
+                    <b>Data and Parameters</b><br><br> 
 
                     <!-- Data Analysis: Evaluation Unit size-->
                     Evaluation Unit Size:
@@ -699,7 +725,7 @@ function show_montecarlo_div() {
     </div>
     <!-- end Significance Results Tab -->
 
-    <div id='Effect Size' class="tabcontent" style="display:none">
+    <div id="Effect Size" class="tabcontent" style="display:none">
 
         <div class="roundpurplebottom" style="position:relative;">
             <form id="frmEffectSize" action="/effectsize" class="form-horizontal" onsubmit="SubmitHandler('frmEffectSize')" enctype="multipart/form-data" method="post">
@@ -771,13 +797,13 @@ function show_montecarlo_div() {
         <h1></h1>
     </div>
 
-    <div id='Post-test Power Analysis' class="tabcontent" style="display:none">
+    <div id="Retrospective Power Analysis" class="tabcontent" style="display:none">
 
         <div class="roundpurplebottom" style="position:relative;">
 
             <form action="/power" class="form-horizontal" enctype="multipart/form-data" method="post">
                 <div class="form-group">
-                    <b>Post-test power analysis:</b> this test involves plotting a power curve that shows how the statistical power increases as sample size increases.
+                    <b>Retrospective power analysis:</b> this test involves plotting a power curve that shows how the statistical power increases as sample size increases.
                     <!-- This test performs an analysis to measure
                 the power at evenly spaced increasing sample sizes. -->
                     <ul>
@@ -874,8 +900,10 @@ function show_montecarlo_div() {
                 </div>
             </form>
             <br>
-            <button class='interface button1 interface' onclick="show_print(); window.print(); hide_print(); return false;">Print Full Report</button>
+           
         </div>
+        
+        
 
         <div class="roundgreen" class="hiddendiv" id="hiddenPowerTest">
 
@@ -885,6 +913,16 @@ function show_montecarlo_div() {
             <img id=power_file src="../{{ url_for('send_img_file_dir', image_name=power_file) }}?{{ rand }}"> {% endif %}
         </div>
     </div>
+
+ <div id="Download Report" class="tabcontent interface" style="display:none">
+
+        <div class="roundpurplebottom" style="position:relative;">
+         <button class='interface button1 interface' onclick="show_print(); window.print(); hide_print(); return false;">Print Full Report</button>
+        
+        </div>
+     
+     </div>
+
 
     <div id="about" class="modal">
         <div class="modal-content">
@@ -902,15 +940,12 @@ function show_montecarlo_div() {
             <form action="{{ url_for('.download_config', config_file_name='config'+rand_str) }}?{{ rand_str }}" method="get" target="_blank">
                 <button class="button1" type="submit">Download Settings File</button>
             </form>
-            <!-- upload config button -->
-            <form action="{{ url_for('.upload_config')}}" enctype="multipart/form-data" method="post" target="_blank">
 
-                <button class="button1" type="submit">Upload Settings File</button>
-                <input type="file" id="system_file" name="system_file" {% if error_str %}required{% endif %}/>
-            </form>
 
         </div>
     </div>
+    
+    
 
 
     <script>
@@ -1026,7 +1061,7 @@ function show_montecarlo_div() {
                                   greenDivs[i].style.display = "none"
                             }
                             break;
-                        case 'Post-test Power Analysis':
+                        case 'Retrospective Power Analysis':
                             console.log('Power: do not need to hide anything')
                             break;
                         default:
@@ -1041,19 +1076,23 @@ function show_montecarlo_div() {
         }
     
         function show_print() {
+          document.getElementById('Upload Files').style.display='block';
           document.getElementById('Data Analysis').style.display='block';
           document.getElementById('Significance Test').style.display='block';
           document.getElementById('Effect Size').style.display='block';
+          document.getElementById('Retrospective Power Analysis').style.display='block';
+          document.getElementById('Download Report').style.display='none';
           return false;
         }
 
 
         function hide_print() {
-    
-            document.getElementById('Data Analysis').style.display='none';
+            document.getElementById('Upload Files').style.display='none';
             document.getElementById('Data Analysis').style.display='none';
             document.getElementById('Significance Test').style.display='none';
             document.getElementById('Effect Size').style.display='none';
+            document.getElementById('Retrospective Power Analysis').style.display='none';
+            document.getElementById('Download Report').style.display='block';
             return false;
           
         }
