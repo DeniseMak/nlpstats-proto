@@ -119,28 +119,29 @@ function show_montecarlo_div() {
 <body>
     <div margin: 100 auto;>
         <div class="header">
-            <h1>NlpStatTest</h1>
+            <h1>NlpStatTest
             
-             <div class="top_bar interface">
+             <span class="top_bar interface">
             <button class='interface button1' id="btn_about" >About</button>
-            <button class='interface button1' id="btn_settings" >Save/Restore Settings</button>
-            <button class='interface button1' id="btn_download" >Download Report</button>
-             </div>
-           <br>
+            <button class='interface button1' id="btn_settings" >Save Settings</button>
+             </span>
+             </h1>
+         
         </div>
 
        
         <div class="roundpurplebottom interface" 
         style="background-color: #eee; padding: 16;   top: 0;
                position: -webkit-sticky;
-               position: sticky;    z-index: 2;">
+               position: sticky;    z-index: 2; line-height: 2;">
        
-                <span><button class="button1" id='BtnTab0' onclick="openTab(event, 'Prospective Power', 'BtnTab0')">Prospective Power</button> | </span>
-                <span><button class="button1" id='BtnTab1' onclick="openTab(event, 'Data Analysis', 'BtnTab1')">Data Analysis </button> → </span>
-                <span><button class="button1" id='BtnTab2' onclick="openTab(event, 'Significance Test', 'BtnTab2')">Significance </button> → </span>
-                <span><button class="button1" id='BtnTab3' onclick="openTab(event, 'Effect Size', 'BtnTab3')">Effect Size </button> → </span>
-                <span><button class="button1" id='BtnTab4' onclick="openTab(event, 'Post-test Power Analysis', 'BtnTab4')">Power Analysis</button></span>
-
+                <span><button class="button1" id='BtnTab0' onclick="openTab(event, 'Prospective Power', 'BtnTab0')">Prospective Power Analysis</button> | </span>
+                <span><button class="button1" id='BtnTab1' onclick="openTab(event, 'Upload Files', 'BtnTab1')">Upload Files</button> →  </span>
+                <span><button class="button1" id='BtnTab2' onclick="openTab(event, 'Data Analysis', 'BtnTab2')">Data Analysis </button> → </span>
+                <span><button class="button1" id='BtnTab3' onclick="openTab(event, 'Significance Test', 'BtnTab3')">Significance Testing</button> → </span>
+                <span><button class="button1" id='BtnTab4' onclick="openTab(event, 'Effect Size', 'BtnTab4')">Effect Size Estimation</button> → </span>
+                <span><button class="button1" id='BtnTab5' onclick="openTab(event, 'Post-test Power Analysis', 'BtnTab5')">Retrospective Power Analysis</button> → </span>
+ <span><button class="button1" id='BtnTab6' onclick="openTab(event, 'Download Report', 'BtnTab6')">Download Report</button></span>
         </div>
         
         <div id='Prospective Power' class="tabcontent" style="display:none">
@@ -911,20 +912,9 @@ function show_montecarlo_div() {
         </div>
     </div>
 
-    <div id="download" class="modal">
-        <div class="modal-content">
-            <button class="button1" id="close_btn_download">&#x2715;</button>
-            <p>
-                <form action="{{ url_for('.download_file') }}" method="get" target="_blank">
-                    <button class="button1" type="submit">Download</button>
-                </form>
-            </p>
-
-        </div>
-    </div>
 
     <script>
-        var modals = ["about",  "settings", "download"];
+        var modals = ["about",  "settings"];
             function make_modal(val){
                 eval("var modal_" + val + " = document.getElementById(\"" + val +"\");");
                 eval("var btn_" + val + " = document.getElementById(\"btn_" + val +"\");");

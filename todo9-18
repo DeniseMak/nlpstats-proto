@@ -1,0 +1,8 @@
+Have a separate page to upload the data file and the config file (the latter is optional).  Have a separate step to download the results. We allow users to skip some steps, but going backwards and then skipping certain steps) will trigger warning messages. <-- Jesse will make two pages and work on the warning.
+
+Pre-testing power analysis, and include in downloadable results and config. <-- Jesse will work on the download part
+
+Download all (downloading a zip file): Denise will test out the dir and zip the files in the dir.  Denise needs to add something when uploading a new config file. Jesse is creating report.pdf
+Inconsistency warning for config file step (check if we can use show_print) <-- Jesse can work on adding warning for Run, not just Save. Make sure that you add a warning when the user wants to start a new "session".
+
+Explicit delete of files on the server <-- see if browser close can just delete all files.  Jesse will work on it.
