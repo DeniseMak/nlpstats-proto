@@ -23,3 +23,26 @@ When the report button is pressed:
 	     no warning is presented
 	If it is not consistent:
 	     then an alert says it is not consistent and a red message on report
+	     
+	     
+	     
+	     
+<script>
+
+   
+
+   function tttt(item, index) {
+      document.getElementById(item);
+   }
+
+   let recent_tabs = [];
+
+   let all_tabs = ["", "", ""];
+   tabs.forEach(tttt);
+   
+   
+   window.onclose = function(){dialog("This will clear your data.");}
+
+</script>
+
+* Add to changeTab: recent_tabs.push(current_tab);
