@@ -8,11 +8,17 @@
     <meta charset="UTF-8">
     <title>NLPStatTest</title>
 
+
+
     <link href="{{ url_for('static', filename='modal.css')}}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='tooltip.css')}}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='tables.css')}}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='other.css')}}" rel="stylesheet"/>
     <link href="{{ url_for('static', filename='print.css')}}" rel="stylesheet" type="text/css"  media="print"/>
+
+
+
+
 
     <!-- CONSTANTS todo: remove this if not used -->
     <script src="{{ url_for('static', filename='constants.js') }}"></script>
@@ -118,7 +124,7 @@ function show_montecarlo_div() {
 }
 </script>
 
-<body>
+<body style="font-family: sans;">
 
 
   <script>
@@ -178,7 +184,7 @@ function show_montecarlo_div() {
                     <!-- 3 alternatives, less, greater, two sided -->
                     <br><b>Choose the alternative hypothesis </b><br><br>
 
-            <input type="radio" name="prospective_alternative" id="alternative_greater" value="one-sided"
+            <input type="radio" name="prospective_alternative" id="alternative_greater" required="" value="one-sided"
                    {% if prospective_alternative=='one-sided' %}checked {% endif %}>
                     <b>One-sided:</b> \( \mu_1 - \mu_2 > \delta \) <b>or</b> \( \mu_1 - \mu_2 < \delta \)
             <div class="tooltip interface">?
