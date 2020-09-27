@@ -32,6 +32,21 @@ When the report button is pressed:
 	     
 	     
 	     
+	     def zip_file(unique_string):
+    os.system("zip")
+
+def reset_all
+    current tab cookie = 0
+    delete user directory
+    
+	     
+	     
+	     
+	  
+	  
+	  
+	  
+	  
 	     
 <script>
 
