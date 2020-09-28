@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>NLPStatTest</title>
+
+    <div class="header">
+        <h1>NlpStatTest</h1>
+    </div>
+</head>
+
+<body>
+
+    <div class="purple">
+
+        <p>A prospective power test is a test that you use before analyzing data to determine whether the sample size is large enough so that the significance test will have enough power. The power of a hypothesis test is the probability that the test correctly rejects the null hypothesis.</p>
+
+        <p>Power is affected by the sample size, the difference, the variability of the data, and the significance level of the test.</p>
+
+        <p> Here, we assume data in a normal distribution, to calculate the sample size you'll need to achieve the power level you specify, given the type of alternative hypothesis, the difference between the means, the standard deviation of the data, and significance level.</p>
+
+        <form>
+            <!-- 3 alternatives, less, greater, two sided -->
+            <p>Choose the alternative hypothesis.</p>
+
+            <p><input type="radio" name="prospective_alternative" id="alternative_greater" required="" value="one-sided" {% if prospective_alternative=='one-sided' %}checked {% endif %}>
+            One-sided: \( \mu_1 - \mu_2 > \delta \) or \( \mu_1 - \mu_2 </p>
+            < \delta \) <div class="tooltip interface">?
+                <span class="tooltiptext">The alternative hypothesis is that the difference between systems is either
+                    greater than, or less than &delta;, but not both.</span>
+    </div> <br>
+    <input type="radio" name="prospective_alternative" id="alternative_two_sided" value="two-sided" {% if prospective_alternative=='two-sided' %}checked{% endif %}>
+    <b>Two-sided:</b> \( \mu_1 - \mu_2 \mathrel{\mathtt{!=}} \delta \)
+    <div class="tooltip interface">?
+        <span class="tooltiptext">The alternative hypothesis is that the difference between
+                        the first and second system is not equal to &delta;.</span>
+    </div>
+    <br><br>
+    <!-- Mu -->
+    Difference between means (&delta;):
+    <div class="tooltip interface">?
+        <span class="tooltiptext">The threshold &delta; for difference between the systems.</span>
+    </div>
+    <div class="hide-arrows">
+        <input id="prospective_mu" name="prospective_mu" type="number" {% if prospective_mu %} placeholder="{{ prospective_mu }}" value="{{ prospective_mu }}" {% else %} value=0.1 {% endif %} class="form-control" step="any" min="0" style="-webkit-appearance: none; margin:0;" onchange="checkForZero('prospective_mu')"> <br><br>
+    </div>
+
+    <!-- Std Dev-->
+    Standard deviation:
+    <div class="tooltip interface">?
+        <span class="tooltiptext">The standard deviation of the differences between the samples.</span>
+    </div>
+    <div class="hide-arrows">
+        <input id="prospective_stddev" name="prospective_stddev" type="number" {% if prospective_stddev %} placeholder="{{ prospective_stddev }}" value="{{ prospective_stddev }}" {% else %} value=0.1 placeholder="standard deviation" {% endif %} class="form-control" step="any" min='0' style="-webkit-appearance: none; margin:0;" onchange="checkForZero('prospective_stddev')"> <br><br>
+        <!-- class="form-control input-md" -->
+    </div>
+    <!-- Desired Power Level-->
+    Desired power level:
+    <div class="tooltip interface">?
+        <span class="tooltiptext">The power level you want to achieve.</span>
+    </div>
+    <div class="hide-arrows">
+        <input id="prospective_desired_power" name="prospective_desired_power" type="number" {% if prospective_desired_power %} placeholder="{{ prospective_desired_power }}" value="{{ prospective_desired_power }}" {% else %} value=0.90 {% endif %} min="0" class="form-control" step="any" style="-webkit-appearance: none; margin:0;" onchange="checkForZero('prospective_desired_power')"> <br><br>
+        <!-- class="form-control input-md" -->
+    </div>
+    <!-- Prospective significance alpha -->
+    Required significance level &alpha;:
+    <div class="tooltip interface">?
+        <span class="tooltiptext">Reject the null hypothesis if the p-value is less than this value.</span>
+    </div>
+
+    <input id="prospective_significance_level" name="prospective_signifcance_level" type="number" {% if prospective_sig_alpha %} placeholder="{{ prospective_sig_alpha }}" value="{{ prospective_sig_alpha }}" {% else %} placeholder="0.05" value=0.05 {% endif %} class="form-control input-md" required="" step="0.01" min="0" max="1" onchange="checkForZero('prospective_significance_level')">
+    <br><br>
+
+    <button id="submit" class='interface button1' onclick="warn = false; console.log(warn);" ; name="submit">Run</button>
+
+    </form>
+    </div>
+
+</body>
+
+</html>
